@@ -3,4 +3,4 @@ type OptionType = {
 	value: string;
 };
 
-export { OptionType };
+export type { OptionType };

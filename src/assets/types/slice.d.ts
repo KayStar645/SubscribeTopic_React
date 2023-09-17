@@ -1,4 +1,6 @@
-type signInType = {
+import { OptionType } from './common';
+
+type signInSliceType = {
 	account: string;
 	password: string;
 	remember_password: boolean;
@@ -6,4 +8,8 @@ type signInType = {
 	status: 'idle' | 'checking' | 'success' | 'failed';
 };
 
-export { signInType };
+type MenuSliceType = {
+	activeItem: string;
+};
+
+export type { signInSliceType, MenuSliceType };

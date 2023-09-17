@@ -4,7 +4,7 @@ import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 import './global.scss';
 
-import { ReduxProvider } from '@assets/redux/providers';
+import ReduxProvider from '@assets/providers/ReduxProvider';
 import type { Metadata } from 'next';
 import { PropsWithChildren } from 'react';
 
@@ -17,7 +17,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
 	return (
 		<html lang='en'>
 			<ReduxProvider>
-				<body className='min-h-screen surface-300'>{children}</body>
+				<body className='min-h-screen surface-200'>{children}</body>
 			</ReduxProvider>
 		</html>
 	);

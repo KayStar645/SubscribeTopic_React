@@ -3,7 +3,7 @@
 import { LANGUAGE, LANGUAGES } from '@assets/configs';
 import { storage } from '@assets/helpers';
 import { useDispatch, useSelector } from '@assets/redux';
-import { selectSignIn, signInSlice } from '@assets/redux/slices/signInSlice';
+import { selectSignIn, signInSlice } from '@assets/redux/slices/sign-in';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Checkbox, Dropdown, InputText, Password } from '@resources/components/form';
 import brand from '@resources/image/brand.png';
@@ -46,7 +46,7 @@ const Page = () => {
 			<div className='absolute right-0 top-0 p-4 sm:p-4 md:p-6 lg:px-8'>
 				<Dropdown
 					id='language'
-					value={storage.get('language') || 'vi'}
+					value={storage.get('language') || LANGUAGE.VI.value}
 					placeholder={t('language')}
 					defaultIndex={0}
 					options={LANGUAGES}

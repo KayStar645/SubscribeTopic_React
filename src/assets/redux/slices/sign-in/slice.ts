@@ -1,7 +1,7 @@
-import { signInType } from '@assets/types/slice';
+import { signInSliceType } from '@assets/types/slice';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initialState: signInType = {
+const initialState: signInSliceType = {
 	account: '',
 	password: '',
 	token: '',
@@ -9,11 +9,11 @@ const initialState: signInType = {
 	status: 'idle',
 };
 
-export const signInSlice = createSlice({
+const signInSlice = createSlice({
 	name: 'sign-in',
 	initialState,
 	reducers: {
-		signIn: (state, action: PayloadAction<signInType>) => {
+		signIn: (state, action: PayloadAction<signInSliceType>) => {
 			return { ...state, ...action.payload, status: 'success' };
 		},
 	},
@@ -21,3 +21,5 @@ export const signInSlice = createSlice({
 		builder;
 	},
 });
+
+export default signInSlice;

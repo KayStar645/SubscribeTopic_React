@@ -2,38 +2,66 @@
 
 import styles from './MenuItem.module.scss';
 
+import { useDispatch, useSelector } from '@assets/redux';
+import { selectMenu } from '@assets/redux/slices/menu';
+import menuSlice from '@assets/redux/slices/menu/slice';
 import { MenuItemProps } from '@assets/types/menu';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { classNames } from 'primereact/utils';
-import { useState } from 'react';
 
-const MenuItem = ({ label, to = '', items, icon }: MenuItemProps) => {
-	const [openMenu, setOpenMenu] = useState(false);
+const MenuItem = (item: MenuItemProps) => {
+	const { to, code, icon, items, label, labelClassName, iconClassName, itemClassName } = item;
+	const dispatch = useDispatch();
+	const menu = useSelector(selectMenu);
+	const openMenu = menu.activeItem == code;
 
 	const onClick = (e: any) => {
-		if (!to) {
+		if (!item.to) {
 			e.preventDefault;
 		}
 
-		if (items) {
-			setOpenMenu((prev) => !prev);
+		dispatch(menuSlice.actions.onItemClick({ activeItem: code }));
+
+		if (code === menu.activeItem) {
+			dispatch(menuSlice.actions.onItemClick({ activeItem: '' }));
 		}
 	};
 
 	return (
 		<div>
 			<Link
-				className={classNames('flex align-items-center gap-2 py-3 px-3', styles['menu-item'], {
-					[styles['active']]: openMenu,
-				})}
-				href={to}
+				className={classNames(
+					'flex align-items-center gap-2 py-2 px-3',
+					styles['menu-item'],
+					itemClassName,
+					{
+						[styles['active']]: openMenu,
+					},
+				)}
+				href={to || ''}
 				onClick={onClick}
 			>
-				<i
-					className={classNames(icon || 'pi pi-circle', openMenu ? 'text-indigo-600' : 'text-gray-600')}
-				></i>
-				<p className={classNames(openMenu ? 'text-indigo-600 font-bold' : 'text-gray-800', 'flex-1')}>
+				<div
+					className={classNames('border-solid border-300 border-round-sm p-1 border-1', iconClassName)}
+				>
+					<i
+						className={classNames(
+							icon || 'pi pi-circle',
+							openMenu ? 'text-indigo-600' : 'text-700',
+							'text-sm',
+							styles['item-icon'],
+						)}
+					></i>
+				</div>
+				<p
+					className={classNames(
+						openMenu ? 'text-indigo-600' : 'text-900',
+						'flex-1 text-sm font-semibold',
+						styles['item-label'],
+						labelClassName,
+					)}
+				>
 					{label}
 				</p>
 
@@ -41,19 +69,22 @@ const MenuItem = ({ label, to = '', items, icon }: MenuItemProps) => {
 			</Link>
 
 			{items && (
-				<div className={classNames(styles['sub-menu'], 'overflow-hidden')}>
+				<div className={classNames(styles['sub-menu'], 'overflow-hidden my-1 border-left-1 border-300')}>
 					<motion.div
 						animate={!openMenu ? { height: 0 } : { height: 'auto' }}
 						transition={{ duration: 0.3 }}
 					>
 						<ul>
-							{items!.map((child, i) => {
+							{items!.map((child) => {
 								return (
 									<MenuItem
 										key={child.label}
+										code={child.code}
 										label={child.label}
 										icon={child.icon || 'pi pi-circle'}
 										to={child.to}
+										itemClassName='ml-2'
+										iconClassName='hidden'
 									/>
 								);
 							})}

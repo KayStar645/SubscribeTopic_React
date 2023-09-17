@@ -5,18 +5,18 @@
 	transition: all 0.1s linear;
 
 	&:hover {
-		background: #e0e0e0;
+		background: #f6f9fc;
 	}
 
 	&.active {
-		background: #e0e0e0;
-		border-bottom-left-radius: 0;
-		border-bottom-right-radius: 0;
+		background: #eef2ff;
 	}
 }
 
 .sub-menu {
-	background: #e0e0e0;
-	border-bottom-left-radius: 10px;
-	border-bottom-right-radius: 10px;
+	margin-left: 30px;
+}
+
+.sub-menu .item-label {
+	font-weight: 400 !important;
 }

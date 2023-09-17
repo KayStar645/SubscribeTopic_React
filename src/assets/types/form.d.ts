@@ -54,4 +54,4 @@ type DropdownType = InputType & {
 };
 
 export default FormType;
-export { CheckboxType, InputTextType, PasswordType, DropdownType };
+export type { CheckboxType, InputTextType, PasswordType, DropdownType };

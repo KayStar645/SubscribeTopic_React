@@ -1,6 +1,14 @@
+import React from 'react';
+
 type OptionType = {
 	label: string;
 	value: string;
 };
 
-export type { OptionType };
+type PageProps = {
+	params: any;
+	searchParams?: any;
+	children?: React.ReactNode;
+};
+
+export type { OptionType, PageProps };

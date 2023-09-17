@@ -12,4 +12,8 @@ type MenuSliceType = {
 	activeItem: string;
 };
 
-export type { signInSliceType, MenuSliceType };
+type LanguageSliceType = {
+	currLanguage: string;
+};
+
+export type { signInSliceType, MenuSliceType, LanguageSliceType };

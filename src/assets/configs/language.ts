@@ -1,4 +1,5 @@
 import { OptionType } from '@assets/types/common';
+import { InitOptions } from 'i18next';
 
 const LANGUAGES: OptionType[] = [
 	{
@@ -22,4 +23,33 @@ const LANGUAGE = {
 	},
 };
 
-export { LANGUAGE, LANGUAGES };
+const NAMESPACE = {
+	common: 'common',
+	validation: 'validation',
+	info: 'info',
+};
+
+const COOKIE_NAME = 'i18next';
+
+function getOptions(lng = LANGUAGE.VI.value, ns = NAMESPACE.common): InitOptions {
+	return {
+		resources: {
+			en: {
+				common: require('../../resources/i18n/locales/en/common.json'),
+				validation: require('../../resources/i18n/locales/en/validation.json'),
+				info: require('../../resources/i18n/locales/en/info.json'),
+			},
+			vi: {
+				common: require('../../resources/i18n/locales/vi/common.json'),
+				validation: require('../../resources/i18n/locales/vi/validation.json'),
+				info: require('../../resources/i18n/locales/vi/info.json'),
+			},
+		},
+		lng,
+		ns,
+		supportedLngs: LANGUAGES.map((t) => t.value),
+		defaultNS: NAMESPACE.common,
+	};
+}
+
+export { LANGUAGE, LANGUAGES, COOKIE_NAME, NAMESPACE, getOptions };

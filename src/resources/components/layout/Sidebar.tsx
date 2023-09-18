@@ -6,7 +6,7 @@ import LogoImage from '@resources/image/logo.png';
 import { getCookie } from 'cookies-next';
 import Image from 'next/image';
 import { useEffect } from 'react';
-import MenuItem from '../UI/MenuItem/MenuItem';
+import { MenuItem } from '../UI/MenuItem';
 
 const Menu = ({ lng }: { lng: string }) => {
 	const dispatch = useDispatch();

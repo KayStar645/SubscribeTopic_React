@@ -1,7 +1,15 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
 const Page = () => {
-	return <div>HI from Student</div>;
+	const { data, isFetching } = useQuery({
+		queryKey: ['list'],
+		queryFn: () => {},
+	});
+
+	return <div></div>;
 };
 
 export default Page;

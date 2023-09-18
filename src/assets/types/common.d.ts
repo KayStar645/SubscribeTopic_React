@@ -11,4 +11,10 @@ type PageProps = {
 	children?: React.ReactNode;
 };
 
-export type { OptionType, PageProps };
+type BreadcrumbType = {
+	label: string;
+	url: string;
+	icon?: string;
+};
+
+export type { OptionType, PageProps, BreadcrumbType };

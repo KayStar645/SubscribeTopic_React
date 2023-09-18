@@ -2,6 +2,8 @@
 	"account": "...",
 	"forgot_password": "...",
 	"password": "...",
+	"language": "...",
+	"notification": "...",
 	"sign_in": "...",
 	"sign_in_to_continue": "...",
 	"welcome_to_system": "...",

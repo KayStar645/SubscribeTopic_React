@@ -1,44 +1,70 @@
 'use client';
 
-import { LANGUAGE, LANGUAGES } from '@assets/configs';
-import { storage } from '@assets/helpers';
+import { LANGUAGES } from '@assets/configs';
+import { language } from '@assets/helpers';
 import { useDispatch, useSelector } from '@assets/redux';
 import { selectSignIn, signInSlice } from '@assets/redux/slices/sign-in';
+import { PageProps } from '@assets/types/common';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Checkbox, Dropdown, InputText, Password } from '@resources/components/form';
+import { useTranslation } from '@resources/i18n';
 import brand from '@resources/image/brand.png';
-import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { usePathname, useRouter } from 'next/navigation';
 import { PrimeIcons } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { DropdownChangeEvent } from 'primereact/dropdown';
 import { Image } from 'primereact/image';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import { setCookie } from 'cookies-next';
 
-const Page = () => {
+const Page = ({ params: { lng } }: PageProps) => {
 	const dispatch = useDispatch();
 	const signIn = useSelector(selectSignIn);
 	const router = useRouter();
-	const { t } = useTranslation();
+	const pathName = usePathname();
+	const { t } = useTranslation(lng);
 	const schema = yup.object({
-		account: yup.string().required(t('validation:required', { attribute: t('account').toLowerCase() })),
+		userName: yup.string().required(t('validation:required', { attribute: t('account').toLowerCase() })),
 		password: yup.string().required(t('validation:required', { attribute: t('password').toLowerCase() })),
 		remember_password: yup.boolean(),
 	});
 	const { control, handleSubmit } = useForm({ resolver: yupResolver(schema) });
+	const signInMutation = useMutation({
+		mutationFn: (data: any) => {
+			return axios.post(
+				'https://localhost:7155/api/Account/login',
+				{
+					userName: data.userName,
+					password: data.password,
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			);
+		},
+	});
 
 	const onSubmit = (data: any) => {
-		dispatch(signInSlice.actions.signIn(data));
+		// dispatch(signInSlice.actions.signIn(data));
+		// if (signIn.status === 'success') {
+		// }
 
-		if (signIn.status === 'success') {
-			router.push('/teacher/listing');
-		}
+		signInMutation.mutate(data, {
+			onSuccess(data) {
+				setCookie('auth_token', data.data.token);
+				setCookie('user', { id: data.data.id, name: data.data.userName });
+				router.push(`/${lng}/home/faculty/listing`);
+			},
+		});
 	};
 
-	const onLanguageChange = async (e: DropdownChangeEvent) => {
-		storage.set('language', e.value);
-		router.replace(e.value);
+	const onLanguageChange = (e: DropdownChangeEvent) => {
+		router.push(language.createNewPath(e.value, pathName));
 	};
 
 	return (
@@ -46,7 +72,7 @@ const Page = () => {
 			<div className='absolute right-0 top-0 p-4 sm:p-4 md:p-6 lg:px-8'>
 				<Dropdown
 					id='language'
-					value={storage.get('language') || LANGUAGE.VI.value}
+					value={lng}
 					placeholder={t('language')}
 					defaultIndex={0}
 					options={LANGUAGES}
@@ -128,7 +154,7 @@ const Page = () => {
 						onSubmit={handleSubmit(onSubmit)}
 					>
 						<Controller
-							name='account'
+							name='userName'
 							control={control}
 							render={({ field, formState }) => (
 								<InputText
@@ -136,7 +162,7 @@ const Page = () => {
 									value={field.value}
 									label={t('account')}
 									placeholder={t('account')}
-									errorMessage={formState.errors.account?.message}
+									errorMessage={formState.errors.userName?.message}
 									onChange={field.onChange}
 									onBlur={field.onBlur}
 								/>

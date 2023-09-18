@@ -15,4 +15,8 @@ type ValidationType = {
 	values: string;
 };
 
-export type { Common, ValidationType };
+interface LanguageProps {
+	lng: string;
+}
+
+export type { Common, ValidationType, LanguageProps };

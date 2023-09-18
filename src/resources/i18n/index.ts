@@ -11,7 +11,7 @@ const initI18next = (lng = LANGUAGE.VI.value, ns = NAMESPACE.common) => {
 };
 
 export function useTranslation(_lng: string | undefined | null = LANGUAGE.VI.value, ns = NAMESPACE.common) {
-	const lng = _lng || 'vi';
+	const lng = _lng || LANGUAGE.VI.value;
 	const i18nextInstance = initI18next(lng, ns);
 
 	return {

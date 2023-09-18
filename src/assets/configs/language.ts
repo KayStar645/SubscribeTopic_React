@@ -29,7 +29,7 @@ const NAMESPACE = {
 	info: 'info',
 };
 
-const COOKIE_NAME = 'i18next';
+const COOKIE_LANGUAGE_NAME = 'i18next';
 
 function getOptions(lng = LANGUAGE.VI.value, ns = NAMESPACE.common): InitOptions {
 	return {
@@ -38,11 +38,13 @@ function getOptions(lng = LANGUAGE.VI.value, ns = NAMESPACE.common): InitOptions
 				common: require('../../resources/i18n/locales/en/common.json'),
 				validation: require('../../resources/i18n/locales/en/validation.json'),
 				info: require('../../resources/i18n/locales/en/info.json'),
+				route: require('../../resources/i18n/locales/en/route.json'),
 			},
 			vi: {
 				common: require('../../resources/i18n/locales/vi/common.json'),
 				validation: require('../../resources/i18n/locales/vi/validation.json'),
 				info: require('../../resources/i18n/locales/vi/info.json'),
+				route: require('../../resources/i18n/locales/vi/route.json'),
 			},
 		},
 		lng,
@@ -52,4 +54,4 @@ function getOptions(lng = LANGUAGE.VI.value, ns = NAMESPACE.common): InitOptions
 	};
 }
 
-export { LANGUAGE, LANGUAGES, COOKIE_NAME, NAMESPACE, getOptions };
+export { LANGUAGE, LANGUAGES, COOKIE_LANGUAGE_NAME, NAMESPACE, getOptions };

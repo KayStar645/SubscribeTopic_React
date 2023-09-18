@@ -1,20 +1,12 @@
 import menu from '@assets/configs/menu';
-import { useDispatch } from '@assets/redux';
-import languageSlice from '@assets/redux/slices/language/slice';
 import { useTranslation } from '@resources/i18n';
 import LogoImage from '@resources/image/logo.png';
-import { getCookie } from 'cookies-next';
 import Image from 'next/image';
-import { useEffect } from 'react';
 import { MenuItem } from '../UI/MenuItem';
+import { LanguageProps } from '@assets/types/lang';
 
-const Menu = ({ lng }: { lng: string }) => {
-	const dispatch = useDispatch();
-	const { t } = useTranslation(getCookie('i18next') || lng);
-
-	useEffect(() => {
-		dispatch(languageSlice.actions.setLanguage({ currLanguage: lng }));
-	}, [dispatch, lng]);
+const Menu = ({ lng }: LanguageProps) => {
+	const { t } = useTranslation(lng);
 
 	return (
 		<div className='flex flex-column gap-2 bg-white w-19rem h-screen relative'>

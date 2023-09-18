@@ -1,4 +1,4 @@
-const ROUTES = {
+const ROUTES: any = {
 	base: '',
 
 	admin: {

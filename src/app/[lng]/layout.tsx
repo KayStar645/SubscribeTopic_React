@@ -9,10 +9,9 @@ import './global.scss';
 import ReduxProvider from '@assets/providers/ReduxProvider';
 import { PageProps } from '@assets/types/common';
 import { Header, Sidebar } from '@resources/components/layout';
+import { getCookie, setCookie } from 'cookies-next';
 import { dir } from 'i18next';
 import type { Metadata } from 'next';
-import { useEffect } from 'react';
-import { setCookie } from 'cookies-next';
 
 export const metadata: Metadata = {
 	title: 'Hệ thống xử lý tiến trình khóa luận tốt nghiệp 2',
@@ -20,7 +19,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children, params: { lng } }: PageProps) {
-	setCookie('i18next', lng);
+	if (!getCookie('i18next')) {
+		setCookie('i18next', lng);
+	}
 	return (
 		<html
 			lang={lng}

@@ -18,7 +18,7 @@ const Menu = ({ lng }: { lng: string }) => {
 
 	return (
 		<div className='flex flex-column gap-2 bg-white w-19rem h-screen relative'>
-			<div className='flex px-3 gap-2 align-items-center absolute bg-white shadow-1 h-5rem'>
+			<div className='w-full flex px-3 gap-2 align-items-center absolute bg-white shadow-1 h-5rem'>
 				<Image
 					src={LogoImage}
 					alt=''

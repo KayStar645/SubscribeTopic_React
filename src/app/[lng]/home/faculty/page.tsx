@@ -18,7 +18,7 @@ import { useState } from 'react';
 const FacultyPage = ({ params: { lng } }: PageProps) => {
 	const { t } = useTranslation(lng);
 	const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-	const { data, isLoading } = useQuery({
+	const { data, isLoading, isError } = useQuery({
 		queryKey: ['faculties', 'list'],
 		queryFn: async () => {
 			const params: ParamType = {
@@ -119,7 +119,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 						className='border-noround p-0'
 					/>
 				</div>
-				<Loader show={isLoading} />
+				<Loader show={isLoading || isError} />
 			</div>
 		</div>
 	);

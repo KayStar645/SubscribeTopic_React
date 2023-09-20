@@ -1,4 +1,4 @@
-import { PasswordType } from '@assets/types/form';
+import { InputPasswordProps } from '@assets/types/form';
 import { Password as PrimePassword } from 'primereact/password';
 import { classNames } from 'primereact/utils';
 
@@ -12,7 +12,7 @@ const Password = ({
 	errorMessage,
 	onChange = () => {},
 	onBlur = () => {},
-}: PasswordType) => {
+}: InputPasswordProps) => {
 	return (
 		<div className={classNames(blockClassName)}>
 			<div className={classNames('block', { 'flex align-items-center': isRow })}>

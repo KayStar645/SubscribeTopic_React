@@ -1,4 +1,4 @@
-import { DropdownType } from '@assets/types/form';
+import { DropdownProps } from '@assets/types/form';
 import { Dropdown as PrimeDropdown } from 'primereact/dropdown';
 import { classNames } from 'primereact/utils';
 import { useState } from 'react';
@@ -7,14 +7,13 @@ const Dropdown = ({
 	id,
 	label,
 	value,
-	defaultIndex,
 	options,
 	placeholder = '',
 	blockClassName = '',
 	isRow = false,
 	errorMessage,
 	onChange = () => {},
-}: DropdownType) => {
+}: DropdownProps) => {
 	const [selected, setSelected] = useState(value);
 
 	return (

@@ -1,27 +1,31 @@
-import menu from '@assets/configs/menu';
 import { useTranslation } from '@resources/i18n';
-import LogoImage from '@resources/image/logo.png';
+import LogoImage from '@resources/image/info/logo.png';
 import Image from 'next/image';
 import { MenuItem } from '../UI/MenuItem';
 import { LanguageProps } from '@assets/types/lang';
+import { getMenu } from '@assets/configs';
 
 const Menu = ({ lng }: LanguageProps) => {
 	const { t } = useTranslation(lng);
+	const menu = getMenu(t, lng);
 
 	return (
-		<div className='flex flex-column gap-2 bg-white w-19rem h-screen relative'>
-			<div className='w-full flex px-3 gap-2 align-items-center absolute bg-white shadow-1 h-5rem'>
+		<div className='flex flex-column gap-2 bg-white w-19rem h-screen relative shadow-2'>
+			<div className='w-full flex flex-column gap-2 align-items-center justify-content-center absolute bg-white z-1 shadow-1 h-11rem'>
 				<Image
 					src={LogoImage}
 					alt=''
-					width={50}
-					height={50}
+					width={100}
+					height={100}
 					priority={false}
 				/>
-				<p className='flex-1'>{t('info:product_name')}</p>
+				<p className='font-semibold text-blue-900 text-2xl'>{t('info:product_name')}</p>
 			</div>
 
-			<ul className='flex flex-column gap-1 p-2 mt-8 overflow-y-auto h-full'>
+			<ul
+				className='flex flex-column gap-1 p-2 overflow-y-auto h-full'
+				style={{ marginTop: 180 }}
+			>
 				{menu.map((item) => (
 					<MenuItem
 						key={Math.random().toString()}

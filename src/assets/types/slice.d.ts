@@ -1,19 +1,19 @@
 import { OptionType } from './common';
 
-type signInSliceType = {
+interface signInSliceType {
 	account: string;
 	password: string;
-	remember_password: boolean;
+	rememberPassword: boolean;
 	token?: string;
-	status: 'idle' | 'checking' | 'success' | 'failed';
-};
+	userName: string;
+}
 
-type MenuSliceType = {
+interface MenuSliceType {
 	activeItem: string;
-};
+}
 
-type LanguageSliceType = {
+interface LanguageSliceType {
 	currLanguage: string;
-};
+}
 
 export type { signInSliceType, MenuSliceType, LanguageSliceType };

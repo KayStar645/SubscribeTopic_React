@@ -1,9 +1,9 @@
-import { PageProps } from '@assets/types/common';
+import { PageProps } from '@assets/types/UI';
 
-const AuthLayout = ({ children, params: { lng } }: PageProps) => {
+const AuthLayout = ({ children }: PageProps) => {
 	return (
-		<body>
-			<div>{children}</div>;
+		<body className='h-screen relative p-4 sm:p-4 md:p-6 lg:px-8 lg:h-screen xl:h-screen surface-300'>
+			{children}
 		</body>
 	);
 };

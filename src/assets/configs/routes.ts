@@ -1,9 +1,10 @@
-const ROUTES: any = {
-	base: '',
+const ROUTES = {
+	base: 'https://localhost:7155/api',
 
 	admin: {
 		home: '/home',
-		teacher: '/teacher',
+		teacher: '/home/teacher',
+		faculty: '/home/faculty',
 	},
 
 	auth: {

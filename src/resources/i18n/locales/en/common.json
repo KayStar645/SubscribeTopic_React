@@ -1,11 +1,16 @@
 {
-	"account": "...",
-	"forgot_password": "...",
-	"password": "...",
-	"language": "...",
-	"notification": "...",
-	"sign_in": "...",
-	"sign_in_to_continue": "...",
-	"welcome_to_system": "...",
-	"remember_password": "..."
+	"account": "update locales/en to have effect",
+	"address": "update locales/en to have effect",
+	"code_of": "update locales/en to have effect",
+	"email": "update locales/en to have effect",
+	"name_of": "update locales/en to have effect",
+	"forgot_password": "update locales/en to have effect",
+	"password": "update locales/en to have effect",
+	"phone_number": "update locales/en to have effect",
+	"language": "update locales/en to have effect",
+	"notification": "update locales/en to have effect",
+	"sign_in": "update locales/en to have effect",
+	"sign_in_to_continue": "update locales/en to have effect",
+	"welcome_to_system": "update locales/en to have effect",
+	"remember_password": "update locales/en to have effect"
 }

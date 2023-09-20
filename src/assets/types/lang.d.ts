@@ -1,8 +1,8 @@
-type Common = {
+interface Common {
 	where: string;
-};
+}
 
-type ValidationType = {
+interface ValidationType {
 	attribute: string;
 	date: string;
 	digits: string;
@@ -13,9 +13,9 @@ type ValidationType = {
 	size: string;
 	value: string;
 	values: string;
-};
+}
 
-interface LanguageProps {
+interface LanguageProp {
 	lng: string;
 }
 

@@ -4,6 +4,7 @@ import { useTranslation } from '@resources/i18n';
 import _ from 'lodash';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { FaHouseChimney } from 'react-icons/fa6';
 
 const Breadcrumb = ({ lng }: LanguageProps) => {
 	const pathName = usePathname();
@@ -18,16 +19,16 @@ const Breadcrumb = ({ lng }: LanguageProps) => {
 		<Link
 			key={items[0].label}
 			href={items[0].url}
-			className='flex align-items-center no-underline gap-2 text-blue-400 font-semibold hover:text-blue-300'
+			className='flex align-items-center no-underline gap-2 text-primary font-semibold hover:text-blue-300'
 		>
-			<i className='pi pi-home'></i>
+			<FaHouseChimney />
 			<p>{items[0].label}</p>
 			{showArrow && <i className='pi pi-angle-right'></i>}
 		</Link>
 	);
 
 	return (
-		<div className='py-2 px-3 border-round-lg border-1 border-500 flex align-items-center gap-2 bg-white'>
+		<div className='border-round-lg flex align-items-center gap-2 bg-white'>
 			{items.length > 1 ? (
 				<>
 					{items.map((item, index) =>

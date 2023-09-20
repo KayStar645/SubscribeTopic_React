@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 import * as yup from 'yup';
 import { OptionType } from './common';
 
-type FormType = PropsWithChildren<{
+interface FormType extends PropsWithChildren {
 	headers?: Record<string, string>;
 	validateStatus?: (status: number) => boolean;
 	onError?: ({
@@ -21,9 +21,9 @@ type FormType = PropsWithChildren<{
 	onSubmit?: (data) => void;
 	method?: 'post' | 'put' | 'delete';
 	schema: yup.ObjectSchema;
-}>;
+}
 
-interface InputType {
+interface InputProps {
 	id: string;
 	label?: string;
 	blockClassName?: string;
@@ -34,24 +34,23 @@ interface InputType {
 	onBlur?: (e) => void;
 }
 
-type InputTextType = InputType & {
+interface InputTextProps extends InputProps {
 	value?: string;
-};
+}
 
-type PasswordType = InputType & {
+interface InputPasswordProps extends InputProps {
 	value?: string;
-};
+}
 
-type CheckboxType = InputType & {
+interface CheckboxProps extends InputProps {
 	value?: boolean;
-};
+}
 
-type DropdownType = InputType & {
+interface DropdownProps extends InputProps {
 	value?: string;
 	options: OptionType[];
-	defaultIndex?: number;
 	onSelect?: (option: OptionType) => void;
-};
+}
 
 export default FormType;
-export type { CheckboxType, InputTextType, PasswordType, DropdownType };
+export type { CheckboxProps, InputTextProps, InputPasswordProps, DropdownProps };

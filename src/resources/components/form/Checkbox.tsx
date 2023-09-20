@@ -1,4 +1,4 @@
-import { CheckboxType } from '@assets/types/form';
+import { CheckboxProps } from '@assets/types/form';
 import { Checkbox as PrimeCheckbox } from 'primereact/checkbox';
 import { classNames } from 'primereact/utils';
 
@@ -11,7 +11,7 @@ const Checkbox = ({
 	errorMessage,
 	onChange = () => {},
 	...props
-}: CheckboxType) => {
+}: CheckboxProps) => {
 	return (
 		<div
 			className={classNames(blockClassName)}

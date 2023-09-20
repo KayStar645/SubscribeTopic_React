@@ -1,4 +1,4 @@
-import { InputTextType } from '@assets/types/form';
+import { InputTextProps } from '@assets/types/form';
 import { InputText as PrimeInputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 
@@ -12,7 +12,7 @@ const InputText = ({
 	errorMessage,
 	onChange = () => {},
 	onBlur = () => {},
-}: InputTextType) => {
+}: InputTextProps) => {
 	return (
 		<div className={classNames(blockClassName)}>
 			<div className={classNames('block', { 'flex align-items-center': isRow })}>

@@ -5,8 +5,8 @@ const initialState: signInSliceType = {
 	account: '',
 	password: '',
 	token: '',
-	remember_password: false,
-	status: 'idle',
+	rememberPassword: false,
+	userName: '',
 };
 
 const signInSlice = createSlice({
@@ -14,7 +14,7 @@ const signInSlice = createSlice({
 	initialState,
 	reducers: {
 		signIn: (state, action: PayloadAction<signInSliceType>) => {
-			return { ...state, ...action.payload, status: 'success' };
+			return { ...state, ...action.payload };
 		},
 	},
 	extraReducers: (builder) => {

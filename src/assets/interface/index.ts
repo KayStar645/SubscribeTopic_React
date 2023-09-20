@@ -1,1 +1,1 @@
-export * from './user.interface';
+export type { default as SignInType } from './sign-in';

@@ -15,6 +15,7 @@ const MenuItem = (item: MenuItemProps) => {
 	const dispatch = useDispatch();
 	const menu = useSelector(selectMenu);
 	const openMenu = menu.activeItem == code;
+	const Icon = () => icon;
 
 	const onClick = (e: any) => {
 		if (!item.to) {
@@ -42,17 +43,8 @@ const MenuItem = (item: MenuItemProps) => {
 				href={to || ''}
 				onClick={onClick}
 			>
-				<div
-					className={classNames('border-solid border-300 border-round-sm p-1 border-1', iconClassName)}
-				>
-					<i
-						className={classNames(
-							icon || 'pi pi-circle',
-							openMenu ? 'text-indigo-600' : 'text-700',
-							'text-sm',
-							styles['item-icon'],
-						)}
-					></i>
+				<div className={classNames('p-1', iconClassName)}>
+					<Icon />
 				</div>
 				<p
 					className={classNames(
@@ -81,7 +73,7 @@ const MenuItem = (item: MenuItemProps) => {
 										key={child.label}
 										code={child.code}
 										label={child.label}
-										icon={child.icon || 'pi pi-circle'}
+										icon={child.icon}
 										to={child.to}
 										itemClassName='ml-2'
 										iconClassName='hidden'

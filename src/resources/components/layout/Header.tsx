@@ -8,7 +8,7 @@ import { OverlayPanel } from 'primereact/overlaypanel';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
 import { language } from '@assets/helpers';
-import { ROUTES, TOKEN, USER } from '@assets/configs';
+import { ROUTES, AUTH_TOKEN, USER } from '@assets/configs';
 
 const Header = ({ lng }: LanguageProps) => {
 	const { t } = useTranslation(lng);
@@ -57,7 +57,7 @@ const Header = ({ lng }: LanguageProps) => {
 					<div
 						className='hover:surface-hover cursor-pointer border-round-lg p-3 flex align-items-center gap-3'
 						onClick={() => {
-							deleteCookie(TOKEN);
+							deleteCookie(AUTH_TOKEN);
 							deleteCookie(USER);
 							router.push(language.addPrefixLanguage(lng, ROUTES.auth.sign_in));
 						}}

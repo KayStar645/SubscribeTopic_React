@@ -13,6 +13,7 @@ const Dropdown = ({
 	isRow = false,
 	errorMessage,
 	onChange = () => {},
+	onSelect = () => {},
 }: DropdownProps) => {
 	const [selected, setSelected] = useState(value);
 
@@ -35,10 +36,12 @@ const Dropdown = ({
 					options={options}
 					value={selected}
 					placeholder={placeholder}
+					optionValue='code'
 					className='w-full md:w-14rem'
 					onChange={(e) => {
 						onChange(e);
 						setSelected(e.value);
+						onSelect(options.find((t) => t.code === e.value));
 					}}
 				/>
 			</div>

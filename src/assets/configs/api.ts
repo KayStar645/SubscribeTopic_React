@@ -1,10 +1,10 @@
 const API = {
 	auth: {
-		sign_in: '/Account/login',
+		sign_in: '/account/login',
 	},
 
 	admin: {
-		faculty_list: '/Faculties',
+		faculty_list: '/faculty',
 	},
 };
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import acceptLanguage from 'accept-language';
-import { COOKIE_LANGUAGE_NAME, LANGUAGE, LANGUAGES, LANGUAGE_EXPIRE, TOKEN } from '@assets/configs';
+import { COOKIE_LANGUAGE_NAME, LANGUAGE, LANGUAGES, LANGUAGE_EXPIRE, AUTH_TOKEN } from '@assets/configs';
 
 const languages = LANGUAGES.map((t) => t.value);
 
@@ -25,13 +25,17 @@ export function middleware(req: NextRequest) {
 		lng = acceptLanguage.get(req.headers.get('Accept-Language'));
 	}
 
+	if (!req.cookies.has(AUTH_TOKEN) && !req.url.includes('/auth/sign-in')) {
+		return NextResponse.redirect(new URL(`/vi/auth/sign-in`, req.url));
+	}
+
 	if (
 		!languages.some((loc) => req.nextUrl.pathname.startsWith(`/${loc}`)) &&
 		!req.nextUrl.pathname.startsWith('/_next')
 	) {
 		let route = NextResponse.redirect(new URL(`/${lng}/auth/sign-in${req.nextUrl.pathname}`, req.url));
 
-		if (req.cookies.has(TOKEN)) {
+		if (req.cookies.has(AUTH_TOKEN)) {
 			route = NextResponse.redirect(new URL(`/${lng}/home${req.nextUrl.pathname}`, req.url));
 		}
 
@@ -48,10 +52,6 @@ export function middleware(req: NextRequest) {
 		}
 
 		return response;
-	}
-
-	if (!req.cookies.has(TOKEN) && !req.url.includes('/auth/sign-in')) {
-		return NextResponse.redirect(new URL(`/vi/auth/sign-in`, req.url));
 	}
 
 	return NextResponse.next();

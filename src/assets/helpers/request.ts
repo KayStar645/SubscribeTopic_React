@@ -1,7 +1,9 @@
-import { ROUTES, TOKEN } from '@assets/configs';
+import { ROUTES, AUTH_TOKEN } from '@assets/configs';
+import { OptionType } from '@assets/types/common';
 import { MetaType, ParamType } from '@assets/types/request';
 import axios, { AxiosRequestConfig } from 'axios';
 import { getCookie } from 'cookies-next';
+import _ from 'lodash';
 import queryString from 'query-string';
 
 const request = axios.create({
@@ -15,7 +17,7 @@ const request = axios.create({
 request.interceptors.request.use(
 	(config) => {
 		if (!config.headers.Authorization) {
-			const token = getCookie(TOKEN);
+			const token = getCookie(AUTH_TOKEN);
 
 			if (token) {
 				config.headers.Authorization = `Bearer ${token}`;
@@ -23,6 +25,15 @@ request.interceptors.request.use(
 		}
 
 		return config;
+	},
+	(error) => {
+		return Promise.reject(error);
+	},
+);
+
+request.interceptors.response.use(
+	(response) => {
+		return response;
 	},
 	(error) => {
 		return Promise.reject(error);
@@ -64,4 +75,28 @@ const defaultMeta: MetaType = {
 	totalPages: 1,
 };
 
-export { get, post, remove, update, defaultMeta };
+const handleSort = (sorts: OptionType | undefined, params: ParamType): string => {
+	let result = params.sorts || '';
+
+	if (!sorts) {
+		return result;
+	}
+
+	const resultSplit = _.split(result, ',').filter((t) => t !== '');
+
+	const keyIndex = resultSplit.findIndex((t) => t.includes(sorts.name || '...'));
+	const symbol = sorts.value === 1 ? '' : '-';
+	const newValue = `${symbol}${sorts.name}`;
+
+	if (keyIndex !== -1) {
+		resultSplit[keyIndex] = newValue;
+	} else {
+		resultSplit.push(newValue);
+	}
+
+	result = _.join(resultSplit, ',');
+
+	return result;
+};
+
+export { get, post, remove, update, defaultMeta, handleSort };

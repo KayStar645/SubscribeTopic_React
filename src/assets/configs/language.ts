@@ -4,10 +4,12 @@ const LANGUAGES: OptionType[] = [
 	{
 		label: 'Tiếng Việt',
 		value: 'vi',
+		code: 'vi',
 	},
 	{
 		label: 'English',
 		value: 'en',
+		code: 'en',
 	},
 ];
 

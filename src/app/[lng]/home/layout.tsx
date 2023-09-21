@@ -1,7 +1,6 @@
 'use client';
 
 import { PageProps } from '@assets/types/UI';
-import Breadcrumb from '@resources/components/UI/Breadcrumb';
 import { Header, Sidebar } from '@resources/components/layout';
 
 const HomeLayout = ({ children, params: { lng } }: PageProps) => {

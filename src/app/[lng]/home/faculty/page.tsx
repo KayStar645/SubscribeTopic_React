@@ -1,9 +1,9 @@
 'use client';
 
-import { API, ROUTES } from '@assets/configs';
+import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
 import { PageProps } from '@assets/types/UI';
-import { MetaType, ParamType } from '@assets/types/request';
+import { FacultyParamType, MetaType } from '@assets/types/request';
 import Loader from '@resources/components/UI/Loader';
 import { Dropdown } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
@@ -18,24 +18,26 @@ import { useState } from 'react';
 const FacultyPage = ({ params: { lng } }: PageProps) => {
 	const { t } = useTranslation(lng);
 	const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
+	const [params, setParams] = useState<FacultyParamType>({
+		page: meta.currentPage,
+		pageSize: meta.pageSize,
+		sorts: '-DateCreated',
+	});
 	const { data, isLoading, isError } = useQuery({
-		queryKey: ['faculties', 'list'],
+		queryKey: ['faculties', 'list', params],
 		queryFn: async () => {
-			const params: ParamType = {
-				page: meta.currentPage,
-				pageSize: meta.pageSize,
-			};
-
 			const response = await request.get(`${API.admin.faculty_list}`, params);
 
+			console.log(response.data);
+
 			setMeta({
-				currentPage: response.data.currentPage,
-				hasNextPage: response.data.hasNextPage,
-				hasPreviousPage: response.data.hasPreviousPage,
-				pageSize: response.data.pageSize,
-				totalCount: response.data.totalCount,
-				totalPages: response.data.totalPages,
-				messages: response.data.messages,
+				currentPage: response.data.extra.currentPage,
+				hasNextPage: response.data.extra.hasNextPage,
+				hasPreviousPage: response.data.extra.hasPreviousPage,
+				pageSize: response.data.extra.pageSize,
+				totalCount: response.data.extra.totalCount,
+				totalPages: response.data.extra.totalPages,
+				messages: response.data.extra.messages,
 			});
 
 			return response.data.data || [];
@@ -43,7 +45,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 	});
 
 	const onPageChange = (e: PaginatorPageChangeEvent) => {
-		setMeta((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
+		setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
 	};
 
 	return (
@@ -52,11 +54,13 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 				<InputText placeholder={`${t('search')}...`} />
 
 				<Button
-					label='Tạo mới'
+					label={t('create_new')}
 					icon='pi pi-plus'
 				/>
 			</div>
-			<div className='border-round-xl overflow-hidden mt-3'>
+			<div className='border-round-xl overflow-hidden mt-3 relative'>
+				<Loader show={isLoading || isError} />
+
 				<DataTable
 					value={data || []}
 					rowHover={true}
@@ -103,23 +107,38 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 				<div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
 					<Dropdown
 						id='date_created_filter'
-						value='DateCreated'
+						value='date_decrease'
+						onSelect={(sort) => {
+							setParams((prev) => ({
+								...prev,
+								sorts: request.handleSort(sort, prev),
+							}));
+						}}
 						options={[
-							{ label: `${t('filter_date_created_down')}`, value: '-DateCreated' },
-							{ label: `${t('filter_date_created_up')}`, value: 'DateCreated' },
+							{
+								label: `${t('filter_date_created_down')}`,
+								value: 0,
+								name: 'DateCreated',
+								code: 'date_decrease',
+							},
+							{
+								label: `${t('filter_date_created_up')}`,
+								value: 1,
+								name: 'DateCreated',
+								code: 'date_increase',
+							},
 						]}
 					/>
 
 					<Paginator
 						first={meta.currentPage - 1}
 						rows={meta.pageSize}
-						totalRecords={2}
+						totalRecords={meta.totalCount}
 						rowsPerPageOptions={[10, 20, 30]}
 						onPageChange={onPageChange}
 						className='border-noround p-0'
 					/>
 				</div>
-				<Loader show={isLoading || isError} />
 			</div>
 		</div>
 	);

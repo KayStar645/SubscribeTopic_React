@@ -15,4 +15,18 @@ interface ParamType {
 	pageSize: number;
 }
 
-export type { MetaType, ParamType };
+interface FacultyParamType extends ParamType {
+	isGetDepartment?: boolean;
+	isGetDean?: boolean;
+	isAllDetail?: boolean;
+}
+
+interface ResponseType {
+	data: object | any[];
+	extra: object;
+	messages: string | null;
+	exception: string | null;
+	succeeded: boolean;
+}
+
+export type { MetaType, ParamType, FacultyParamType, ResponseType };

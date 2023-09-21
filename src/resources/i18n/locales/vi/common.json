@@ -2,6 +2,7 @@
 	"account": "Tài khoản",
 	"action": "Thao tác",
 	"address": "Địa chỉ",
+	"create_new": "Tạo mới",
 	"code_of": "Mã {{ obj }}",
 	"email": "Địa chỉ email",
 	"name_of": "Tên {{ obj }}",

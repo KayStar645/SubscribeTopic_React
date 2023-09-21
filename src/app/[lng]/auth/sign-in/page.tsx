@@ -1,6 +1,6 @@
 'use client';
 
-import { API, LANGUAGES, ROUTES, TOKEN, TOKEN_EXPIRE, USER } from '@assets/configs';
+import { API, LANGUAGES, ROUTES, AUTH_TOKEN, TOKEN_EXPIRE, USER } from '@assets/configs';
 import { language, request } from '@assets/helpers';
 import { PageProps } from '@assets/types/UI';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -39,13 +39,15 @@ const Page = ({ params: { lng } }: PageProps) => {
 
 	const onSubmit = (data: any) => {
 		signInMutation.mutate(data, {
-			onSuccess(data) {
-				setCookie(TOKEN, data.data.token, { maxAge: TOKEN_EXPIRE });
-				setCookie(USER, { id: data.data.id, name: data.data.userName }, { maxAge: TOKEN_EXPIRE });
+			onSuccess(response) {
+				setCookie(AUTH_TOKEN, response.data.data.token, { expires: TOKEN_EXPIRE });
+				setCookie(
+					USER,
+					{ id: response.data.data.id, name: response.data.data.userName },
+					{ expires: TOKEN_EXPIRE },
+				);
 
-				if (getCookie(TOKEN)) {
-					router.push(language.addPrefixLanguage(lng, ROUTES.admin.home));
-				}
+				router.push(language.addPrefixLanguage(lng, ROUTES.admin.home));
 			},
 		});
 	};
@@ -55,11 +57,8 @@ const Page = ({ params: { lng } }: PageProps) => {
 	};
 
 	return (
-		<div className='flex align-items-center justify-content-center h-full w-full'>
-			<Loader
-				show={signInMutation.isLoading || signInMutation.isError}
-				overlay={true}
-			/>
+		<div className='flex align-items-center justify-content-center h-full w-full relative'>
+			<Loader show={signInMutation.isLoading || signInMutation.isError} />
 			<div className='absolute right-0 top-0 p-4 sm:p-4 md:p-6 lg:px-8'>
 				<Dropdown
 					id='language'

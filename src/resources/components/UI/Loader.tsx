@@ -1,23 +1,22 @@
 import { LoaderProps } from '@assets/types/UI';
-import LoadingGif from '@resources/image/loading/kid.gif';
-import Image from 'next/image';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import { classNames } from 'primereact/utils';
 
-const Loader = ({ label, overlay, show = true }: LoaderProps) => {
+const Loader = ({ label = 'Loading...', show = true }: LoaderProps) => {
 	return show ? (
 		<div
-			className={classNames('flex align-items-center justify-content-center h-full w-full flex-1', {
-				'absolute top-0 left-0 right-0 bottom-0 z-5': overlay,
-			})}
-			style={{ backgroundColor: overlay ? 'rgba(0,0,0, 0.2)' : 'transparent' }}
+			className={classNames(
+				'flex align-items-center justify-content-center absolute top-0 left-0 right-0 bottom-0 z-5 gap-2',
+			)}
+			style={{ backgroundColor: 'rgba(0,0,0, 0.2)' }}
 		>
-			<Image
-				src={LoadingGif}
-				alt='2'
-				width={130}
+			<ProgressSpinner
+				strokeWidth='8'
+				animationDuration='0.8s'
+				className='m-0 w-2rem h-2rem'
 			/>
 
-			{label && <p className='font-semibold text-xl'>{label}</p>}
+			<p className='font-semibold text-xl'>{label}</p>
 		</div>
 	) : null;
 };

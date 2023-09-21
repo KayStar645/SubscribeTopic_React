@@ -1,6 +1,8 @@
-import { PropsWithChildren } from 'react';
+import { ChangeEventHandler, FocusEventHandler, PropsWithChildren } from 'react';
 import * as yup from 'yup';
 import { OptionType } from './common';
+import { DropdownChangeEvent } from 'primereact/dropdown';
+import { CheckboxChangeEvent } from 'primereact/checkbox';
 
 interface FormType extends PropsWithChildren {
 	headers?: Record<string, string>;
@@ -26,30 +28,28 @@ interface FormType extends PropsWithChildren {
 interface InputProps {
 	id: string;
 	label?: string;
+	value?: string;
 	blockClassName?: string;
 	placeholder?: string;
 	errorMessage?: string;
 	isRow?: boolean;
-	onChange?: (e) => void;
-	onBlur?: (e) => void;
+	onChange?: (e: ChangeEventHandler<HTMLInputElement>) => void;
+	onBlur?: (e: FocusEventHandler<HTMLInputElement>) => void;
 }
 
-interface InputTextProps extends InputProps {
-	value?: string;
-}
+interface InputTextProps extends InputProps {}
 
-interface InputPasswordProps extends InputProps {
-	value?: string;
-}
+interface InputPasswordProps extends InputProps {}
 
 interface CheckboxProps extends InputProps {
 	value?: boolean;
+	onChange?: (e: CheckboxChangeEvent) => void;
 }
 
 interface DropdownProps extends InputProps {
-	value?: string;
 	options: OptionType[];
-	onSelect?: (option: OptionType) => void;
+	onChange?: (e: DropdownChangeEvent) => void;
+	onSelect?: (option: OptionType | undefined) => void;
 }
 
 export default FormType;

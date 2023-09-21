@@ -14,7 +14,6 @@ interface BreadcrumbProps {
 
 interface LoaderProps {
 	label?: string;
-	overlay?: boolean;
 	show?: boolean;
 }
 

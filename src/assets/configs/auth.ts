@@ -1,6 +1,8 @@
-const TOKEN = 'auth_token';
-const USER = 'user';
-const LANGUAGE_EXPIRE = 30 * 24 * 60 * 60 * 1000;
-const TOKEN_EXPIRE = 600 * 60 * 1000;
+import moment from 'moment';
 
-export { TOKEN, USER, LANGUAGE_EXPIRE, TOKEN_EXPIRE };
+const AUTH_TOKEN = 'auth_token';
+const USER = 'user';
+const LANGUAGE_EXPIRE = moment().add({ days: 30 }).toDate();
+const TOKEN_EXPIRE = moment().add({ minute: 600 }).toDate();
+
+export { AUTH_TOKEN, USER, LANGUAGE_EXPIRE, TOKEN_EXPIRE };

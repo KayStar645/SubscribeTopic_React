@@ -1,6 +1,8 @@
 {
 	"faculty": "Khoa",
 	"home": "Trang chủ",
+	"info": "Thông tin cá nhân",
+	"logout": "Đăng xuất",
 	"master_data": "Dữ liệu nguồn",
 	"teacher": "Giảng viên"
 }

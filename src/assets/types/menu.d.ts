@@ -1,14 +1,15 @@
 import React from 'react';
 
-interface MenuItemProps {
+interface MenuItemType {
 	code: string;
 	label: string;
-	items?: MenuItemProps[];
+	items?: MenuItemType[];
 	icon?: React.JSX.Element;
 	to?: string;
 	itemClassName?: string;
 	labelClassName?: string;
 	iconClassName?: string;
+	onItemClick?: (item: MenuItemType) => void;
 }
 
-export type { MenuItemProps };
+export type { MenuItemType };

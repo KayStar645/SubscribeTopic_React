@@ -1,10 +1,10 @@
-import { MenuItemProps } from '@assets/types/menu';
-import { ROUTES } from '.';
+import { MenuItemType } from '@assets/types/menu';
 import { TFunction } from 'i18next';
 import { language } from '@assets/helpers';
 import { FaBoxesStacked, FaHouseChimney } from 'react-icons/fa6';
+import { ROUTES } from '.';
 
-const getMenu = (t: TFunction, lng: string): MenuItemProps[] => {
+const getAdminMenu = (t: TFunction, lng: string): MenuItemType[] => {
 	return [
 		{
 			code: 'home',
@@ -32,4 +32,4 @@ const getMenu = (t: TFunction, lng: string): MenuItemProps[] => {
 	];
 };
 
-export { getMenu };
+export { getAdminMenu };

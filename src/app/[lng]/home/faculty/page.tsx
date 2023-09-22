@@ -28,8 +28,6 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 		queryFn: async () => {
 			const response = await request.get(`${API.admin.faculty_list}`, params);
 
-			console.log(response.data);
-
 			setMeta({
 				currentPage: response.data.extra.currentPage,
 				hasNextPage: response.data.extra.hasNextPage,
@@ -58,7 +56,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 					icon='pi pi-plus'
 				/>
 			</div>
-			<div className='border-round-xl overflow-hidden mt-3 relative'>
+			<div className='border-round-xl overflow-hidden mt-3 relative shadow-5'>
 				<Loader show={isLoading || isError} />
 
 				<DataTable

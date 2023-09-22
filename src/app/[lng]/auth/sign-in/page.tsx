@@ -57,9 +57,8 @@ const Page = ({ params: { lng } }: PageProps) => {
 	};
 
 	return (
-		<div className='flex align-items-center justify-content-center h-full w-full relative'>
-			<Loader show={signInMutation.isLoading || signInMutation.isError} />
-			<div className='absolute right-0 top-0 p-4 sm:p-4 md:p-6 lg:px-8'>
+		<div className='flex align-items-center justify-content-center h-full w-full'>
+			{/* <div className='absolute right-0 top-0 p-4 sm:p-4 md:p-6 lg:px-8'>
 				<Dropdown
 					id='language'
 					value={lng}
@@ -67,9 +66,11 @@ const Page = ({ params: { lng } }: PageProps) => {
 					options={LANGUAGES}
 					onChange={onLanguageChange}
 				/>
-			</div>
+			</div> */}
 
 			<div className='flex flex-wrap shadow-2 w-full border-round-2xl overflow-hidden'>
+				<Loader show={signInMutation.isLoading || signInMutation.isError} />
+
 				<div className='w-full lg:w-6 p-4 lg:p-7 bg-blue-50'>
 					<div className='pb-3'>
 						<Image
@@ -174,7 +175,8 @@ const Page = ({ params: { lng } }: PageProps) => {
 							)}
 						/>
 						<div className='flex align-items-center justify-content-between'>
-							<Controller
+							<div>
+								{/* <Controller
 								name='remember_password'
 								control={control}
 								render={({ field }) => (
@@ -185,7 +187,8 @@ const Page = ({ params: { lng } }: PageProps) => {
 										onChange={(e) => field.onChange(e.checked)}
 									/>
 								)}
-							/>
+							/> */}
+							</div>
 							<a className='font-medium text-blue-500 hover:text-blue-700 cursor-pointer transition-colors transition-duration-150'>
 								{t('forgot_password')}
 							</a>
@@ -193,7 +196,7 @@ const Page = ({ params: { lng } }: PageProps) => {
 
 						<Button
 							label={t('sign_in')}
-							className='w-full font-medium py-3 mt-5'
+							className='w-full font-medium py-3 '
 							rounded={true}
 						/>
 					</form>

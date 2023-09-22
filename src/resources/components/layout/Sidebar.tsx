@@ -3,11 +3,11 @@ import LogoImage from '@resources/image/info/logo.png';
 import Image from 'next/image';
 import { MenuItem } from '../UI/MenuItem';
 import { LanguageProps } from '@assets/types/lang';
-import { getMenu } from '@assets/configs';
+import { getAdminMenu } from '@assets/configs';
 
 const Menu = ({ lng }: LanguageProps) => {
 	const { t } = useTranslation(lng);
-	const menu = getMenu(t, lng);
+	const menu = getAdminMenu(t, lng);
 
 	return (
 		<div className='flex flex-column gap-2 bg-white w-19rem h-screen relative shadow-2'>
@@ -23,12 +23,12 @@ const Menu = ({ lng }: LanguageProps) => {
 			</div>
 
 			<ul
-				className='flex flex-column gap-1 p-2 overflow-y-auto h-full'
-				style={{ marginTop: 180 }}
+				className='p-2 overflow-y-auto h-full'
+				style={{ marginTop: 170 }}
 			>
 				{menu.map((item) => (
 					<MenuItem
-						key={Math.random().toString()}
+						key={item.code}
 						code={item.code}
 						label={item.label}
 						icon={item.icon}

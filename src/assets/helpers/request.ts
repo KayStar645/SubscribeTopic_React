@@ -1,7 +1,7 @@
 import { ROUTES, AUTH_TOKEN } from '@assets/configs';
 import { OptionType } from '@assets/types/common';
 import { MetaType, ParamType } from '@assets/types/request';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { getCookie } from 'cookies-next';
 import _ from 'lodash';
 import queryString from 'query-string';

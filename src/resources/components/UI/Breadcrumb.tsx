@@ -1,12 +1,12 @@
 import { language } from '@assets/helpers';
-import { LanguageProps } from '@assets/types/lang';
+import { LanguageType } from '@assets/types/lang';
 import { useTranslation } from '@resources/i18n';
 import _ from 'lodash';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FaHouseChimney } from 'react-icons/fa6';
 
-const Breadcrumb = ({ lng }: LanguageProps) => {
+const Breadcrumb = ({ lng }: LanguageType) => {
 	const pathName = usePathname();
 	const { t } = useTranslation(lng);
 	const pathItems = _.drop(pathName.split('/'), 2);

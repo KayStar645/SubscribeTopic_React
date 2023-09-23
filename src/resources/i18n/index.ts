@@ -4,6 +4,7 @@ import { initReactI18next } from 'react-i18next/initReactI18next';
 
 const initI18next = (lng = LANGUAGE.VI.value, ns = NAMESPACE.common) => {
 	const i18nInstance = createInstance();
+	const supportedLngs: string[] = LANGUAGES.map((t) => t.value.toString());
 
 	i18nInstance.use(initReactI18next).init({
 		resources: {
@@ -14,6 +15,7 @@ const initI18next = (lng = LANGUAGE.VI.value, ns = NAMESPACE.common) => {
 				route: require('../../resources/i18n/locales/en/route.json'),
 				module: require('../../resources/i18n/locales/en/module.json'),
 				menu: require('../../resources/i18n/locales/en/menu.json'),
+				request: require('../../resources/i18n/locales/en/request.json'),
 			},
 			vi: {
 				common: require('../../resources/i18n/locales/vi/common.json'),
@@ -22,11 +24,12 @@ const initI18next = (lng = LANGUAGE.VI.value, ns = NAMESPACE.common) => {
 				route: require('../../resources/i18n/locales/vi/route.json'),
 				module: require('../../resources/i18n/locales/vi/module.json'),
 				menu: require('../../resources/i18n/locales/vi/menu.json'),
+				request: require('../../resources/i18n/locales/vi/request.json'),
 			},
 		},
 		lng,
 		ns,
-		supportedLngs: LANGUAGES.map((t) => t.value),
+		supportedLngs,
 		defaultNS: NAMESPACE.common,
 		fallbackLng: LANGUAGE.VI.value,
 	});

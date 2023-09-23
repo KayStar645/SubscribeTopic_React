@@ -37,9 +37,9 @@ const Dropdown = ({
 					value={selected}
 					placeholder={placeholder}
 					optionValue='code'
-					className='w-full md:w-14rem'
+					className={classNames('w-full', { 'p-invalid': !!errorMessage })}
 					onChange={(e) => {
-						onChange(e);
+						onChange(e.value);
 						setSelected(e.value);
 						onSelect(options.find((t) => t.code === e.value));
 					}}

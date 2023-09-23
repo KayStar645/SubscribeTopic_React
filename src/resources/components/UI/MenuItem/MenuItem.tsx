@@ -11,17 +11,31 @@ import Link from 'next/link';
 import { classNames } from 'primereact/utils';
 
 const MenuItem = (item: MenuItemType) => {
-	const { to, code, icon, items, label, labelClassName, iconClassName, itemClassName, onItemClick } = item;
+	const {
+		isChild,
+		parent,
+		to,
+		code,
+		icon,
+		items,
+		label,
+		labelClassName,
+		iconClassName,
+		itemClassName,
+		onItemClick,
+	} = item;
 	const dispatch = useDispatch();
 	const menu = useSelector(selectMenu);
-	const active = menu.activeItem == code;
+	const active = menu.activeItem === code;
 	const Icon = () => icon;
 
-	const onClick = (e: any) => {
-		dispatch(menuSlice.actions.onItemClick({ activeItem: code }));
-
-		if (code === menu.activeItem) {
-			dispatch(menuSlice.actions.onItemClick({ activeItem: '' }));
+	const onClick = () => {
+		if (items && items.length > 0) {
+			dispatch(menuSlice.actions.onItemClick({ activeItem: code, openMenu: !menu.openMenu }));
+		} else if (isChild) {
+			dispatch(menuSlice.actions.onItemClick({ activeItem: code, openMenu: true, parent }));
+		} else {
+			dispatch(menuSlice.actions.onItemClick({ activeItem: code, openMenu: false }));
 		}
 
 		onItemClick?.(item);
@@ -40,6 +54,9 @@ const MenuItem = (item: MenuItemType) => {
 							to={child.to}
 							itemClassName='ml-2'
 							iconClassName='hidden'
+							isChild={child.isChild}
+							parent={child.parent}
+							isOpenMenu={active}
 						/>
 					);
 				})}
@@ -57,8 +74,8 @@ const MenuItem = (item: MenuItemType) => {
 					{
 						'hover:surface-hover': !active,
 						'text-900': !active,
-						'bg-highlight': active,
-						'text-highlight': active,
+						'bg-highlight': code === menu.activeItem,
+						'text-highlight': code === menu.activeItem,
 					},
 				)}
 				href={to || '#'}
@@ -75,7 +92,7 @@ const MenuItem = (item: MenuItemType) => {
 			</Link>
 
 			<motion.div
-				animate={!active ? { height: 0 } : { height: 'auto' }}
+				animate={!menu.openMenu ? { height: 0 } : { height: 'auto' }}
 				transition={{ duration: 0.3 }}
 				className={classNames(styles['sub-menu'], 'overflow-hidden my-1 border-left-1 border-300')}
 			>

@@ -1,1 +1,2 @@
-export type { default as SignInType } from './sign-in';
+export * from './Faculty';
+export * from './Teacher';

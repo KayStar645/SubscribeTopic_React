@@ -1,7 +1,8 @@
 import { AUTH_TOKEN, ROUTES, USER } from '@assets/configs';
 import { getUserMenu } from '@assets/configs/user_menu';
 import { language } from '@assets/helpers';
-import { LanguageProps } from '@assets/types/lang';
+import { LanguageType } from '@assets/types/lang';
+import { MenuItemType } from '@assets/types/menu';
 import { useTranslation } from '@resources/i18n';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
@@ -9,10 +10,9 @@ import { Avatar } from 'primereact/avatar';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useEffect, useRef, useState } from 'react';
 import Breadcrumb from '../UI/Breadcrumb';
-import { MenuItemType } from '@assets/types/menu';
 import { MenuItem } from '../UI/MenuItem';
 
-const Header = ({ lng }: LanguageProps) => {
+const Header = ({ lng }: LanguageType) => {
 	const { t } = useTranslation(lng);
 	const [user, setUser] = useState({ name: '' });
 	const userModalRef = useRef<OverlayPanel>(null);

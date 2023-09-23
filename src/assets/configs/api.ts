@@ -4,7 +4,8 @@ const API = {
 	},
 
 	admin: {
-		faculty_list: '/faculty',
+		faculty: '/faculty',
+		teacher: '/teacher',
 	},
 };
 

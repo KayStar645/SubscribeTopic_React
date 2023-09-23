@@ -19,13 +19,17 @@ const getAdminMenu = (t: TFunction, lng: string): MenuItemType[] => {
 			items: [
 				{
 					code: 'faculty',
+					parent: 'master_data',
 					label: t('menu:faculty'),
 					to: language.addPrefixLanguage(lng, ROUTES.admin.faculty),
+					isChild: true,
 				},
 				{
 					code: 'teacher',
+					parent: 'master_data',
 					label: t('menu:teacher'),
 					to: language.addPrefixLanguage(lng, ROUTES.admin.teacher),
+					isChild: true,
 				},
 			],
 		},

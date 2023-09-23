@@ -15,8 +15,8 @@ interface ValidationType {
 	values: string;
 }
 
-interface LanguageProp {
+interface LanguageType {
 	lng: string;
 }
 
-export type { Common, ValidationType, LanguageProps };
+export type { Common, ValidationType, LanguageType };

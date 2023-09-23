@@ -69,7 +69,7 @@ const Page = ({ params: { lng } }: PageProps) => {
 			</div> */}
 
 			<div className='flex flex-wrap shadow-2 w-full border-round-2xl overflow-hidden'>
-				<Loader show={signInMutation.isLoading || signInMutation.isError} />
+				<Loader show={signInMutation.isLoading} />
 
 				<div className='w-full lg:w-6 p-4 lg:p-7 bg-blue-50'>
 					<div className='pb-3'>
@@ -176,6 +176,9 @@ const Page = ({ params: { lng } }: PageProps) => {
 						/>
 						<div className='flex align-items-center justify-content-between'>
 							<div>
+								{signInMutation.isError && (
+									<small className='text-error'>{t('validation:custom.login_fail')}</small>
+								)}
 								{/* <Controller
 								name='remember_password'
 								control={control}

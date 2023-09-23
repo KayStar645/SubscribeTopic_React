@@ -28,13 +28,13 @@ interface FormType extends PropsWithChildren {
 interface InputProps {
 	id: string;
 	label?: string;
-	value?: string;
+	value?: string | number;
 	blockClassName?: string;
 	placeholder?: string;
 	errorMessage?: string;
 	isRow?: boolean;
-	onChange?: (e: ChangeEventHandler<HTMLInputElement>) => void;
-	onBlur?: (e: FocusEventHandler<HTMLInputElement>) => void;
+	onChange?: ChangeEventHandler<HTMLInputElement>;
+	onBlur?: FocusEventHandler<HTMLInputElement>;
 }
 
 interface InputTextProps extends InputProps {}

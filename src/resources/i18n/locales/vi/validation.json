@@ -115,5 +115,9 @@
 	"unique": "Giá trị {{attribute}} đã tồn tại.",
 	"uploaded": "Tải lên {{attribute}} thất bại.",
 	"url": "Trường {{attribute}} phải là một URL hợp lệ.",
-	"uuid": "Trường {{attribute}} phải là một UUID hợp lệ."
+	"uuid": "Trường {{attribute}} phải là một UUID hợp lệ.",
+
+	"custom": {
+		"login_fail": "Thông tin đăng nhập không hợp lệ"
+	}
 }

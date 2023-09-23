@@ -1,3 +1,8 @@
+@import url('primeflex/primeflex.css');
+@import url('primeicons/primeicons.css');
+@import url('primereact/resources/primereact.min.css');
+@import url('./themes/light.css');
+
 * {
 	box-sizing: border-box;
 	margin: 0;
@@ -6,6 +11,10 @@
 
 body {
 	font-family: var(--font-family);
+}
+
+.p-overlaypanel-content {
+	padding: 0 !important;
 }
 
 .bg-transparent {
@@ -20,6 +29,6 @@ body {
 	color: var(--highlight-text-color);
 }
 
-.p-overlaypanel-content {
-	padding: 0 !important;
+.text-error {
+	color: var(--red-600);
 }

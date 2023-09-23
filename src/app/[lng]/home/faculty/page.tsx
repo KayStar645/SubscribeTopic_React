@@ -1,32 +1,41 @@
 'use client';
 
-import { API } from '@assets/configs';
+import { API, ROWS_PER_PAGE } from '@assets/configs';
 import { request } from '@assets/helpers';
+import { FacultyType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { FacultyParamType, MetaType } from '@assets/types/request';
 import Loader from '@resources/components/UI/Loader';
 import { Dropdown } from '@resources/components/form';
+import Confirm, { ConfirmRef } from '@resources/components/modal/Confirm';
 import { useTranslation } from '@resources/i18n';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AxiosError, AxiosResponse } from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
-import { useState } from 'react';
+import { Toast } from 'primereact/toast';
+import { useRef, useState } from 'react';
+import FacultyForm, { FacultyFormRefType } from './form';
 
 const FacultyPage = ({ params: { lng } }: PageProps) => {
 	const { t } = useTranslation(lng);
+	const formRef = useRef<FacultyFormRefType>(null);
+	const confirmRef = useRef<ConfirmRef>(null);
+	const toastRef = useRef<Toast>(null);
 	const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
 	const [params, setParams] = useState<FacultyParamType>({
 		page: meta.currentPage,
 		pageSize: meta.pageSize,
 		sorts: '-DateCreated',
 	});
-	const { data, isLoading, isError } = useQuery({
+	const queryClient = useQueryClient();
+	const facultyQuery = useQuery<AxiosResponse, AxiosError<any, any>, FacultyType[]>({
 		queryKey: ['faculties', 'list', params],
 		queryFn: async () => {
-			const response = await request.get(`${API.admin.faculty_list}`, params);
+			const response = await request.get(`${API.admin.faculty}`, params);
 
 			setMeta({
 				currentPage: response.data.extra.currentPage,
@@ -40,27 +49,80 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 
 			return response.data.data || [];
 		},
+		onError: (error) => {
+			toastRef.current?.show({
+				severity: 'error',
+				summary: t('notify'),
+				detail: error?.response?.data?.message || error.message,
+			});
+		},
+	});
+	const facultyMutation = useMutation<AxiosResponse, AxiosError<any, any>, FacultyType>({
+		mutationFn: (data: FacultyType) => {
+			return request.remove(`${API.admin.faculty}`, { data: { id: data.id } });
+		},
 	});
 
 	const onPageChange = (e: PaginatorPageChangeEvent) => {
 		setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
 	};
 
-	return (
-		<div>
-			<div className='flex align-items-center justify-content-between'>
-				<InputText placeholder={`${t('search')}...`} />
+	const renderActions = (faculty: FacultyType) => {
+		return (
+			<div className='flex align-items-center gap-3'>
+				<i
+					className='pi pi-pencil hover:text-primary cursor-pointer'
+					onClick={() => formRef.current?.show?.(faculty)}
+				></i>
+				<i
+					className='pi pi-trash hover:text-red-600 cursor-pointer'
+					onClick={(e) =>
+						confirmRef.current?.show?.(e, faculty, t('sure_to_delete', { obj: faculty.name }))
+					}
+				></i>
+			</div>
+		);
+	};
 
+	const onRemoveFaculty = (faculty: FacultyType) => {
+		facultyMutation.mutate(faculty, {
+			onSuccess: () => {},
+			onError: (error) => {
+				toastRef.current?.show({
+					severity: 'error',
+					summary: t('notify'),
+					detail: error?.response?.data?.message || error.message,
+				});
+			},
+		});
+	};
+
+	return (
+		<div className='flex flex-column gap-4'>
+			<Toast ref={toastRef} />
+
+			<Confirm
+				ref={confirmRef}
+				onAccept={onRemoveFaculty}
+			/>
+
+			<div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
+				<p className='text-xl font-semibold'>{t('list_of', { module: t('module:faculty') })}</p>
 				<Button
 					label={t('create_new')}
 					icon='pi pi-plus'
+					size='small'
+					onClick={() => formRef.current?.show?.()}
 				/>
 			</div>
-			<div className='border-round-xl overflow-hidden mt-3 relative shadow-5'>
-				<Loader show={isLoading || isError} />
+			<div className='flex align-items-center justify-content-between'>
+				<InputText placeholder={`${t('search')}...`} />
+			</div>
+			<div className='border-round-xl overflow-hidden relative shadow-5'>
+				<Loader show={facultyQuery.isLoading || facultyMutation.isLoading} />
 
 				<DataTable
-					value={data || []}
+					value={facultyQuery.data || []}
 					rowHover={true}
 					stripedRows={true}
 					emptyMessage={t('list_empty')}
@@ -68,12 +130,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 					<Column
 						headerClassName='bg-primary text-white font-semibold'
 						header={t('action')}
-						body={
-							<div className='flex align-items-center gap-3'>
-								<i className='pi pi-pencil hover:text-primary cursor-pointer'></i>
-								<i className='pi pi-trash hover:text-primary cursor-pointer'></i>
-							</div>
-						}
+						body={renderActions}
 					></Column>
 					<Column
 						headerClassName='bg-primary text-white font-semibold'
@@ -132,12 +189,19 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 						first={meta.currentPage - 1}
 						rows={meta.pageSize}
 						totalRecords={meta.totalCount}
-						rowsPerPageOptions={[10, 20, 30]}
+						rowsPerPageOptions={ROWS_PER_PAGE}
 						onPageChange={onPageChange}
 						className='border-noround p-0'
 					/>
 				</div>
 			</div>
+
+			<FacultyForm
+				lng={lng}
+				title={t('create_new_at', { obj: t('module:faculty').toLowerCase() })}
+				ref={formRef}
+				onSuccess={(faculty) => queryClient.refetchQueries({ queryKey: ['faculties'] })}
+			/>
 		</div>
 	);
 };

@@ -1,11 +1,11 @@
+import { getAdminMenu } from '@assets/configs';
+import { LanguageType } from '@assets/types/lang';
 import { useTranslation } from '@resources/i18n';
 import LogoImage from '@resources/image/info/logo.png';
 import Image from 'next/image';
 import { MenuItem } from '../UI/MenuItem';
-import { LanguageProps } from '@assets/types/lang';
-import { getAdminMenu } from '@assets/configs';
 
-const Menu = ({ lng }: LanguageProps) => {
+const Menu = ({ lng }: LanguageType) => {
 	const { t } = useTranslation(lng);
 	const menu = getAdminMenu(t, lng);
 
@@ -29,11 +29,7 @@ const Menu = ({ lng }: LanguageProps) => {
 				{menu.map((item) => (
 					<MenuItem
 						key={item.code}
-						code={item.code}
-						label={item.label}
-						icon={item.icon}
-						to={item.to}
-						items={item.items}
+						{...item}
 					/>
 				))}
 			</ul>

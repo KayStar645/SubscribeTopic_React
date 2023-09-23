@@ -1,10 +1,6 @@
 'use client';
 
-import 'primeflex/primeflex.css';
-import 'primeicons/primeicons.css';
-import 'primereact/resources/primereact.min.css';
-import '../../resources/styles/themes/light.css';
-import './global.scss';
+import '../../resources/styles/index.scss';
 
 import ReduxProvider from '@assets/providers/ReduxProvider';
 import { PageProps } from '@assets/types/UI';

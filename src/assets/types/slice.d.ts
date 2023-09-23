@@ -10,6 +10,8 @@ interface signInSliceType {
 
 interface MenuSliceType {
 	activeItem: string;
+	openMenu?: boolean;
+	parent?: string;
 }
 
 interface LanguageSliceType {

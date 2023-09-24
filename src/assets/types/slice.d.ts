@@ -9,7 +9,7 @@ interface signInSliceType {
 }
 
 interface MenuSliceType {
-	activeItem: string;
+	activeItem?: string;
 	openMenu?: boolean;
 	parent?: string;
 }

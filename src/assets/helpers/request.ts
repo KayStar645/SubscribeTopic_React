@@ -1,7 +1,7 @@
-import { ROUTES, AUTH_TOKEN } from '@assets/configs';
+import { AUTH_TOKEN, ROUTES } from '@assets/configs';
 import { OptionType } from '@assets/types/common';
 import { MetaType, ParamType } from '@assets/types/request';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { getCookie } from 'cookies-next';
 import _ from 'lodash';
 import queryString from 'query-string';
@@ -99,4 +99,4 @@ const handleSort = (sorts: OptionType | undefined, params: ParamType): string =>
 	return result;
 };
 
-export { get, post, remove, update, defaultMeta, handleSort };
+export { defaultMeta, get, handleSort, post, remove, update };

@@ -17,7 +17,7 @@ const Menu = ({ lng }: LanguageType) => {
 					alt=''
 					width={100}
 					height={100}
-					priority={false}
+					priority={true}
 				/>
 				<p className='font-semibold text-blue-900 text-2xl'>{t('info:product_name')}</p>
 			</div>

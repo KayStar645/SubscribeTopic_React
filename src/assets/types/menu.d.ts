@@ -2,7 +2,6 @@ import React from 'react';
 
 interface MenuItemType {
 	parent?: string;
-	isChild?: boolean;
 	code: string;
 	label: string;
 	items?: MenuItemType[];
@@ -11,8 +10,8 @@ interface MenuItemType {
 	itemClassName?: string;
 	labelClassName?: string;
 	iconClassName?: string;
-	isOpenMenu?: boolean;
 	onItemClick?: (item: MenuItemType) => void;
+	onSubItemClick?: (item: MenuItemType) => void;
 }
 
 export type { MenuItemType };

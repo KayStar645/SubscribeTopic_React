@@ -47,6 +47,7 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
 		},
 	});
 	const schema = yup.object({
+		id: yup.string(),
 		internalCode: yup.string().required().max(50),
 		name: yup.string().required().max(150),
 		phoneNumber: yup.string().required().max(10),
@@ -57,6 +58,7 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
 	const { setValue, control, handleSubmit, reset } = useForm({
 		resolver: yupResolver(schema) as Resolver<FacultyType>,
 		defaultValues: {
+			id: '0',
 			internalCode: '',
 			name: '',
 			phoneNumber: '',
@@ -72,6 +74,7 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
 		setVisible(true);
 
 		if (formData) {
+			setValue('id', formData.id);
 			setValue('internalCode', formData.internalCode);
 			setValue('name', formData.name);
 			setValue('phoneNumber', formData.phoneNumber);

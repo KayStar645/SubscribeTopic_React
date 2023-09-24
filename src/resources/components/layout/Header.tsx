@@ -1,11 +1,13 @@
-import { AUTH_TOKEN, ROUTES, USER } from '@assets/configs';
+import { AUTH_TOKEN, USER } from '@assets/configs';
 import { getUserMenu } from '@assets/configs/user_menu';
 import { language } from '@assets/helpers';
+import { useDispatch } from '@assets/redux';
+import menuSlice from '@assets/redux/slices/menu/slice';
 import { LanguageType } from '@assets/types/lang';
 import { MenuItemType } from '@assets/types/menu';
 import { useTranslation } from '@resources/i18n';
 import { deleteCookie, getCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Avatar } from 'primereact/avatar';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useEffect, useRef, useState } from 'react';
@@ -16,8 +18,9 @@ const Header = ({ lng }: LanguageType) => {
 	const { t } = useTranslation(lng);
 	const [user, setUser] = useState({ name: '' });
 	const userModalRef = useRef<OverlayPanel>(null);
-	const router = useRouter();
-	const menu = getUserMenu(t, lng);
+	const pathName = usePathname();
+	const menu = getUserMenu(t, lng, language.getRealPathName(pathName));
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		setUser(getCookie('user') ? JSON.parse(getCookie('user')!) : '');
@@ -27,7 +30,7 @@ const Header = ({ lng }: LanguageType) => {
 		const onLogoutClick = () => {
 			deleteCookie(AUTH_TOKEN);
 			deleteCookie(USER);
-			router.push(language.addPrefixLanguage(lng, ROUTES.auth.sign_in));
+			dispatch(menuSlice.actions.onItemClick({ activeItem: 'home', openMenu: false, parent: '' }));
 		};
 
 		return (

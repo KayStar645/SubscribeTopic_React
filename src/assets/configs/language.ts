@@ -1,5 +1,12 @@
 import { OptionType } from '@assets/types/common';
 
+type LanguageType = {
+	[key: string]: {
+		label: string;
+		value: string;
+	};
+};
+
 const LANGUAGES: OptionType[] = [
 	{
 		label: 'Tiếng Việt',
@@ -13,7 +20,7 @@ const LANGUAGES: OptionType[] = [
 	},
 ];
 
-const LANGUAGE = {
+const LANGUAGE: LanguageType = {
 	VI: {
 		label: 'Tiếng Việt',
 		value: 'vi',

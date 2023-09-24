@@ -9,10 +9,10 @@ import { MenuItemType } from '@assets/types/menu';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { classNames } from 'primereact/utils';
+import { useState } from 'react';
 
 const MenuItem = (item: MenuItemType) => {
 	const {
-		isChild,
 		parent,
 		to,
 		code,
@@ -23,22 +23,49 @@ const MenuItem = (item: MenuItemType) => {
 		iconClassName,
 		itemClassName,
 		onItemClick,
+		onSubItemClick,
 	} = item;
+	const Icon = () => icon;
 	const dispatch = useDispatch();
 	const menu = useSelector(selectMenu);
-	const active = menu.activeItem === code;
-	const Icon = () => icon;
+	const active = code === menu.activeItem;
+	const [isOpenMenu, setIsOpenMenu] = useState(false);
 
-	const onClick = () => {
+	const onClick = (currItem: MenuItemType) => {
 		if (items && items.length > 0) {
-			dispatch(menuSlice.actions.onItemClick({ activeItem: code, openMenu: !menu.openMenu }));
-		} else if (isChild) {
-			dispatch(menuSlice.actions.onItemClick({ activeItem: code, openMenu: true, parent }));
+			if (active) {
+				dispatch(
+					menuSlice.actions.onItemClick({
+						activeItem: '',
+						parent: '',
+						openMenu: isOpenMenu && menu.openMenu,
+					}),
+				);
+				setIsOpenMenu(false);
+			} else {
+				dispatch(
+					menuSlice.actions.onItemClick({
+						activeItem: code,
+						parent,
+						openMenu: isOpenMenu && menu.openMenu,
+					}),
+				);
+				setIsOpenMenu(true);
+			}
+		} else if (parent) {
+			dispatch(
+				menuSlice.actions.onItemClick({
+					activeItem: code,
+					parent,
+					openMenu: false,
+				}),
+			);
 		} else {
-			dispatch(menuSlice.actions.onItemClick({ activeItem: code, openMenu: false }));
+			dispatch(menuSlice.actions.onItemClick({ activeItem: code, parent, openMenu: false }));
+			setIsOpenMenu(false);
 		}
 
-		onItemClick?.(item);
+		onItemClick?.(currItem);
 	};
 
 	const SubItem = () => {
@@ -54,9 +81,8 @@ const MenuItem = (item: MenuItemType) => {
 							to={child.to}
 							itemClassName='ml-2'
 							iconClassName='hidden'
-							isChild={child.isChild}
 							parent={child.parent}
-							isOpenMenu={active}
+							onItemClick={onSubItemClick}
 						/>
 					);
 				})}
@@ -78,8 +104,8 @@ const MenuItem = (item: MenuItemType) => {
 						'text-highlight': code === menu.activeItem,
 					},
 				)}
-				href={to || '#'}
-				onClick={onClick}
+				href={to || ''}
+				onClick={() => onClick(item)}
 			>
 				<div className={classNames('p-1', iconClassName)}>
 					<Icon />
@@ -92,7 +118,11 @@ const MenuItem = (item: MenuItemType) => {
 			</Link>
 
 			<motion.div
-				animate={!menu.openMenu ? { height: 0 } : { height: 'auto' }}
+				animate={
+					(isOpenMenu && active) || (isOpenMenu && menu.openMenu) || parent === menu.parent
+						? { height: 'auto' }
+						: { height: 0 }
+				}
 				transition={{ duration: 0.3 }}
 				className={classNames(styles['sub-menu'], 'overflow-hidden my-1 border-left-1 border-300')}
 			>

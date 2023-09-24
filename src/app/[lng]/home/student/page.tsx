@@ -3,12 +3,12 @@
 import { useQuery } from '@tanstack/react-query';
 
 const Page = () => {
-	const { data, isFetching } = useQuery({
-		queryKey: ['list'],
-		queryFn: () => {},
-	});
+    const { data, isFetching } = useQuery({
+        queryKey: ['list'],
+        queryFn: () => {},
+    });
 
-	return <div></div>;
+    return <div></div>;
 };
 
 export default Page;

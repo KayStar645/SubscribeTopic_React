@@ -31,6 +31,8 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
     });
+    const [selected, setSelected] = useState<FacultyType>();
+
     const queryClient = useQueryClient();
     const facultyQuery = useQuery<AxiosResponse, AxiosError<any, any>, FacultyType[]>({
         queryKey: ['faculties', 'list', params],
@@ -72,11 +74,16 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
             <div className='flex align-items-center gap-3'>
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
-                    onClick={() => formRef.current?.show?.(faculty)}
+                    onClick={() => {
+                        formRef.current?.show?.(faculty);
+                        setSelected(faculty);
+                    }}
                 ></i>
                 <i
                     className='pi pi-trash hover:text-red-600 cursor-pointer'
-                    onClick={(e) => confirmRef.current?.show?.(e, faculty, t('sure_to_delete', { obj: faculty.name }))}
+                    onClick={(e) => {
+                        confirmRef.current?.show?.(e, faculty, t('sure_to_delete', { obj: faculty.name }));
+                    }}
                 ></i>
             </div>
         );
@@ -114,7 +121,10 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                     label={t('create_new')}
                     icon='pi pi-plus'
                     size='small'
-                    onClick={() => formRef.current?.show?.()}
+                    onClick={() => {
+                        formRef.current?.show?.();
+                        setSelected(undefined);
+                    }}
                 />
             </div>
             <div className='flex align-items-center justify-content-between'>
@@ -200,7 +210,11 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 
             <FacultyForm
                 lng={lng}
-                title={t('create_new_at', { obj: t('module:faculty').toLowerCase() })}
+                title={
+                    selected?.id
+                        ? t('update_at', { obj: selected.name })
+                        : t('create_new_at', { obj: t('module:faculty').toLowerCase() })
+                }
                 ref={formRef}
                 onSuccess={(faculty) => queryClient.refetchQueries({ queryKey: ['faculties'] })}
             />

@@ -2,9 +2,9 @@
 
 import { API, ROWS_PER_PAGE } from '@assets/configs';
 import { request } from '@assets/helpers';
-import { FacultyType } from '@assets/interface';
+import { FacultyParamType, FacultyType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
-import { FacultyParamType, MetaType } from '@assets/types/request';
+import { MetaType } from '@assets/types/request';
 import Loader from '@resources/components/UI/Loader';
 import { Dropdown } from '@resources/components/form';
 import Confirm, { ConfirmRef } from '@resources/components/modal/Confirm';

@@ -4,10 +4,11 @@ import { API, ROWS_PER_PAGE } from '@assets/configs';
 import { request } from '@assets/helpers';
 import { FacultyParamType, FacultyType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
+import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType } from '@assets/types/request';
 import Loader from '@resources/components/UI/Loader';
 import { Dropdown } from '@resources/components/form';
-import Confirm, { ConfirmRef } from '@resources/components/modal/Confirm';
+import ConfirmModal from '@resources/components/modal/ConfirmModal';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
@@ -23,7 +24,7 @@ import FacultyForm, { FacultyFormRefType } from './form';
 const FacultyPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
     const formRef = useRef<FacultyFormRefType>(null);
-    const confirmRef = useRef<ConfirmRef>(null);
+    const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const toastRef = useRef<Toast>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
     const [params, setParams] = useState<FacultyParamType>({
@@ -54,7 +55,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
         onError: (error) => {
             toastRef.current?.show({
                 severity: 'error',
-                summary: t('notify'),
+                summary: t('notification'),
                 detail: error?.response?.data?.message || error.message,
             });
         },
@@ -82,7 +83,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                 <i
                     className='pi pi-trash hover:text-red-600 cursor-pointer'
                     onClick={(e) => {
-                        confirmRef.current?.show?.(e, faculty, t('sure_to_delete', { obj: faculty.name }));
+                        confirmModalRef.current?.show?.(e, faculty, t('sure_to_delete', { obj: faculty.name }));
                     }}
                 ></i>
             </div>
@@ -95,14 +96,14 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                 queryClient.refetchQueries({ queryKey: ['faculties'] });
                 toastRef.current?.show({
                     severity: 'success',
-                    summary: t('notify'),
+                    summary: t('notification'),
                     detail: t('request:update_success'),
                 });
             },
             onError: (error) => {
                 toastRef.current?.show({
                     severity: 'error',
-                    summary: t('notify'),
+                    summary: t('notification'),
                     detail: error?.response?.data?.message || error.message,
                 });
             },
@@ -113,10 +114,15 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
         <div className='flex flex-column gap-4'>
             <Toast ref={toastRef} />
 
-            <Confirm ref={confirmRef} onAccept={onRemoveFaculty} />
+            <ConfirmModal
+                ref={confirmModalRef}
+                onAccept={onRemoveFaculty}
+                acceptLabel={t('confirm')}
+                rejectLabel={t('cancel')}
+            />
 
             <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
-                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:faculty') })}</p>
+                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:faculty').toLowerCase() })}</p>
                 <Button
                     label={t('create_new')}
                     icon='pi pi-plus'
@@ -140,32 +146,32 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
-                        headerClassName='bg-primary text-white font-semibold'
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         header={t('action')}
                         body={renderActions}
                     ></Column>
                     <Column
-                        headerClassName='bg-primary text-white font-semibold'
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='internalCode'
-                        header={t('code_of', { obj: t('module:faculty') })}
+                        header={t('code_of', { obj: t('module:faculty').toLowerCase() })}
                     ></Column>
                     <Column
-                        headerClassName='bg-primary text-white font-semibold'
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='name'
-                        header={t('name_of', { obj: t('module:faculty') })}
+                        header={t('name_of', { obj: t('module:faculty').toLowerCase() })}
                     ></Column>
                     <Column
-                        headerClassName='bg-primary text-white font-semibold'
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='address'
                         header={t('address')}
                     ></Column>
                     <Column
-                        headerClassName='bg-primary text-white font-semibold'
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='phoneNumber'
                         header={t('phone_number')}
                     ></Column>
                     <Column
-                        headerClassName='bg-primary text-white font-semibold'
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='email'
                         header={t('email')}
                     ></Column>

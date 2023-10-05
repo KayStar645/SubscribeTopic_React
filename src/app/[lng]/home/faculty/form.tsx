@@ -134,7 +134,7 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
             onSuccess: (response) => {
                 toastRef.current?.show({
                     severity: 'success',
-                    summary: t('notify'),
+                    summary: t('notification'),
                     detail: t('request:update_success'),
                 });
                 close();
@@ -143,7 +143,7 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
             onError: (error) => {
                 toastRef.current?.show({
                     severity: 'error',
-                    summary: t('notify'),
+                    summary: t('notification'),
                     detail: error.response?.data?.messages[0] || error.message,
                 });
             },
@@ -295,6 +295,8 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
         </Dialog>
     );
 });
+
+FacultyForm.displayName = 'Faculty Form';
 
 export default FacultyForm;
 export type { FacultyFormRefType };

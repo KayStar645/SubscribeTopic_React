@@ -1,10 +1,10 @@
 const ROUTES = {
-    base: 'https://localhost:7155/api',
+    base: 'http://localhost:5231/api',
 
     admin: {
         home: '/home',
-        teacher: '/home/teacher',
-        faculty: '/home/faculty',
+        product: 'product',
+        order: 'order',
     },
 
     auth: {

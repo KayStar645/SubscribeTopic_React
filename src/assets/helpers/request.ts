@@ -1,11 +1,14 @@
-import { ROUTES } from '@assets/configs';
+import { AUTH_TOKEN, FACULTY_TOKEN, ROUTES } from '@assets/configs';
+import { FacultyType } from '@assets/interface';
 import { OptionType } from '@assets/types/common';
 import { MetaType, ParamType } from '@assets/types/request';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { Axios, AxiosRequestConfig } from 'axios';
 import _ from 'lodash';
+import { cookie } from '.';
 
 const request = axios.create({
     baseURL: ROUTES.base,
+    timeout: 5000,
     headers: {
         accept: 'text/plain',
         'Content-Type': 'application/json',
@@ -14,13 +17,40 @@ const request = axios.create({
 
 request.interceptors.request.use(
     (config) => {
-        // if (!config.headers.Authorization) {
-        //     const token = getCookie(AUTH_TOKEN);
+        while (true) {
+            const token = cookie.get(AUTH_TOKEN);
+            const faculty: FacultyType = cookie.get(FACULTY_TOKEN);
 
-        //     if (token) {
-        //         config.headers.Authorization = `Bearer ${token}`;
-        //     }
-        // }
+            if (!config.headers.Authorization) {
+                config.headers.Authorization = '';
+            }
+
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+
+            if (!faculty) {
+                break;
+            }
+
+            if (!config.data && (config.method === 'put' || config.method === 'post' || config.method === 'delete')) {
+                config.data = {};
+            }
+
+            if (!config.params && config.method === 'get') {
+                config.params = {};
+            }
+
+            if (config.method === 'get') {
+                config.params.facultyId = faculty?.id;
+            }
+
+            if (config.method === 'put' || config.method === 'post' || config.method === 'delete') {
+                config.data.facultyId = faculty?.id;
+            }
+
+            break;
+        }
 
         return config;
     },

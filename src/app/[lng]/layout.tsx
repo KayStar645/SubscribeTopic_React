@@ -14,9 +14,7 @@ export default function RootLayout({ children, params: { lng } }: PageProps) {
     return (
         <html lang={lng} dir={dir(lng)}>
             <ReduxProvider>
-                <QueryClientProvider client={queryClient}>
-                    <PrimeReactProvider>{children}</PrimeReactProvider>
-                </QueryClientProvider>
+                <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
             </ReduxProvider>
         </html>
     );

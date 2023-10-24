@@ -12,9 +12,9 @@ import { AxiosError, AxiosResponse } from 'axios';
 import _ from 'lodash';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import { Toast } from 'primereact/toast';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 interface FacultyFormRefType {
@@ -29,7 +29,6 @@ interface FacultyFormType extends LanguageType {
 
 const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, lng, onSuccess }, ref) => {
     const queryClient = useQueryClient();
-    const toastRef = useRef<Toast>(null);
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
     const schema = yup.object({
@@ -89,12 +88,10 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
     });
     const teacherQuery = useQuery({
         queryKey: ['faculty_teacher'],
+        enabled: false,
+        refetchOnWindowFocus: false,
         queryFn: async () => {
-            const params: TeacherParamType = {
-                facultyId: getValues('id') || '',
-            };
-
-            const responseData: TeacherType[] = (await request.get(API.admin.teacher, { params })).data.data;
+            const responseData: TeacherType[] = (await request.get(API.admin.teacher)).data.data;
 
             return responseData || [];
         },
@@ -112,6 +109,8 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
     const show = (formData?: FacultyType) => {
         setVisible(true);
 
+        teacherQuery.refetch();
+
         if (formData) {
             setValue('id', formData.id);
             setValue('internalCode', formData.internalCode);
@@ -121,8 +120,6 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
             setValue('email', formData.email);
             setValue('dean_TeacherId', formData.dean_TeacherId);
         }
-
-        queryClient.refetchQueries({ queryKey: ['faculty_teacher'] });
     };
 
     const close = () => {
@@ -132,20 +129,12 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
     const onSubmit = (formData: FacultyType) => {
         facultyMutation.mutate(formData, {
             onSuccess: (response) => {
-                toastRef.current?.show({
-                    severity: 'success',
-                    summary: t('notification'),
-                    detail: t('request:update_success'),
-                });
+                toast.success(t('request:update_success'));
                 close();
                 onSuccess?.(response.data);
             },
             onError: (error) => {
-                toastRef.current?.show({
-                    severity: 'error',
-                    summary: t('notification'),
-                    detail: error.response?.data?.messages[0] || error.message,
-                });
+                toast.error(error.response?.data?.messages[0] || error.message);
             },
         });
     };
@@ -167,7 +156,6 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
                 reset();
             }}
         >
-            <Toast ref={toastRef} />
             <Loader show={facultyMutation.isLoading} />
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <div className='flex flex-column gap-2'>

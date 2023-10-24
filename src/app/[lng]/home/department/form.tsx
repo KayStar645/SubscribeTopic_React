@@ -1,21 +1,19 @@
 import { API, FACULTY_TOKEN } from '@assets/configs';
-import { request } from '@assets/helpers';
-import { DepartmentType, FacultyParamType, FacultyType } from '@assets/interface';
-import { OptionType } from '@assets/types/common';
+import { cookie, request } from '@assets/helpers';
+import { DepartmentType, FacultyType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Loader from '@resources/components/UI/Loader';
-import { Dropdown, InputText } from '@resources/components/form';
+import { InputText } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import { getCookie } from 'cookies-next';
-import _ from 'lodash';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import { Toast } from 'primereact/toast';
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 interface DepartmentFormRefType {
@@ -29,8 +27,6 @@ interface DepartmentFormType extends LanguageType {
 }
 
 const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ title, lng, onSuccess }, ref) => {
-    const queryClient = useQueryClient();
-    const toastRef = useRef<Toast>(null);
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
     const schema = yup.object({
@@ -90,10 +86,6 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
     });
     const departmentMutation = useMutation<AxiosResponse, AxiosError<any, any>, DepartmentType>({
         mutationFn: (department: DepartmentType) => {
-            const faculty: FacultyType = JSON.parse(getCookie(FACULTY_TOKEN)!);
-
-            department.facultyId = faculty.id;
-
             return department.id === '0'
                 ? request.post(API.admin.department, department)
                 : request.update(API.admin.department, department);
@@ -112,8 +104,6 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
             setValue('email', formData.email);
             setValue('facultyId', formData.facultyId);
         }
-
-        queryClient.refetchQueries({ queryKey: ['faculty_faculty'] });
     };
 
     const close = () => {
@@ -123,20 +113,12 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
     const onSubmit = (formData: DepartmentType) => {
         departmentMutation.mutate(formData, {
             onSuccess: (response) => {
-                toastRef.current?.show({
-                    severity: 'success',
-                    summary: t('notification'),
-                    detail: t('request:update_success'),
-                });
+                toast.success(t('request:update_success'));
                 close();
                 onSuccess?.(response.data);
             },
             onError: (error) => {
-                toastRef.current?.show({
-                    severity: 'error',
-                    summary: t('notification'),
-                    detail: error.response?.data?.messages[0] || error.message,
-                });
+                toast.error(error.response?.data?.messages[0] || error.message);
             },
         });
     };
@@ -158,7 +140,6 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
                 reset();
             }}
         >
-            <Toast ref={toastRef} />
             <Loader show={departmentMutation.isLoading} />
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <div className='flex flex-column gap-2'>

@@ -17,15 +17,14 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
-import { Toast } from 'primereact/toast';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 import FacultyForm, { FacultyFormRefType } from './form';
 
 const FacultyPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
     const formRef = useRef<FacultyFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
-    const toastRef = useRef<Toast>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
     const [params, setParams] = useState<FacultyParamType>({
         page: meta.currentPage,
@@ -36,6 +35,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 
     const queryClient = useQueryClient();
     const facultyQuery = useQuery<AxiosResponse, AxiosError<any, any>, FacultyType[]>({
+        refetchOnWindowFocus: false,
         queryKey: ['faculties', 'list', params],
         queryFn: async () => {
             const response = await request.get(`${API.admin.faculty}`, { params });
@@ -53,11 +53,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
             return response.data.data || [];
         },
         onError: (error) => {
-            toastRef.current?.show({
-                severity: 'error',
-                summary: t('notification'),
-                detail: error?.response?.data?.message || error.message,
-            });
+            toast.error(error?.response?.data?.message || error.message);
         },
     });
     const facultyMutation = useMutation<AxiosResponse, AxiosError<any, any>, FacultyType>({
@@ -94,26 +90,16 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
         facultyMutation.mutate(faculty, {
             onSuccess: () => {
                 queryClient.refetchQueries({ queryKey: ['faculties'] });
-                toastRef.current?.show({
-                    severity: 'success',
-                    summary: t('notification'),
-                    detail: t('request:update_success'),
-                });
+                toast.success(t('request:update_success'));
             },
             onError: (error) => {
-                toastRef.current?.show({
-                    severity: 'error',
-                    summary: t('notification'),
-                    detail: error?.response?.data?.message || error.message,
-                });
+                toast.error(error.response?.data?.messages[0] || error.message);
             },
         });
     };
 
     return (
         <div className='flex flex-column gap-4'>
-            <Toast ref={toastRef} />
-
             <ConfirmModal
                 ref={confirmModalRef}
                 onAccept={onRemoveFaculty}
@@ -180,7 +166,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                 <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
                     <Dropdown
                         id='date_created_filter'
-                        value='date_decrease'
+                        value={0}
                         onSelect={(sort) => {
                             setParams((prev) => ({
                                 ...prev,

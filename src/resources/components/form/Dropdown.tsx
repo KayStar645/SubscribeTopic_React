@@ -35,6 +35,7 @@ const Dropdown = ({
                 <PrimeDropdown
                     options={options}
                     value={selected}
+                    optionValue='value'
                     placeholder={placeholder}
                     className={classNames('w-full', { 'p-invalid': !!errorMessage })}
                     onChange={(e) => {

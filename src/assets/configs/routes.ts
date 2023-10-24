@@ -6,6 +6,7 @@ const ROUTES = {
         teacher: '/home/teacher',
         faculty: '/home/faculty',
         department: '/home/department',
+        major: '/home/major',
     },
 
     auth: {

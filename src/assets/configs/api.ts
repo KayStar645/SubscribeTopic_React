@@ -7,6 +7,8 @@ const API = {
         faculty: '/faculty',
         teacher: '/teacher',
         department: '/department',
+        major: '/major',
+        industry: '/industry',
     },
 };
 

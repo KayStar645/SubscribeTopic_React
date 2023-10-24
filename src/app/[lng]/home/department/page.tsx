@@ -185,7 +185,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
                     <Dropdown
                         id='date_created_filter'
-                        value='date_decrease'
+                        value={0}
                         onSelect={(sort) => {
                             setParams((prev) => ({
                                 ...prev,

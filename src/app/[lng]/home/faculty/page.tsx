@@ -19,7 +19,7 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { Toast } from 'primereact/toast';
 import { useRef, useState } from 'react';
-import FacultyForm, { FacultyFormRefType } from './form';
+import FacultyForm, { FacultyFormRefType } from './(components)/form';
 
 const FacultyPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
@@ -180,7 +180,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                 <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
                     <Dropdown
                         id='date_created_filter'
-                        value='date_decrease'
+                        value={0}
                         onSelect={(sort) => {
                             setParams((prev) => ({
                                 ...prev,

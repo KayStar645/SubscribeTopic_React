@@ -9,35 +9,11 @@ const getUserMenu = (t: TFunction, lng: string, pathName: string): MenuItemType[
 
     return [
         {
-            code: 'info',
-            parent: 'info',
-            label: t('menu:info'),
-            icon: <FaUser />,
-            to: `/${lng}${pathName || '/home'}`,
-        },
-        {
-            code: lng || 'language',
-            parent: lng || 'language',
-            label: currLanguage,
-            icon: <LuLanguages />,
-            items: LANGUAGES.map((t) => ({
-                ...t,
-                parent: 'language',
-                to: `/${t.code}${pathName || '/home'}`,
-            })),
-        },
-        {
             code: 'logout',
             parent: 'logout',
             label: t('menu:logout'),
             icon: <FaArrowRightFromBracket />,
-            to: `/${lng}/${ROUTES.auth.sign_in}`,
-        },
-        {
-            code: 'change_faculty',
-            parent: 'change_faculty',
-            label: t('menu:change_faculty'),
-            icon: <FaArrowRightArrowLeft />,
+            to: `http://localhost:2222/vi/auth/sign-in`,
         },
     ];
 };

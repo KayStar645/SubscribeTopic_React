@@ -1,8 +1,7 @@
-import { AUTH_TOKEN, ROUTES } from '@assets/configs';
+import { ROUTES } from '@assets/configs';
 import { OptionType } from '@assets/types/common';
 import { MetaType, ParamType } from '@assets/types/request';
 import axios, { AxiosRequestConfig } from 'axios';
-import { getCookie } from 'cookies-next';
 import _ from 'lodash';
 
 const request = axios.create({

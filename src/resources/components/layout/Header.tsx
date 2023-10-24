@@ -1,20 +1,19 @@
-import { AUTH_TOKEN, FACULTY_TOKEN, USER } from '@assets/configs';
+import { AUTH_TOKEN } from '@assets/configs';
 import { getUserMenu } from '@assets/configs/user_menu';
 import { language } from '@assets/helpers';
 import { useDispatch } from '@assets/redux';
 import menuSlice from '@assets/redux/slices/menu/slice';
 import { LanguageType } from '@assets/types/lang';
 import { MenuItemType } from '@assets/types/menu';
+import { SelectFacultyModalRefType } from '@assets/types/modal';
 import { useTranslation } from '@resources/i18n';
-import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { deleteCookie, getCookie } from 'cookies-next';
 import { usePathname } from 'next/navigation';
 import { Avatar } from 'primereact/avatar';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useEffect, useRef, useState } from 'react';
 import Breadcrumb from '../UI/Breadcrumb';
 import { MenuItem } from '../UI/MenuItem';
-import SelectFacultyModal from '../modal/SelectFacultyModal';
-import { SelectFacultyModalRefType } from '@assets/types/modal';
 
 const Header = ({ lng }: LanguageType) => {
     const { t } = useTranslation(lng);
@@ -26,13 +25,12 @@ const Header = ({ lng }: LanguageType) => {
     const selectFacultyRef = useRef<SelectFacultyModalRefType>(null);
 
     useEffect(() => {
-        setUser(getCookie('user') ? JSON.parse(getCookie('user')!) : '');
+        setUser(getCookie(AUTH_TOKEN) ? JSON.parse(getCookie(AUTH_TOKEN)!) : '');
     }, []);
 
     const renderItem = (item: MenuItemType) => {
         const onLogoutClick = () => {
             deleteCookie(AUTH_TOKEN);
-            deleteCookie(USER);
             dispatch(menuSlice.actions.onItemClick({ activeItem: 'home', openMenu: false, parent: '' }));
         };
 
@@ -62,7 +60,7 @@ const Header = ({ lng }: LanguageType) => {
     };
 
     return (
-        <div className='flex align-items-center justify-content-between flex-1 h-5rem shadow-1 bg-white px-4'>
+        <div className='flex align-items-center justify-content-between flex-1 h-5rem shadow-1 bg-white px-4 relative z-4'>
             <Breadcrumb lng={lng} />
 
             <div className='flex align-items-center justify-content-end gap-6' style={{ marginRight: '-0.5rem' }}>
@@ -85,13 +83,13 @@ const Header = ({ lng }: LanguageType) => {
                 </OverlayPanel>
             </div>
 
-            <SelectFacultyModal
+            {/* <SelectFacultyModal
                 ref={selectFacultyRef}
                 lng={lng}
                 onConfirm={(item) => {
                     setCookie(FACULTY_TOKEN, item);
                 }}
-            />
+            /> */}
         </div>
     );
 };

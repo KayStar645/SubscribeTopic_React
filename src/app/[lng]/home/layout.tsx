@@ -5,6 +5,8 @@ import { PageProps } from '@assets/types/UI';
 import { Header, Sidebar } from '@resources/components/layout';
 import { setCookie } from 'cookies-next';
 import { useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HomeLayout = ({ children, params: { lng } }: PageProps) => {
     // const selectFacultyRef = useRef<SelectFacultyModalRefType>(null);
@@ -14,7 +16,7 @@ const HomeLayout = ({ children, params: { lng } }: PageProps) => {
         //     selectFacultyRef.current?.show();
         // }
         setCookie(FACULTY_TOKEN, {
-            id: 1,
+            id: 3,
         });
     }, []);
 
@@ -31,6 +33,8 @@ const HomeLayout = ({ children, params: { lng } }: PageProps) => {
                     </div>
                 </div>
             </div>
+
+            <ToastContainer />
 
             {/* <SelectFacultyModal
                 ref={selectFacultyRef}

@@ -36,6 +36,12 @@ const getAdminMenu = (t: TFunction, lng: string): MenuItemType[] => {
                     label: t('menu:department'),
                     to: `/${lng}/${ROUTES.admin.department}`,
                 },
+                {
+                    code: 'major',
+                    parent: 'master_data',
+                    label: t('menu:major'),
+                    to: `/${lng}/${ROUTES.admin.major}`,
+                },
             ],
         },
     ];

@@ -2,6 +2,7 @@
     "faculty": "Khoa",
     "department": "Bộ môn",
     "major": "Chuyên ngành",
+    "industry": "Ngành",
 
     "field": {
         "faculty": {
@@ -12,6 +13,9 @@
         },
         "major": {
             "industry": "Ngành"
+        },
+        "industry": {
+            "faculty": "Khoa"
         }
     }
 }

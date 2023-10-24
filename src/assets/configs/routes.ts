@@ -7,6 +7,7 @@ const ROUTES = {
         faculty: '/home/faculty',
         department: '/home/department',
         major: '/home/major',
+        industry: '/home/industry',
     },
 
     auth: {

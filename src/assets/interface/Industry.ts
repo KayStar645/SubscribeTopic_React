@@ -1,7 +1,7 @@
 import { ParamType } from '@assets/types/request';
-import { Default } from './Default';
+import { GeneralType } from './Default';
 
-interface IndustryType extends Default {
+interface IndustryType extends GeneralType {
     facultyId?: string | number;
 }
 

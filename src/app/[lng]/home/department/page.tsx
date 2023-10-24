@@ -10,7 +10,7 @@ import Loader from '@resources/components/UI/Loader';
 import { Dropdown } from '@resources/components/form';
 import ConfirmModal from '@resources/components/modal/ConfirmModal';
 import { useTranslation } from '@resources/i18n';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
@@ -22,7 +22,6 @@ import { toast } from 'react-toastify';
 import DepartmentForm, { DepartmentFormRefType } from './form';
 
 const DepartmentPage = ({ params: { lng } }: PageProps) => {
-    const queryClient = useQueryClient();
     const { t } = useTranslation(lng);
     const formRef = useRef<DepartmentFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
@@ -86,10 +85,10 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
         );
     };
 
-    const onRemoveDepartment = (department: DepartmentType) => {
+    const onRemove = (department: DepartmentType) => {
         departmentMutation.mutate(department, {
             onSuccess: () => {
-                queryClient.refetchQueries({ queryKey: ['departments'] });
+                departmentQuery.refetch();
                 toast.success(t('request:update_success'));
             },
             onError: (error) => {
@@ -102,7 +101,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
         <div className='flex flex-column gap-4'>
             <ConfirmModal
                 ref={confirmModalRef}
-                onAccept={onRemoveDepartment}
+                onAccept={onRemove}
                 acceptLabel={t('confirm')}
                 rejectLabel={t('cancel')}
             />
@@ -210,7 +209,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                         : t('create_new_at', { obj: t('module:department').toLowerCase() })
                 }
                 ref={formRef}
-                onSuccess={(department) => queryClient.refetchQueries({ queryKey: ['departments'] })}
+                onSuccess={(data) => departmentQuery.refetch()}
             />
         </div>
     );

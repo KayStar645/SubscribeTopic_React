@@ -1,15 +1,13 @@
 import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
-import { IndustryType, MajorType } from '@assets/interface';
-import { OptionType } from '@assets/types/common';
+import { IndustryType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Loader from '@resources/components/UI/Loader';
-import { Dropdown, InputText } from '@resources/components/form';
+import { InputText } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
-import _ from 'lodash';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { forwardRef, useImperativeHandle, useState } from 'react';
@@ -17,17 +15,17 @@ import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
-interface MajorFormRefType {
-    show?: (formData?: MajorType) => void;
+interface IndustryFormRefType {
+    show?: (data?: IndustryType) => void;
     close?: () => void;
 }
 
-interface MajorFormType extends LanguageType {
+interface IndustryFormType extends LanguageType {
     title: string;
-    onSuccess?: (faculty: MajorType) => void;
+    onSuccess?: (industry: IndustryType) => void;
 }
 
-const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onSuccess }, ref) => {
+const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title, lng, onSuccess }, ref) => {
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
     const schema = yup.object({
@@ -36,7 +34,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
             .string()
             .required(
                 t('validation:required', {
-                    attribute: t('common:code_of', { obj: t('module:major') }).toLowerCase(),
+                    attribute: t('common:code_of', { obj: t('module:industry') }).toLowerCase(),
                 }),
             )
             .max(50),
@@ -44,57 +42,45 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
             .string()
             .required(
                 t('validation:required', {
-                    attribute: t('common:name_of', { obj: t('module:major') }).toLowerCase(),
+                    attribute: t('common:name_of', { obj: t('module:industry') }).toLowerCase(),
                 }),
             )
             .max(150),
     });
     const { setValue, control, handleSubmit, reset } = useForm({
-        resolver: yupResolver(schema) as Resolver<MajorType>,
+        resolver: yupResolver(schema) as Resolver<IndustryType>,
         defaultValues: {
             id: '0',
             internalCode: '',
             name: '',
-            industryId: '',
+            facultyId: '',
         },
     });
-    const industryQuery = useQuery({
-        enabled: false,
-        refetchOnWindowFocus: false,
-        queryKey: ['major_industry'],
-        queryFn: async () => {
-            const responseData: IndustryType[] = (await request.get(API.admin.industry)).data.data;
+    const industryMutation = useMutation<AxiosResponse, AxiosError<any, any>, IndustryType>({
+        mutationFn: (industry: IndustryType) => {
+            return industry.id === '0'
+                ? request.post(API.admin.industry, industry)
+                : request.update(API.admin.industry, industry);
+        },
+    });
 
-            return responseData || [];
-        },
-    });
-    const majorMutation = useMutation<AxiosResponse, AxiosError<any, any>, MajorType>({
-        mutationFn: (major: MajorType) => {
-            return major.id === '0' ? request.post(API.admin.major, major) : request.update(API.admin.major, major);
-        },
-    });
-    const industryOptions: OptionType[] =
-        _.map(industryQuery.data, (t) => ({ label: t.name, value: t.id, code: t.id })) || [];
-
-    const show = (formData?: MajorType) => {
+    const show = (data?: IndustryType) => {
         setVisible(true);
 
-        if (formData) {
-            setValue('id', formData.id);
-            setValue('internalCode', formData.internalCode);
-            setValue('name', formData.name);
-            setValue('industryId', formData.industryId);
+        if (data) {
+            setValue('id', data.id);
+            setValue('internalCode', data.internalCode);
+            setValue('name', data.name);
+            setValue('facultyId', data.facultyId);
         }
-
-        industryQuery.refetch();
     };
 
     const close = () => {
         setVisible(false);
     };
 
-    const onSubmit = (formData: MajorType) => {
-        majorMutation.mutate(formData, {
+    const onSubmit = (data: IndustryType) => {
+        industryMutation.mutate(data, {
             onSuccess: (response) => {
                 toast.success(t('request:update_success'));
                 close();
@@ -124,19 +110,19 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
                 reset();
             }}
         >
-            <Loader show={majorMutation.isLoading} />
+            <Loader show={industryMutation.isLoading} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('code_of', { obj: t('module:major') })}</p>
+                    <p className='font-semibold'>{t('code_of', { obj: t('module:industry') })}</p>
                     <Controller
                         name='internalCode'
                         control={control}
-                        render={({ field, fieldState, formState }) => (
+                        render={({ field, fieldState }) => (
                             <InputText
                                 id='form_data_internal_code'
                                 value={field.value}
-                                placeholder={t('code_of', { obj: t('module:major') })}
+                                placeholder={t('code_of', { obj: t('module:industry') })}
                                 errorMessage={fieldState.error?.message}
                                 onChange={(e) => field.onChange(e.target.value)}
                             />
@@ -145,7 +131,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
                 </div>
 
                 <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('name_of', { obj: t('module:major') })}</p>
+                    <p className='font-semibold'>{t('name_of', { obj: t('module:industry') })}</p>
                     <Controller
                         name='name'
                         control={control}
@@ -153,25 +139,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
                             <InputText
                                 id='form_data_name'
                                 value={field.value}
-                                placeholder={t('name_of', { obj: t('module:major') })}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                            />
-                        )}
-                    />
-                </div>
-
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('module:field.major.industry')}</p>
-                    <Controller
-                        name='industryId'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <Dropdown
-                                id='form_data_industry_id'
-                                placeholder={t('module:field.major.industry')}
-                                options={industryOptions}
-                                value={field.value}
+                                placeholder={t('name_of', { obj: t('module:industry') })}
                                 errorMessage={fieldState.error?.message}
                                 onChange={field.onChange}
                             />
@@ -197,7 +165,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
     );
 });
 
-MajorForm.displayName = 'Major Form';
+IndustryForm.displayName = 'Industry Form';
 
-export default MajorForm;
-export type { MajorFormRefType };
+export default IndustryForm;
+export type { IndustryFormRefType };

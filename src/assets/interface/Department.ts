@@ -1,7 +1,7 @@
 import { ParamType } from '@assets/types/request';
-import { Default } from './Default';
+import { GeneralType } from './Default';
 
-interface DepartmentType extends Default {
+interface DepartmentType extends GeneralType {
     facultyId?: string;
 }
 

@@ -1,6 +1,6 @@
-import { API, FACULTY_TOKEN } from '@assets/configs';
-import { cookie, request } from '@assets/helpers';
-import { DepartmentType, FacultyType } from '@assets/interface';
+import { API } from '@assets/configs';
+import { request } from '@assets/helpers';
+import { DepartmentType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Loader from '@resources/components/UI/Loader';
@@ -8,7 +8,6 @@ import { InputText } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
-import { getCookie } from 'cookies-next';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { forwardRef, useImperativeHandle, useState } from 'react';
@@ -17,13 +16,13 @@ import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 interface DepartmentFormRefType {
-    show?: (formData?: DepartmentType) => void;
+    show?: (data?: DepartmentType) => void;
     close?: () => void;
 }
 
 interface DepartmentFormType extends LanguageType {
     title: string;
-    onSuccess?: (faculty: DepartmentType) => void;
+    onSuccess?: (data: DepartmentType) => void;
 }
 
 const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ title, lng, onSuccess }, ref) => {
@@ -72,7 +71,7 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
             )
             .max(30),
     });
-    const { setValue, control, handleSubmit, reset, getValues } = useForm({
+    const { setValue, control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema) as Resolver<DepartmentType>,
         defaultValues: {
             id: '0',
@@ -85,24 +84,23 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
         },
     });
     const departmentMutation = useMutation<AxiosResponse, AxiosError<any, any>, DepartmentType>({
-        mutationFn: (department: DepartmentType) => {
-            return department.id === '0'
-                ? request.post(API.admin.department, department)
-                : request.update(API.admin.department, department);
+        mutationFn: (data: DepartmentType) => {
+            return data.id === '0'
+                ? request.post(API.admin.department, data)
+                : request.update(API.admin.department, data);
         },
     });
-
-    const show = (formData?: DepartmentType) => {
+    const show = (data?: DepartmentType) => {
         setVisible(true);
 
-        if (formData) {
-            setValue('id', formData.id);
-            setValue('internalCode', formData.internalCode);
-            setValue('name', formData.name);
-            setValue('phoneNumber', formData.phoneNumber);
-            setValue('address', formData.address);
-            setValue('email', formData.email);
-            setValue('facultyId', formData.facultyId);
+        if (data) {
+            setValue('id', data.id);
+            setValue('internalCode', data.internalCode);
+            setValue('name', data.name);
+            setValue('phoneNumber', data.phoneNumber);
+            setValue('address', data.address);
+            setValue('email', data.email);
+            setValue('facultyId', data.facultyId);
         }
     };
 
@@ -110,11 +108,12 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
         setVisible(false);
     };
 
-    const onSubmit = (formData: DepartmentType) => {
-        departmentMutation.mutate(formData, {
+    const onSubmit = (data: DepartmentType) => {
+        departmentMutation.mutate(data, {
             onSuccess: (response) => {
                 toast.success(t('request:update_success'));
                 close();
+                reset();
                 onSuccess?.(response.data);
             },
             onError: (error) => {
@@ -147,7 +146,7 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
                     <Controller
                         name='internalCode'
                         control={control}
-                        render={({ field, fieldState, formState }) => (
+                        render={({ field, fieldState }) => (
                             <InputText
                                 id='form_data_internal_code'
                                 value={field.value}

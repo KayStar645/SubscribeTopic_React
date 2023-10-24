@@ -1,12 +1,13 @@
 const API = {
-	auth: {
-		sign_in: '/account/login',
-	},
+    auth: {
+        sign_in: '/account/login',
+    },
 
-	admin: {
-		faculty: '/faculty',
-		teacher: '/teacher',
-	},
+    admin: {
+        faculty: '/faculty',
+        teacher: '/teacher',
+        department: '/department',
+    },
 };
 
 export { API };

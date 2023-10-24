@@ -12,9 +12,12 @@ const HomeLayout = ({ children, params: { lng } }: PageProps) => {
     const selectFacultyRef = useRef<SelectFacultyModalRefType>(null);
 
     useEffect(() => {
-        if (!getCookie(FACULTY_TOKEN)) {
-            selectFacultyRef.current?.show();
-        }
+        // if (!getCookie(FACULTY_TOKEN)) {
+        //     selectFacultyRef.current?.show();
+        // }
+        setCookie(FACULTY_TOKEN, {
+            id: 1,
+        });
     }, []);
 
     return (
@@ -29,13 +32,13 @@ const HomeLayout = ({ children, params: { lng } }: PageProps) => {
                 </div>
             </div>
 
-            <SelectFacultyModal
+            {/* <SelectFacultyModal
                 ref={selectFacultyRef}
                 lng={lng}
                 onConfirm={(item) => {
                     setCookie(FACULTY_TOKEN, item);
                 }}
-            />
+            /> */}
         </body>
     );
 };

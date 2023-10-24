@@ -15,13 +15,13 @@ const request = axios.create({
 
 request.interceptors.request.use(
     (config) => {
-        if (!config.headers.Authorization) {
-            const token = getCookie(AUTH_TOKEN);
+        // if (!config.headers.Authorization) {
+        //     const token = getCookie(AUTH_TOKEN);
 
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-        }
+        //     if (token) {
+        //         config.headers.Authorization = `Bearer ${token}`;
+        //     }
+        // }
 
         return config;
     },

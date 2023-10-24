@@ -5,6 +5,7 @@ const ROUTES = {
         home: '/home',
         teacher: '/home/teacher',
         faculty: '/home/faculty',
+        department: '/home/department',
     },
 
     auth: {

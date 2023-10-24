@@ -1,8 +1,8 @@
 'use client';
 
-import { API, ROWS_PER_PAGE } from '@assets/configs';
+import { API, AUTH_TOKEN, FACULTY_TOKEN, ROWS_PER_PAGE } from '@assets/configs';
 import { request } from '@assets/helpers';
-import { FacultyParamType, FacultyType } from '@assets/interface';
+import { DepartmentParamType, DepartmentType, FacultyType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType } from '@assets/types/request';
@@ -19,26 +19,29 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { Toast } from 'primereact/toast';
 import { useRef, useState } from 'react';
-import FacultyForm, { FacultyFormRefType } from './form';
+import DepartmentForm, { DepartmentFormRefType } from './(components)/form';
+import { getCookie, hasCookie } from 'cookies-next';
 
-const FacultyPage = ({ params: { lng } }: PageProps) => {
+const DepartmentPage = ({ params: { lng } }: PageProps) => {
+    const faculty: FacultyType = hasCookie(AUTH_TOKEN) ? JSON.parse(getCookie(FACULTY_TOKEN)!) : {};
     const { t } = useTranslation(lng);
-    const formRef = useRef<FacultyFormRefType>(null);
+    const formRef = useRef<DepartmentFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const toastRef = useRef<Toast>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-    const [params, setParams] = useState<FacultyParamType>({
+    const [params, setParams] = useState<DepartmentParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
+        facultyId: faculty.id,
     });
-    const [selected, setSelected] = useState<FacultyType>();
+    const [selected, setSelected] = useState<DepartmentType>();
 
     const queryClient = useQueryClient();
-    const facultyQuery = useQuery<AxiosResponse, AxiosError<any, any>, FacultyType[]>({
-        queryKey: ['faculties', 'list', params],
+    const departmentQuery = useQuery<AxiosResponse, AxiosError<any, any>, DepartmentType[]>({
+        queryKey: ['departments', 'list', params],
         queryFn: async () => {
-            const response = await request.get(`${API.admin.faculty}`, { params });
+            const response = await request.get(`${API.admin.department}`, { params });
 
             setMeta({
                 currentPage: response.data.extra.currentPage,
@@ -60,9 +63,9 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
             });
         },
     });
-    const facultyMutation = useMutation<AxiosResponse, AxiosError<any, any>, FacultyType>({
-        mutationFn: (data: FacultyType) => {
-            return request.remove(`${API.admin.faculty}`, { params: { id: data.id } });
+    const departmentMutation = useMutation<AxiosResponse, AxiosError<any, any>, DepartmentType>({
+        mutationFn: (data: DepartmentType) => {
+            return request.remove(`${API.admin.department}`, { params: { id: data.id } });
         },
     });
 
@@ -70,30 +73,30 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (faculty: FacultyType) => {
+    const renderActions = (department: DepartmentType) => {
         return (
             <div className='flex align-items-center gap-3'>
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
                     onClick={() => {
-                        formRef.current?.show?.(faculty);
-                        setSelected(faculty);
+                        formRef.current?.show?.(department);
+                        setSelected(department);
                     }}
                 ></i>
                 <i
                     className='pi pi-trash hover:text-red-600 cursor-pointer'
                     onClick={(e) => {
-                        confirmModalRef.current?.show?.(e, faculty, t('sure_to_delete', { obj: faculty.name }));
+                        confirmModalRef.current?.show?.(e, department, t('sure_to_delete', { obj: department.name }));
                     }}
                 ></i>
             </div>
         );
     };
 
-    const onRemoveFaculty = (faculty: FacultyType) => {
-        facultyMutation.mutate(faculty, {
+    const onRemoveDepartment = (department: DepartmentType) => {
+        departmentMutation.mutate(department, {
             onSuccess: () => {
-                queryClient.refetchQueries({ queryKey: ['faculties'] });
+                queryClient.refetchQueries({ queryKey: ['departments'] });
                 toastRef.current?.show({
                     severity: 'success',
                     summary: t('notification'),
@@ -116,13 +119,15 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 
             <ConfirmModal
                 ref={confirmModalRef}
-                onAccept={onRemoveFaculty}
+                onAccept={onRemoveDepartment}
                 acceptLabel={t('confirm')}
                 rejectLabel={t('cancel')}
             />
 
             <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
-                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:faculty').toLowerCase() })}</p>
+                <p className='text-xl font-semibold'>
+                    {t('list_of', { module: t('module:department').toLowerCase() })}
+                </p>
                 <Button
                     label={t('create_new')}
                     icon='pi pi-plus'
@@ -137,10 +142,10 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                 <InputText placeholder={`${t('search')}...`} className='col-4' />
             </div>
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={facultyQuery.isLoading || facultyMutation.isLoading} />
+                <Loader show={departmentQuery.isLoading || departmentMutation.isLoading} />
 
                 <DataTable
-                    value={facultyQuery.data || []}
+                    value={departmentQuery.data || []}
                     rowHover={true}
                     stripedRows={true}
                     emptyMessage={t('list_empty')}
@@ -153,12 +158,12 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='internalCode'
-                        header={t('code_of', { obj: t('module:faculty').toLowerCase() })}
+                        header={t('code_of', { obj: t('module:department').toLowerCase() })}
                     ></Column>
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='name'
-                        header={t('name_of', { obj: t('module:faculty').toLowerCase() })}
+                        header={t('name_of', { obj: t('module:department').toLowerCase() })}
                     ></Column>
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
@@ -214,18 +219,18 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                 </div>
             </div>
 
-            <FacultyForm
+            <DepartmentForm
                 lng={lng}
                 title={
                     selected?.id
                         ? t('update_at', { obj: selected.name })
-                        : t('create_new_at', { obj: t('module:faculty').toLowerCase() })
+                        : t('create_new_at', { obj: t('module:department').toLowerCase() })
                 }
                 ref={formRef}
-                onSuccess={(faculty) => queryClient.refetchQueries({ queryKey: ['faculties'] })}
+                onSuccess={(department) => queryClient.refetchQueries({ queryKey: ['departments'] })}
             />
         </div>
     );
 };
 
-export default FacultyPage;
+export default DepartmentPage;

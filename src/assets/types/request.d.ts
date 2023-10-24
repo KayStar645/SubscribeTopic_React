@@ -13,6 +13,7 @@ interface ParamType {
     sorts?: string;
     page?: number;
     pageSize?: number;
+    isAllDetail?: boolean;
 }
 
 interface ResponseType {

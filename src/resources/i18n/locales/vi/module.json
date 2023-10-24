@@ -1,9 +1,13 @@
 {
-	"faculty": "Khoa",
+    "faculty": "Khoa",
+    "department": "Bộ môn",
 
-	"field": {
-		"faculty": {
-			"dean": "Trưởng khoa"
-		}
-	}
+    "field": {
+        "faculty": {
+            "dean": "Trưởng khoa"
+        },
+        "department": {
+            "faculty": "Khoa"
+        }
+    }
 }

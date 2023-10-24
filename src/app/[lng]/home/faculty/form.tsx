@@ -1,34 +1,33 @@
 import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
-import { FacultyType, TeacherParamType, TeacherType } from '@assets/interface';
+import { FacultyType, TeacherType } from '@assets/interface';
 import { OptionType } from '@assets/types/common';
 import { LanguageType } from '@assets/types/lang';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Loader from '@resources/components/UI/Loader';
 import { Dropdown, InputText } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import _ from 'lodash';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 interface FacultyFormRefType {
-    show?: (formData?: FacultyType) => void;
+    show?: (data?: FacultyType) => void;
     close?: () => void;
 }
 
 interface FacultyFormType extends LanguageType {
     title: string;
-    onSuccess?: (faculty: FacultyType) => void;
+    onSuccess?: (data: FacultyType) => void;
 }
 
 const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, lng, onSuccess }, ref) => {
-    const queryClient = useQueryClient();
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
     const schema = yup.object({
@@ -87,7 +86,7 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
         },
     });
     const teacherQuery = useQuery({
-        queryKey: ['faculty_teacher'],
+        queryKey: ['faculty_teachers'],
         enabled: false,
         refetchOnWindowFocus: false,
         queryFn: async () => {
@@ -104,21 +103,21 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
         },
     });
     const teacherOptions: OptionType[] =
-        _.map(teacherQuery.data, (t) => ({ label: t.name || '', value: t.id || '', code: t.id || '' })) || [];
+        _.map(teacherQuery.data, (t) => ({ label: t.name, value: t.id, code: t.id })) || [];
 
-    const show = (formData?: FacultyType) => {
+    const show = (data?: FacultyType) => {
         setVisible(true);
 
         teacherQuery.refetch();
 
-        if (formData) {
-            setValue('id', formData.id);
-            setValue('internalCode', formData.internalCode);
-            setValue('name', formData.name);
-            setValue('phoneNumber', formData.phoneNumber);
-            setValue('address', formData.address);
-            setValue('email', formData.email);
-            setValue('dean_TeacherId', formData.dean_TeacherId);
+        if (data) {
+            setValue('id', data.id);
+            setValue('internalCode', data.internalCode);
+            setValue('name', data.name);
+            setValue('phoneNumber', data.phoneNumber);
+            setValue('address', data.address);
+            setValue('email', data.email);
+            setValue('dean_TeacherId', data.dean_TeacherId);
         }
     };
 
@@ -126,11 +125,12 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
         setVisible(false);
     };
 
-    const onSubmit = (formData: FacultyType) => {
-        facultyMutation.mutate(formData, {
+    const onSubmit = (data: FacultyType) => {
+        facultyMutation.mutate(data, {
             onSuccess: (response) => {
                 toast.success(t('request:update_success'));
                 close();
+                reset();
                 onSuccess?.(response.data);
             },
             onError: (error) => {
@@ -163,7 +163,7 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
                     <Controller
                         name='internalCode'
                         control={control}
-                        render={({ field, fieldState, formState }) => (
+                        render={({ field, fieldState }) => (
                             <InputText
                                 id='form_data_internal_code'
                                 value={field.value}

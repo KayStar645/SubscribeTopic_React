@@ -2,7 +2,7 @@
 
 import { API, ROWS_PER_PAGE } from '@assets/configs';
 import { request } from '@assets/helpers';
-import { MajorParamType, MajorType } from '@assets/interface';
+import { IndustryParamType, IndustryType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType } from '@assets/types/request';
@@ -10,7 +10,7 @@ import Loader from '@resources/components/UI/Loader';
 import { Dropdown } from '@resources/components/form';
 import ConfirmModal from '@resources/components/modal/ConfirmModal';
 import { useTranslation } from '@resources/i18n';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
@@ -19,25 +19,25 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import MajorForm, { MajorFormRefType } from './form';
+import IndustryForm, { IndustryFormRefType } from './form';
 
-const MajorPage = ({ params: { lng } }: PageProps) => {
+const IndustryPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
-    const formRef = useRef<MajorFormRefType>(null);
+    const formRef = useRef<IndustryFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-    const [selected, setSelected] = useState<MajorType>();
-    const [params, setParams] = useState<MajorParamType>({
+    const [selected, setSelected] = useState<IndustryType>();
+    const [params, setParams] = useState<IndustryParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
     });
 
-    const majorQuery = useQuery<AxiosResponse, AxiosError<any, any>, MajorType[]>({
+    const industryQuery = useQuery<AxiosResponse, AxiosError<any, any>, IndustryType[]>({
         refetchOnWindowFocus: false,
-        queryKey: ['majors', 'list', params],
+        queryKey: ['industries', 'list', params],
         queryFn: async () => {
-            const response = await request.get(`${API.admin.major}`, { params });
+            const response = await request.get(`${API.admin.industry}`, { params });
 
             setMeta({
                 currentPage: response.data.extra.currentPage,
@@ -55,9 +55,9 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
             toast.error(error?.response?.data?.message || error.message);
         },
     });
-    const majorMutation = useMutation<AxiosResponse, AxiosError<any, any>, MajorType>({
-        mutationFn: (data: MajorType) => {
-            return request.remove(`${API.admin.major}`, { params: { id: data.id } });
+    const industryMutation = useMutation<AxiosResponse, AxiosError<any, any>, IndustryType>({
+        mutationFn: (data: IndustryType) => {
+            return request.remove(`${API.admin.industry}`, { params: { id: data.id } });
         },
     });
 
@@ -65,30 +65,30 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (major: MajorType) => {
+    const renderActions = (industry: IndustryType) => {
         return (
             <div className='flex align-items-center gap-3'>
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
                     onClick={() => {
-                        formRef.current?.show?.(major);
-                        setSelected(major);
+                        formRef.current?.show?.(industry);
+                        setSelected(industry);
                     }}
                 ></i>
                 <i
                     className='pi pi-trash hover:text-red-600 cursor-pointer'
                     onClick={(e) => {
-                        confirmModalRef.current?.show?.(e, major, t('sure_to_delete', { obj: major.name }));
+                        confirmModalRef.current?.show?.(e, industry, t('sure_to_delete', { obj: industry.name }));
                     }}
                 ></i>
             </div>
         );
     };
 
-    const onRemove = (major: MajorType) => {
-        majorMutation.mutate(major, {
+    const onRemove = (industry: IndustryType) => {
+        industryMutation.mutate(industry, {
             onSuccess: () => {
-                majorQuery.refetch();
+                industryQuery.refetch();
 
                 toast.success(t('request:update_success'));
             },
@@ -108,7 +108,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
             />
 
             <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
-                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:major').toLowerCase() })}</p>
+                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:industry').toLowerCase() })}</p>
                 <Button
                     label={t('create_new')}
                     icon='pi pi-plus'
@@ -123,10 +123,10 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                 <InputText placeholder={`${t('search')}...`} className='col-4' />
             </div>
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={majorQuery.isLoading || majorMutation.isLoading} />
+                <Loader show={industryQuery.isLoading || industryMutation.isLoading} />
 
                 <DataTable
-                    value={majorQuery.data || []}
+                    value={industryQuery.data || []}
                     rowHover={true}
                     stripedRows={true}
                     emptyMessage={t('list_empty')}
@@ -139,12 +139,12 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='internalCode'
-                        header={t('code_of', { obj: t('module:major').toLowerCase() })}
+                        header={t('code_of', { obj: t('module:industry').toLowerCase() })}
                     ></Column>
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='name'
-                        header={t('name_of', { obj: t('module:major').toLowerCase() })}
+                        header={t('name_of', { obj: t('module:industry').toLowerCase() })}
                     ></Column>
                 </DataTable>
 
@@ -185,18 +185,18 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                 </div>
             </div>
 
-            <MajorForm
+            <IndustryForm
                 lng={lng}
                 title={
                     selected?.id
                         ? t('update_at', { obj: selected.name })
-                        : t('create_new_at', { obj: t('module:major').toLowerCase() })
+                        : t('create_new_at', { obj: t('module:industry').toLowerCase() })
                 }
                 ref={formRef}
-                onSuccess={(major) => majorQuery.refetch()}
+                onSuccess={(data) => industryQuery.refetch()}
             />
         </div>
     );
 };
 
-export default MajorPage;
+export default IndustryPage;

@@ -1,7 +1,7 @@
 import { ParamType } from '@assets/types/request';
-import { Default } from './Default';
+import { GeneralType } from './Default';
 
-interface MajorType extends Default {
+interface MajorType extends GeneralType {
     industryId?: string;
 }
 

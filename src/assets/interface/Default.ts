@@ -1,10 +1,10 @@
-interface Default {
+interface GeneralType {
     id?: string;
     name: string;
     internalCode: string;
-    address?: string;
     phoneNumber?: string;
+    address?: string;
     email?: string;
 }
 
-export type { Default };
+export type { GeneralType };

@@ -10,14 +10,14 @@ import Loader from '@resources/components/UI/Loader';
 import { Dropdown } from '@resources/components/form';
 import ConfirmModal from '@resources/components/modal/ConfirmModal';
 import { useTranslation } from '@resources/i18n';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import FacultyForm, { FacultyFormRefType } from './form';
 
@@ -32,8 +32,6 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
         sorts: '-DateCreated',
     });
     const [selected, setSelected] = useState<FacultyType>();
-
-    const queryClient = useQueryClient();
     const facultyQuery = useQuery<AxiosResponse, AxiosError<any, any>, FacultyType[]>({
         refetchOnWindowFocus: false,
         queryKey: ['faculties', 'list', params],
@@ -86,10 +84,10 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
         );
     };
 
-    const onRemoveFaculty = (faculty: FacultyType) => {
+    const onRemove = (faculty: FacultyType) => {
         facultyMutation.mutate(faculty, {
             onSuccess: () => {
-                queryClient.refetchQueries({ queryKey: ['faculties'] });
+                facultyQuery.refetch();
                 toast.success(t('request:update_success'));
             },
             onError: (error) => {
@@ -102,7 +100,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
         <div className='flex flex-column gap-4'>
             <ConfirmModal
                 ref={confirmModalRef}
-                onAccept={onRemoveFaculty}
+                onAccept={onRemove}
                 acceptLabel={t('confirm')}
                 rejectLabel={t('cancel')}
             />
@@ -208,7 +206,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                         : t('create_new_at', { obj: t('module:faculty').toLowerCase() })
                 }
                 ref={formRef}
-                onSuccess={(faculty) => queryClient.refetchQueries({ queryKey: ['faculties'] })}
+                onSuccess={(data) => facultyQuery.refetch()}
             />
         </div>
     );

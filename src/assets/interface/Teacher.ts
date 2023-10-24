@@ -1,7 +1,7 @@
 import { ParamType } from '@assets/types/request';
-import { Default } from './Default';
+import { GeneralType } from './Default';
 
-interface TeacherType extends Default {
+interface TeacherType extends GeneralType {
     departmentId: number;
     gender: string;
     dateOfBirth: Date;

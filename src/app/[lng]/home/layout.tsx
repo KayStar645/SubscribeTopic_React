@@ -5,7 +5,7 @@ import { PageProps } from '@assets/types/UI';
 import { Header, Sidebar } from '@resources/components/layout';
 import { setCookie } from 'cookies-next';
 import { useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const HomeLayout = ({ children, params: { lng } }: PageProps) => {

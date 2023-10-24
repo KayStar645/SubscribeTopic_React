@@ -24,12 +24,12 @@ const getAdminMenu = (t: TFunction, lng: string): MenuItemType[] => {
                     label: t('menu:faculty'),
                     to: `/${lng}/${ROUTES.admin.faculty}`,
                 },
-                {
-                    code: 'teacher',
-                    parent: 'master_data',
-                    label: t('menu:teacher'),
-                    to: `/${lng}/${ROUTES.admin.teacher}`,
-                },
+                // {
+                //     code: 'teacher',
+                //     parent: 'master_data',
+                //     label: t('menu:teacher'),
+                //     to: `/${lng}/${ROUTES.admin.teacher}`,
+                // },
                 {
                     code: 'department',
                     parent: 'master_data',

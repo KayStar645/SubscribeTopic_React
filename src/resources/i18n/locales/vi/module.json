@@ -3,6 +3,7 @@
     "department": "Bộ môn",
     "major": "Chuyên ngành",
     "industry": "Ngành",
+    "student": "Sinh viên",
 
     "field": {
         "faculty": {
@@ -16,6 +17,10 @@
         },
         "industry": {
             "faculty": "Khoa"
+        },
+        "student": {
+            "major": "Chuyên ngành",
+            "class": "Lớp"
         }
     }
 }

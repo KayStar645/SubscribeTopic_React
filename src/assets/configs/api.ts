@@ -9,6 +9,7 @@ const API = {
         department: '/department',
         major: '/major',
         industry: '/industry',
+        student: '/student',
     },
 };
 

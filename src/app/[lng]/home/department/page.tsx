@@ -52,7 +52,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
             return response.data.data || [];
         },
         onError: (error) => {
-            toast.error(error?.response?.data?.message || error.message);
+            toast.error(error?.response?.data?.messages[0] || error.message);
         },
     });
     const departmentMutation = useMutation<AxiosResponse, AxiosError<any, any>, DepartmentType>({
@@ -92,7 +92,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 toast.success(t('request:update_success'));
             },
             onError: (error) => {
-                toast.error(error?.response?.data?.message || error.message);
+                toast.error(error?.response?.data?.messages[0] || error.message);
             },
         });
     };
@@ -136,32 +136,32 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         header={t('action')}
                         body={renderActions}
-                    ></Column>
+                    />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='internalCode'
                         header={t('code_of', { obj: t('module:department').toLowerCase() })}
-                    ></Column>
+                    />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='name'
                         header={t('name_of', { obj: t('module:department').toLowerCase() })}
-                    ></Column>
+                    />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='address'
                         header={t('address')}
-                    ></Column>
+                    />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='phoneNumber'
                         header={t('phone_number')}
-                    ></Column>
+                    />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='email'
                         header={t('email')}
-                    ></Column>
+                    />
                 </DataTable>
 
                 <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>

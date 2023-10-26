@@ -28,5 +28,7 @@
     "sure_to_delete": "Bạn có chắc muốn xóa {{ obj }}",
     "update_at": "Cập nhập {{ obj }}",
     "yes": "Có",
-    "welcome_to_system": "Chào mừng đển với hệ thống"
+    "welcome_to_system": "Chào mừng đển với hệ thống",
+    "gender": "Giới tính",
+    "date_of_birth": "Ngày sinh"
 }

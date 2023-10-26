@@ -18,13 +18,13 @@ import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 interface MajorFormRefType {
-    show?: (formData?: MajorType) => void;
+    show?: (data?: MajorType) => void;
     close?: () => void;
 }
 
 interface MajorFormType extends LanguageType {
     title: string;
-    onSuccess?: (faculty: MajorType) => void;
+    onSuccess?: (data: MajorType) => void;
 }
 
 const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onSuccess }, ref) => {
@@ -32,22 +32,16 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
     const { t } = useTranslation(lng);
     const schema = yup.object({
         id: yup.string(),
-        internalCode: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:code_of', { obj: t('module:major') }).toLowerCase(),
-                }),
-            )
-            .max(50),
-        name: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:name_of', { obj: t('module:major') }).toLowerCase(),
-                }),
-            )
-            .max(150),
+        internalCode: yup.string().required(
+            t('validation:required', {
+                attribute: t('common:code_of', { obj: t('module:major') }).toLowerCase(),
+            }),
+        ),
+        name: yup.string().required(
+            t('validation:required', {
+                attribute: t('common:name_of', { obj: t('module:major') }).toLowerCase(),
+            }),
+        ),
     });
     const { setValue, control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema) as Resolver<MajorType>,
@@ -69,21 +63,21 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
         },
     });
     const majorMutation = useMutation<AxiosResponse, AxiosError<any, any>, MajorType>({
-        mutationFn: (major: MajorType) => {
-            return major.id === '0' ? request.post(API.admin.major, major) : request.update(API.admin.major, major);
+        mutationFn: (data: MajorType) => {
+            return data.id === '0' ? request.post(API.admin.major, data) : request.update(API.admin.major, data);
         },
     });
     const industryOptions: OptionType[] =
         _.map(industryQuery.data, (t) => ({ label: t.name, value: t.id, code: t.id })) || [];
 
-    const show = (formData?: MajorType) => {
+    const show = (data?: MajorType) => {
         setVisible(true);
 
-        if (formData) {
-            setValue('id', formData.id);
-            setValue('internalCode', formData.internalCode);
-            setValue('name', formData.name);
-            setValue('industryId', formData.industryId);
+        if (data) {
+            setValue('id', data.id);
+            setValue('internalCode', data.internalCode);
+            setValue('name', data.name);
+            setValue('industryId', data.industryId);
         }
 
         industryQuery.refetch();
@@ -93,8 +87,8 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
         setVisible(false);
     };
 
-    const onSubmit = (formData: MajorType) => {
-        majorMutation.mutate(formData, {
+    const onSubmit = (data: MajorType) => {
+        majorMutation.mutate(data, {
             onSuccess: (response) => {
                 toast.success(t('request:update_success'));
                 close();
@@ -127,57 +121,51 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
             <Loader show={majorMutation.isLoading} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('code_of', { obj: t('module:major') })}</p>
-                    <Controller
-                        name='internalCode'
-                        control={control}
-                        render={({ field, fieldState, formState }) => (
-                            <InputText
-                                id='form_data_internal_code'
-                                value={field.value}
-                                placeholder={t('code_of', { obj: t('module:major') })}
-                                errorMessage={fieldState.error?.message}
-                                onChange={(e) => field.onChange(e.target.value)}
-                            />
-                        )}
-                    />
-                </div>
+                <Controller
+                    name='internalCode'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <InputText
+                            id='form_data_internal_code'
+                            value={field.value}
+                            label={t('code_of', { obj: t('module:major').toLowerCase() })}
+                            placeholder={t('code_of', { obj: t('module:major').toLowerCase() })}
+                            errorMessage={fieldState.error?.message}
+                            onChange={(e) => field.onChange(e.target.value)}
+                        />
+                    )}
+                />
 
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('name_of', { obj: t('module:major') })}</p>
-                    <Controller
-                        name='name'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <InputText
-                                id='form_data_name'
-                                value={field.value}
-                                placeholder={t('name_of', { obj: t('module:major') })}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                            />
-                        )}
-                    />
-                </div>
+                <Controller
+                    name='name'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <InputText
+                            id='form_data_name'
+                            value={field.value}
+                            label={t('name_of', { obj: t('module:major').toLowerCase() })}
+                            placeholder={t('name_of', { obj: t('module:major').toLowerCase() })}
+                            errorMessage={fieldState.error?.message}
+                            onChange={field.onChange}
+                        />
+                    )}
+                />
 
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('module:field.major.industry')}</p>
-                    <Controller
-                        name='industryId'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <Dropdown
-                                id='form_data_industry_id'
-                                placeholder={t('module:field.major.industry')}
-                                options={industryOptions}
-                                value={field.value}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                            />
-                        )}
-                    />
-                </div>
+                <Controller
+                    name='industryId'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <Dropdown
+                            id='form_data_industry_id'
+                            options={industryOptions}
+                            value={field.value}
+                            label={t('module:field.major.industry')}
+                            placeholder={t('module:field.major.industry')}
+                            errorMessage={fieldState.error?.message}
+                            onChange={field.onChange}
+                        />
+                    )}
+                />
 
                 <div className='flex align-items-center justify-content-end gap-2 absolute bottom-0 left-0 right-0 bg-white p-4'>
                     <Button

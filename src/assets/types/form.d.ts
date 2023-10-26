@@ -3,6 +3,7 @@ import * as yup from 'yup';
 import { OptionType } from './common';
 import { DropdownChangeEvent } from 'primereact/dropdown';
 import { CheckboxChangeEvent } from 'primereact/checkbox';
+import { RadioButtonChangeEvent } from 'primereact/radiobutton';
 
 interface FormType extends PropsWithChildren {
     headers?: Record<string, string>;
@@ -27,12 +28,13 @@ interface FormType extends PropsWithChildren {
 
 interface InputProps {
     id: string;
-    label?: string;
     value?: string | number;
-    blockClassName?: string;
+    label?: string;
     placeholder?: string;
+    blockClassName?: string;
     errorMessage?: string;
-    isRow?: boolean;
+    row?: boolean;
+    required?: boolean;
     onChange?: ChangeEventHandler<HTMLInputElement>;
     onBlur?: FocusEventHandler<HTMLInputElement>;
 }
@@ -53,8 +55,28 @@ interface DropdownProps extends InputProps {
 }
 
 interface TextAreaProps extends InputProps {
-    onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => {};
+    onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+}
+
+interface RadioListProps extends InputProps {
+    id?: string;
+    options: OptionType[];
+    onChange?: (e: RadioButtonChangeEvent) => void;
+}
+
+interface InputDateProps extends InputProps {
+    value?: Date;
+    format?: string;
+    onChange?: (e: FormEvent<Date, SyntheticEvent<Element, Event>>) => void;
 }
 
 export default FormType;
-export type { CheckboxProps, InputTextProps, InputPasswordProps, DropdownProps, TextAreaProps };
+export type {
+    CheckboxProps,
+    InputTextProps,
+    InputPasswordProps,
+    DropdownProps,
+    TextAreaProps,
+    RadioListProps,
+    InputDateProps,
+};

@@ -161,7 +161,7 @@ const Page = ({ params: { lng } }: PageProps) => {
                         <div className='flex align-items-center justify-content-between'>
                             <div>
                                 {signInMutation.isError && (
-                                    <small className='text-error'>{t('validation:custom.login_fail')}</small>
+                                    <small className='p-error'>{t('validation:custom.login_fail')}</small>
                                 )}
                                 {/* <Controller
 								name='remember_password'

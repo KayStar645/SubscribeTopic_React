@@ -30,46 +30,23 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
     const { t } = useTranslation(lng);
     const schema = yup.object({
         id: yup.string(),
-        internalCode: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:code_of', { obj: t('module:department') }).toLowerCase(),
-                }),
-            )
-            .max(50),
-        name: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:name_of', { obj: t('module:department') }).toLowerCase(),
-                }),
-            )
-            .max(150),
-        address: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:address').toLowerCase(),
-                }),
-            )
-            .max(200),
-        phoneNumber: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:phone_number').toLowerCase(),
-                }),
-            )
-            .max(10),
-        email: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:email').toLowerCase(),
-                }),
-            )
-            .max(30),
+        internalCode: yup.string().required(
+            t('validation:required', {
+                attribute: t('common:code_of', { obj: t('module:department') }).toLowerCase(),
+            }),
+        ),
+        name: yup.string().required(
+            t('validation:required', {
+                attribute: t('common:name_of', { obj: t('module:department') }).toLowerCase(),
+            }),
+        ),
+        phoneNumber: yup.string().length(
+            10,
+            t('validation:size.string', {
+                attribute: t('common:phone_number').toLowerCase(),
+                size: 10,
+            }),
+        ),
     });
     const { setValue, control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema) as Resolver<DepartmentType>,
@@ -141,93 +118,80 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
         >
             <Loader show={departmentMutation.isLoading} />
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('code_of', { obj: t('module:department') })}</p>
-                    <Controller
-                        name='internalCode'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <InputText
-                                id='form_data_internal_code'
-                                value={field.value}
-                                placeholder={t('code_of', { obj: t('module:department') })}
-                                errorMessage={fieldState.error?.message}
-                                onChange={(e) => field.onChange(e.target.value)}
-                            />
-                        )}
-                    />
-                </div>
+                <Controller
+                    name='internalCode'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <InputText
+                            id='form_data_internal_code'
+                            value={field.value}
+                            label={t('code_of', { obj: t('module:department').toLowerCase() })}
+                            placeholder={t('code_of', { obj: t('module:department').toLowerCase() })}
+                            errorMessage={fieldState.error?.message}
+                            onChange={field.onChange}
+                        />
+                    )}
+                />
 
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('name_of', { obj: t('module:department') })}</p>
-                    <Controller
-                        name='name'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <InputText
-                                id='form_data_name'
-                                value={field.value}
-                                placeholder={t('name_of', { obj: t('module:department') })}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                            />
-                        )}
-                    />
-                </div>
+                <Controller
+                    name='name'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <InputText
+                            id='form_data_name'
+                            value={field.value}
+                            label={t('name_of', { obj: t('module:department').toLowerCase() })}
+                            placeholder={t('name_of', { obj: t('module:department').toLowerCase() })}
+                            errorMessage={fieldState.error?.message}
+                            onChange={field.onChange}
+                        />
+                    )}
+                />
 
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('address')}</p>
-                    <Controller
-                        name='address'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <InputText
-                                id='form_data_address'
-                                value={field.value}
-                                placeholder={t('address')}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                                onBlur={field.onBlur}
-                            />
-                        )}
-                    />
-                </div>
+                <Controller
+                    name='phoneNumber'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <InputText
+                            id='form_data_phone_number'
+                            value={field.value}
+                            label={t('phone_number')}
+                            placeholder={t('phone_number')}
+                            errorMessage={fieldState.error?.message}
+                            onChange={field.onChange}
+                        />
+                    )}
+                />
 
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('phone_number')}</p>
-                    <Controller
-                        name='phoneNumber'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <InputText
-                                id='form_data_phone_number'
-                                value={field.value}
-                                placeholder={t('phone_number')}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                                onBlur={field.onBlur}
-                            />
-                        )}
-                    />
-                </div>
+                <Controller
+                    name='address'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <InputText
+                            id='form_data_address'
+                            value={field.value}
+                            label={t('address')}
+                            placeholder={t('address')}
+                            errorMessage={fieldState.error?.message}
+                            onChange={field.onChange}
+                        />
+                    )}
+                />
 
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('email')}</p>
-                    <Controller
-                        name='email'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <InputText
-                                id='form_data_email'
-                                value={field.value}
-                                placeholder={t('email')}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                                onBlur={field.onBlur}
-                            />
-                        )}
-                    />
-                </div>
+                <Controller
+                    name='email'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <InputText
+                            id='form_data_email'
+                            value={field.value}
+                            label={t('email')}
+                            placeholder={t('email')}
+                            errorMessage={fieldState.error?.message}
+                            onChange={field.onChange}
+                        />
+                    )}
+                />
 
                 <div className='flex align-items-center justify-content-end gap-2 absolute bottom-0 left-0 right-0 bg-white p-4'>
                     <Button

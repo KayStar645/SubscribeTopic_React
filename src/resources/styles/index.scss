@@ -1,6 +1,6 @@
+@import url('./themes/light.css');
 @import url('primeflex/primeflex.min.css');
 @import url('primeicons/primeicons.css');
-@import url('./themes/light.css');
 
 * {
     box-sizing: border-box;
@@ -28,10 +28,7 @@ body {
     background: var(--highlight-bg);
 }
 
-.text-highlight {
-    color: var(--highlight-text-color);
-}
-
-.text-error {
-    color: var(--red-600);
+.p-datepicker-calendar tbody tr td span {
+    text-align: center;
+    margin: 0 auto;
 }

@@ -16,7 +16,7 @@ const HomeLayout = ({ children, params: { lng } }: PageProps) => {
         //     selectFacultyRef.current?.show();
         // }
         setCookie(FACULTY_TOKEN, {
-            id: 3,
+            id: 1,
         });
     }, []);
 

@@ -10,7 +10,7 @@ const Dropdown = ({
     options,
     placeholder = '',
     blockClassName = '',
-    isRow = false,
+    row = false,
     errorMessage,
     onChange = () => {},
     onSelect = () => {},
@@ -19,13 +19,13 @@ const Dropdown = ({
 
     return (
         <div className={classNames(blockClassName)}>
-            <div className={classNames({ 'flex align-items-center': isRow })}>
+            <div className={classNames({ 'flex align-items-center': row })}>
                 {label && (
                     <label
                         htmlFor={id}
                         className={classNames('text-900 font-medium block', {
-                            'w-10rem mr-2': isRow,
-                            'mb-2': !isRow,
+                            'w-10rem mr-2': row,
+                            'mb-2': !row,
                         })}
                     >
                         {label}
@@ -33,6 +33,7 @@ const Dropdown = ({
                 )}
 
                 <PrimeDropdown
+                    inputId={id}
                     options={options}
                     value={selected}
                     optionValue='value'

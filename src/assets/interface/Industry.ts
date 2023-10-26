@@ -7,7 +7,6 @@ interface IndustryType extends GeneralType {
 
 interface IndustryParamType extends ParamType {
     isGetFaculty?: boolean;
-    facultyId?: number | string;
 }
 
 export type { IndustryParamType, IndustryType };

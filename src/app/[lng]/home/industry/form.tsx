@@ -22,7 +22,7 @@ interface IndustryFormRefType {
 
 interface IndustryFormType extends LanguageType {
     title: string;
-    onSuccess?: (industry: IndustryType) => void;
+    onSuccess?: (data: IndustryType) => void;
 }
 
 const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title, lng, onSuccess }, ref) => {
@@ -30,22 +30,16 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
     const { t } = useTranslation(lng);
     const schema = yup.object({
         id: yup.string(),
-        internalCode: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:code_of', { obj: t('module:industry') }).toLowerCase(),
-                }),
-            )
-            .max(50),
-        name: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:name_of', { obj: t('module:industry') }).toLowerCase(),
-                }),
-            )
-            .max(150),
+        internalCode: yup.string().required(
+            t('validation:required', {
+                attribute: t('common:code_of', { obj: t('module:industry') }).toLowerCase(),
+            }),
+        ),
+        name: yup.string().required(
+            t('validation:required', {
+                attribute: t('common:name_of', { obj: t('module:industry') }).toLowerCase(),
+            }),
+        ),
     });
     const { setValue, control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema) as Resolver<IndustryType>,
@@ -57,10 +51,8 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
         },
     });
     const industryMutation = useMutation<AxiosResponse, AxiosError<any, any>, IndustryType>({
-        mutationFn: (industry: IndustryType) => {
-            return industry.id === '0'
-                ? request.post(API.admin.industry, industry)
-                : request.update(API.admin.industry, industry);
+        mutationFn: (data: IndustryType) => {
+            return data.id === '0' ? request.post(API.admin.industry, data) : request.update(API.admin.industry, data);
         },
     });
 
@@ -113,39 +105,35 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
             <Loader show={industryMutation.isLoading} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('code_of', { obj: t('module:industry') })}</p>
-                    <Controller
-                        name='internalCode'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <InputText
-                                id='form_data_internal_code'
-                                value={field.value}
-                                placeholder={t('code_of', { obj: t('module:industry') })}
-                                errorMessage={fieldState.error?.message}
-                                onChange={(e) => field.onChange(e.target.value)}
-                            />
-                        )}
-                    />
-                </div>
+                <Controller
+                    name='internalCode'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <InputText
+                            id='form_data_internal_code'
+                            value={field.value}
+                            label={t('code_of', { obj: t('module:industry').toLowerCase() })}
+                            placeholder={t('code_of', { obj: t('module:industry').toLowerCase() })}
+                            errorMessage={fieldState.error?.message}
+                            onChange={(e) => field.onChange(e.target.value)}
+                        />
+                    )}
+                />
 
-                <div className='flex flex-column gap-2'>
-                    <p className='font-semibold'>{t('name_of', { obj: t('module:industry') })}</p>
-                    <Controller
-                        name='name'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <InputText
-                                id='form_data_name'
-                                value={field.value}
-                                placeholder={t('name_of', { obj: t('module:industry') })}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                            />
-                        )}
-                    />
-                </div>
+                <Controller
+                    name='name'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <InputText
+                            id='form_data_name'
+                            value={field.value}
+                            label={t('name_of', { obj: t('module:industry').toLowerCase() })}
+                            placeholder={t('name_of', { obj: t('module:industry').toLowerCase() })}
+                            errorMessage={fieldState.error?.message}
+                            onChange={field.onChange}
+                        />
+                    )}
+                />
 
                 <div className='flex align-items-center justify-content-end gap-2 absolute bottom-0 left-0 right-0 bg-white p-4'>
                     <Button

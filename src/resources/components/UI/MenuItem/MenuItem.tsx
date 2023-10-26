@@ -101,7 +101,7 @@ const MenuItem = (item: MenuItemType) => {
                         'hover:surface-hover': !active,
                         'text-900': !active,
                         'bg-highlight': code === menu.activeItem,
-                        'text-highlight': code === menu.activeItem,
+                        'p-highlight': code === menu.activeItem,
                     },
                 )}
                 href={to || '#'}

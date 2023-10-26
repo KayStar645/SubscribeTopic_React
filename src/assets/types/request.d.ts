@@ -14,6 +14,7 @@ interface ParamType {
     page?: number;
     pageSize?: number;
     isAllDetail?: boolean;
+    facultyId?: string | number;
 }
 
 interface ResponseType {

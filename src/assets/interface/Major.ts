@@ -8,7 +8,6 @@ interface MajorType extends GeneralType {
 interface MajorParamType extends ParamType {
     isGetIndustry?: boolean;
     isGetDean?: boolean;
-    facultyId?: string | number;
     industryId?: string | number;
 }
 

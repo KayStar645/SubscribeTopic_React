@@ -12,8 +12,6 @@ interface TeacherType extends GeneralType {
     type: string;
 }
 
-interface TeacherParamType extends ParamType {
-    facultyId?: string;
-}
+interface TeacherParamType extends ParamType {}
 
 export type { TeacherType, TeacherParamType };

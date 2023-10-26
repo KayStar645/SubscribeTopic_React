@@ -2,7 +2,7 @@
 
 import { API, ROWS_PER_PAGE } from '@assets/configs';
 import { request } from '@assets/helpers';
-import { IndustryParamType, IndustryType } from '@assets/interface';
+import { StudentParamType, StudentType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType } from '@assets/types/request';
@@ -19,25 +19,25 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import IndustryForm, { IndustryFormRefType } from './form';
+import MajorForm, { StudentFormRefType } from './form';
 
-const IndustryPage = ({ params: { lng } }: PageProps) => {
+const StudentPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
-    const formRef = useRef<IndustryFormRefType>(null);
+    const formRef = useRef<StudentFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-    const [selected, setSelected] = useState<IndustryType>();
-    const [params, setParams] = useState<IndustryParamType>({
+    const [selected, setSelected] = useState<StudentType>();
+    const [params, setParams] = useState<StudentParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
     });
 
-    const industryQuery = useQuery<AxiosResponse, AxiosError<any, any>, IndustryType[]>({
+    const studentQuery = useQuery<AxiosResponse, AxiosError<any, any>, StudentType[]>({
         refetchOnWindowFocus: false,
-        queryKey: ['industries', 'list', params],
+        queryKey: ['students', 'list', params],
         queryFn: async () => {
-            const response = await request.get(`${API.admin.industry}`, { params });
+            const response = await request.get(`${API.admin.student}`, { params });
 
             setMeta({
                 currentPage: response.data.extra.currentPage,
@@ -55,9 +55,9 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
             toast.error(error?.response?.data?.messages[0] || error.message);
         },
     });
-    const industryMutation = useMutation<AxiosResponse, AxiosError<any, any>, IndustryType>({
-        mutationFn: (data: IndustryType) => {
-            return request.remove(`${API.admin.industry}`, { params: { id: data.id } });
+    const studentMutation = useMutation<AxiosResponse, AxiosError<any, any>, StudentType>({
+        mutationFn: (data: StudentType) => {
+            return request.remove(`${API.admin.student}`, { params: { id: data.id } });
         },
     });
 
@@ -65,30 +65,30 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (industry: IndustryType) => {
+    const renderActions = (data: StudentType) => {
         return (
             <div className='flex align-items-center gap-3'>
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
                     onClick={() => {
-                        formRef.current?.show?.(industry);
-                        setSelected(industry);
+                        formRef.current?.show?.(data);
+                        setSelected(data);
                     }}
                 ></i>
                 <i
                     className='pi pi-trash hover:text-red-600 cursor-pointer'
                     onClick={(e) => {
-                        confirmModalRef.current?.show?.(e, industry, t('sure_to_delete', { obj: industry.name }));
+                        confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
                     }}
                 ></i>
             </div>
         );
     };
 
-    const onRemove = (industry: IndustryType) => {
-        industryMutation.mutate(industry, {
+    const onRemove = (data: StudentType) => {
+        studentMutation.mutate(data, {
             onSuccess: () => {
-                industryQuery.refetch();
+                studentQuery.refetch();
 
                 toast.success(t('request:update_success'));
             },
@@ -108,7 +108,7 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
             />
 
             <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
-                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:industry').toLowerCase() })}</p>
+                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:student').toLowerCase() })}</p>
                 <Button
                     label={t('create_new')}
                     icon='pi pi-plus'
@@ -123,10 +123,10 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                 <InputText placeholder={`${t('search')}...`} className='col-4' />
             </div>
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={industryQuery.isLoading || industryMutation.isLoading} />
+                <Loader show={studentQuery.isLoading || studentMutation.isLoading} />
 
                 <DataTable
-                    value={industryQuery.data || []}
+                    value={studentQuery.data || []}
                     rowHover={true}
                     stripedRows={true}
                     emptyMessage={t('list_empty')}
@@ -139,12 +139,27 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='internalCode'
-                        header={t('code_of', { obj: t('module:industry').toLowerCase() })}
+                        header={t('code_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='name'
-                        header={t('name_of', { obj: t('module:industry').toLowerCase() })}
+                        header={t('name_of', { obj: t('module:student').toLowerCase() })}
+                    />
+                    <Column
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        field='email'
+                        header={t('email')}
+                    />
+                    <Column
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        field='phoneNumber'
+                        header={t('phone_number')}
+                    />
+                    <Column
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        field='class'
+                        header={t('module:field.student.class')}
                     />
                 </DataTable>
 
@@ -185,18 +200,18 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                 </div>
             </div>
 
-            <IndustryForm
+            <MajorForm
                 lng={lng}
                 title={
                     selected?.id
                         ? t('update_at', { obj: selected.name })
-                        : t('create_new_at', { obj: t('module:industry').toLowerCase() })
+                        : t('create_new_at', { obj: t('module:student').toLowerCase() })
                 }
                 ref={formRef}
-                onSuccess={(data) => industryQuery.refetch()}
+                onSuccess={(data) => studentQuery.refetch()}
             />
         </div>
     );
 };
 
-export default IndustryPage;
+export default StudentPage;

@@ -10,7 +10,7 @@ import Loader from '@resources/components/UI/Loader';
 import { Dropdown } from '@resources/components/form';
 import ConfirmModal from '@resources/components/modal/ConfirmModal';
 import { useTranslation } from '@resources/i18n';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
@@ -52,7 +52,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
             return response.data.data || [];
         },
         onError: (error) => {
-            toast.error(error?.response?.data?.message || error.message);
+            toast.error(error?.response?.data?.messages[0] || error.message);
         },
     });
     const majorMutation = useMutation<AxiosResponse, AxiosError<any, any>, MajorType>({
@@ -93,7 +93,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                 toast.success(t('request:update_success'));
             },
             onError: (error) => {
-                toast.error(error?.response?.data?.message || error.message);
+                toast.error(error?.response?.data?.messages[0] || error.message);
             },
         });
     };
@@ -135,17 +135,17 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         header={t('action')}
                         body={renderActions}
-                    ></Column>
+                    />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='internalCode'
                         header={t('code_of', { obj: t('module:major').toLowerCase() })}
-                    ></Column>
+                    />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='name'
                         header={t('name_of', { obj: t('module:major').toLowerCase() })}
-                    ></Column>
+                    />
                 </DataTable>
 
                 <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>

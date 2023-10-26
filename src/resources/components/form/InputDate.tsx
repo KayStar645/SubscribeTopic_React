@@ -1,22 +1,19 @@
-import { InputTextProps } from '@assets/types/form';
-import { InputText as PrimeInputText } from 'primereact/inputtext';
+import { InputDateProps } from '@assets/types/form';
+import { Calendar as PrimeCalendar } from 'primereact/calendar';
 import { classNames } from 'primereact/utils';
-import { useState } from 'react';
 
-const InputText = ({
+const InputDate = ({
     id,
     label,
-    value = '',
+    value = undefined,
     placeholder = '',
     blockClassName = '',
+    format = 'dd/mm/yy',
     row = false,
     required = false,
     errorMessage,
     onChange = () => {},
-    onBlur = () => {},
-}: InputTextProps) => {
-    const [inputValue, setInputValue] = useState(value.toString());
-
+}: InputDateProps) => {
     return (
         <div className={classNames(blockClassName)}>
             <div className={classNames('block', { 'flex align-items-center': row })}>
@@ -33,20 +30,15 @@ const InputText = ({
                         {required && <span className='p-error'> ⁎</span>}
                     </label>
                 )}
-                <PrimeInputText
-                    id={id}
-                    value={inputValue}
+                <PrimeCalendar
+                    inputId={id}
+                    locale='vi'
+                    value={new Date(value || '')}
                     placeholder={placeholder}
-                    spellCheck={false}
-                    className={classNames('w-full flex-1 p-3', { 'p-invalid': !!errorMessage })}
-                    onChange={(e) => {
-                        setInputValue(e.target.value);
-                        onChange(e);
-                    }}
-                    onBlur={(e) => {
-                        setInputValue(e.target.value);
-                        onBlur(e);
-                    }}
+                    onChange={onChange}
+                    dateFormat={format}
+                    className={classNames('w-full flex-1', { 'p-invalid': !!errorMessage })}
+                    inputClassName='w-full p-3'
                 />
             </div>
 
@@ -55,4 +47,4 @@ const InputText = ({
     );
 };
 
-export { InputText };
+export { InputDate };

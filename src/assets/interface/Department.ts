@@ -6,7 +6,6 @@ interface DepartmentType extends GeneralType {
 }
 
 interface DepartmentParamType extends ParamType {
-    facultyId?: string | number;
     isGetHeadDepartment?: boolean;
     isGetFaculty?: boolean;
 }

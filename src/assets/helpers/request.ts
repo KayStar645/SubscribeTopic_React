@@ -2,7 +2,7 @@ import { AUTH_TOKEN, FACULTY_TOKEN, ROUTES } from '@assets/configs';
 import { FacultyType } from '@assets/interface';
 import { OptionType } from '@assets/types/common';
 import { MetaType, ParamType } from '@assets/types/request';
-import axios, { Axios, AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import _ from 'lodash';
 import { cookie } from '.';
 

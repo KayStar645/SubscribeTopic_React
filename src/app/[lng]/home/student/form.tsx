@@ -18,6 +18,7 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
+import { Calendar } from 'primereact/calendar';
 
 interface StudentFormRefType {
     show?: (data?: StudentType) => void;
@@ -28,6 +29,18 @@ interface StudentFormType extends LanguageType {
     title: string;
     onSuccess?: (faculty: StudentType) => void;
 }
+
+const defaultValues: StudentType = {
+    id: '',
+    internalCode: '',
+    name: '',
+    dateOfBirth: null,
+    gender: '',
+    class: '',
+    phoneNumber: '',
+    email: '',
+    majorId: '',
+};
 
 const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, lng, onSuccess }, ref) => {
     const [visible, setVisible] = useState(false);
@@ -54,17 +67,7 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
     });
     const { setValue, control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema) as Resolver<StudentType>,
-        defaultValues: {
-            id: '0',
-            internalCode: '',
-            name: '',
-            dateOfBirth: undefined,
-            gender: '',
-            class: '',
-            phoneNumber: '',
-            email: '',
-            majorId: '',
-        },
+        defaultValues,
     });
     const majorQuery = useQuery({
         enabled: false,
@@ -79,8 +82,9 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
     const studentMutation = useMutation<AxiosResponse, AxiosError<any, any>, StudentType>({
         mutationFn: (data: StudentType) => {
             if (data.dateOfBirth) {
-                data.dateOfBirth = moment(data.dateOfBirth).add({ days: 1 }).toDate();
+                data.dateOfBirth = new Date(moment(data.dateOfBirth).format('YYYY-MM-DD'));
             }
+
             return data.id == '0' ? request.post(API.admin.student, data) : request.update(API.admin.student, data);
         },
     });
@@ -107,6 +111,7 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
 
     const close = () => {
         setVisible(false);
+        reset(defaultValues);
     };
 
     const onSubmit = (data: StudentType) => {
@@ -114,7 +119,6 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
             onSuccess: (response) => {
                 toast.success(t('request:update_success'));
                 close();
-                reset();
                 onSuccess?.(response.data);
             },
             onError: (error) => {
@@ -137,7 +141,6 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
             contentClassName='mb-8'
             onHide={() => {
                 close();
-                reset();
             }}
         >
             <Loader show={studentMutation.isLoading} />
@@ -274,7 +277,6 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
                         severity='secondary'
                         onClick={(e) => {
                             e.preventDefault();
-                            reset();
                             close();
                         }}
                     />

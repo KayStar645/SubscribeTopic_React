@@ -25,11 +25,20 @@ interface DepartmentFormType extends LanguageType {
     onSuccess?: (data: DepartmentType) => void;
 }
 
+const defaultValues: DepartmentType = {
+    id: '0',
+    internalCode: '',
+    name: '',
+    phoneNumber: '',
+    address: '',
+    email: '',
+    facultyId: '',
+};
+
 const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ title, lng, onSuccess }, ref) => {
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
     const schema = yup.object({
-        id: yup.string(),
         internalCode: yup.string().required(
             t('validation:required', {
                 attribute: t('common:code_of', { obj: t('module:department') }).toLowerCase(),
@@ -48,21 +57,13 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
             }),
         ),
     });
-    const { setValue, control, handleSubmit, reset } = useForm({
+    const { control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema) as Resolver<DepartmentType>,
-        defaultValues: {
-            id: '0',
-            internalCode: '',
-            name: '',
-            phoneNumber: '',
-            address: '',
-            email: '',
-            facultyId: '',
-        },
+        defaultValues,
     });
     const departmentMutation = useMutation<AxiosResponse, AxiosError<any, any>, DepartmentType>({
         mutationFn: (data: DepartmentType) => {
-            return data.id === '0'
+            return data.id == '0'
                 ? request.post(API.admin.department, data)
                 : request.update(API.admin.department, data);
         },
@@ -71,18 +72,13 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
         setVisible(true);
 
         if (data) {
-            setValue('id', data.id);
-            setValue('internalCode', data.internalCode);
-            setValue('name', data.name);
-            setValue('phoneNumber', data.phoneNumber);
-            setValue('address', data.address);
-            setValue('email', data.email);
-            setValue('facultyId', data.facultyId);
+            reset(data);
         }
     };
 
     const close = () => {
         setVisible(false);
+        reset(defaultValues);
     };
 
     const onSubmit = (data: DepartmentType) => {
@@ -90,11 +86,10 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
             onSuccess: (response) => {
                 toast.success(t('request:update_success'));
                 close();
-                reset();
                 onSuccess?.(response.data);
             },
             onError: (error) => {
-                toast.error(error.response?.data?.messages[0] || error.message);
+                toast.error(error.response?.data?.messages?.[0] || error.message);
             },
         });
     };
@@ -113,7 +108,6 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
             contentClassName='mb-8'
             onHide={() => {
                 close();
-                reset();
             }}
         >
             <Loader show={departmentMutation.isLoading} />
@@ -200,7 +194,6 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
                         severity='secondary'
                         onClick={(e) => {
                             e.preventDefault();
-                            reset();
                             close();
                         }}
                     />

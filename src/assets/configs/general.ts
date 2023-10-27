@@ -15,4 +15,19 @@ const genders: OptionType[] = [
     },
 ];
 
-export { genders };
+const semesters: OptionType[] = [
+    {
+        label: 'Học kỳ 1',
+        value: 'Học kỳ 1',
+    },
+    {
+        label: 'Học kỳ 2',
+        value: 'Học kỳ 2',
+    },
+    {
+        label: 'Học kỳ 3',
+        value: 'Học kỳ 3',
+    },
+];
+
+export { genders, semesters };

@@ -51,7 +51,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
             return response.data.data || [];
         },
         onError: (error) => {
-            toast.error(error?.response?.data?.messages[0] || error.message);
+            toast.error(error?.response?.data?.messages?.[0] || error.message);
         },
     });
     const facultyMutation = useMutation<AxiosResponse, AxiosError<any, any>, FacultyType>({
@@ -64,34 +64,34 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (faculty: FacultyType) => {
+    const renderActions = (data: FacultyType) => {
         return (
             <div className='flex align-items-center gap-3'>
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
                     onClick={() => {
-                        formRef.current?.show?.(faculty);
-                        setSelected(faculty);
+                        formRef.current?.show?.(data);
+                        setSelected(data);
                     }}
                 ></i>
                 <i
                     className='pi pi-trash hover:text-red-600 cursor-pointer'
                     onClick={(e) => {
-                        confirmModalRef.current?.show?.(e, faculty, t('sure_to_delete', { obj: faculty.name }));
+                        confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
                     }}
                 ></i>
             </div>
         );
     };
 
-    const onRemove = (faculty: FacultyType) => {
-        facultyMutation.mutate(faculty, {
+    const onRemove = (data: FacultyType) => {
+        facultyMutation.mutate(data, {
             onSuccess: () => {
                 facultyQuery.refetch();
                 toast.success(t('request:update_success'));
             },
             onError: (error) => {
-                toast.error(error.response?.data?.messages[0] || error.message);
+                toast.error(error.response?.data?.messages?.[0] || error.message);
             },
         });
     };

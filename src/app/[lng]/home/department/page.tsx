@@ -52,7 +52,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
             return response.data.data || [];
         },
         onError: (error) => {
-            toast.error(error?.response?.data?.messages[0] || error.message);
+            toast.error(error?.response?.data?.messages?.[0] || error.message);
         },
     });
     const departmentMutation = useMutation<AxiosResponse, AxiosError<any, any>, DepartmentType>({
@@ -65,34 +65,34 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (department: DepartmentType) => {
+    const renderActions = (data: DepartmentType) => {
         return (
             <div className='flex align-items-center gap-3'>
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
                     onClick={() => {
-                        formRef.current?.show?.(department);
-                        setSelected(department);
+                        formRef.current?.show?.(data);
+                        setSelected(data);
                     }}
                 ></i>
                 <i
                     className='pi pi-trash hover:text-red-600 cursor-pointer'
                     onClick={(e) => {
-                        confirmModalRef.current?.show?.(e, department, t('sure_to_delete', { obj: department.name }));
+                        confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
                     }}
                 ></i>
             </div>
         );
     };
 
-    const onRemove = (department: DepartmentType) => {
-        departmentMutation.mutate(department, {
+    const onRemove = (data: DepartmentType) => {
+        departmentMutation.mutate(data, {
             onSuccess: () => {
                 departmentQuery.refetch();
                 toast.success(t('request:update_success'));
             },
             onError: (error) => {
-                toast.error(error?.response?.data?.messages[0] || error.message);
+                toast.error(error?.response?.data?.messages?.[0] || error.message);
             },
         });
     };

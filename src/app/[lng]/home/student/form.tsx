@@ -95,15 +95,7 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
         setVisible(true);
 
         if (data) {
-            setValue('id', data.id);
-            setValue('internalCode', data.internalCode);
-            setValue('name', data.name);
-            setValue('dateOfBirth', data.dateOfBirth);
-            setValue('gender', data.gender);
-            setValue('class', data.class);
-            setValue('phoneNumber', data.phoneNumber);
-            setValue('email', data.email);
-            setValue('majorId', data.majorId);
+            reset(data);
         }
 
         majorQuery.refetch();
@@ -122,7 +114,7 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
                 onSuccess?.(response.data);
             },
             onError: (error) => {
-                toast.error(error.response?.data?.messages[0] || error.message);
+                toast.error(error.response?.data?.messages?.[0] || error.message);
             },
         });
     };

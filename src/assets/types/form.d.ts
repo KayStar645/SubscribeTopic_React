@@ -67,6 +67,7 @@ interface RadioListProps extends InputProps {
 interface InputDateProps extends InputProps {
     value?: Date | null;
     format?: string;
+    time?: boolean;
     onChange?: (e: FormEvent<Date, SyntheticEvent<Element, Event>>) => void;
 }
 

@@ -10,6 +10,7 @@ const API = {
         major: '/major',
         industry: '/industry',
         student: '/student',
+        registration_period: '/registrationPeriod',
     },
 };
 

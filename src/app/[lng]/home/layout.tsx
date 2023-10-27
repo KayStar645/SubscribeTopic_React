@@ -2,22 +2,21 @@
 
 import { FACULTY_TOKEN } from '@assets/configs';
 import { PageProps } from '@assets/types/UI';
+import { SelectFacultyModalRefType } from '@assets/types/modal';
 import { Header, Sidebar } from '@resources/components/layout';
-import { setCookie } from 'cookies-next';
-import { useEffect } from 'react';
+import SelectFacultyModal from '@resources/components/modal/SelectFacultyModal';
+import { getCookie, setCookie } from 'cookies-next';
+import { useEffect, useRef } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const HomeLayout = ({ children, params: { lng } }: PageProps) => {
-    // const selectFacultyRef = useRef<SelectFacultyModalRefType>(null);
+    const selectFacultyRef = useRef<SelectFacultyModalRefType>(null);
 
     useEffect(() => {
-        // if (!getCookie(FACULTY_TOKEN)) {
-        //     selectFacultyRef.current?.show();
-        // }
-        setCookie(FACULTY_TOKEN, {
-            id: 1,
-        });
+        if (!getCookie(FACULTY_TOKEN)) {
+            selectFacultyRef.current?.show();
+        }
     }, []);
 
     return (
@@ -36,13 +35,13 @@ const HomeLayout = ({ children, params: { lng } }: PageProps) => {
 
             <ToastContainer />
 
-            {/* <SelectFacultyModal
+            <SelectFacultyModal
                 ref={selectFacultyRef}
                 lng={lng}
                 onConfirm={(item) => {
                     setCookie(FACULTY_TOKEN, item);
                 }}
-            /> */}
+            />
         </body>
     );
 };

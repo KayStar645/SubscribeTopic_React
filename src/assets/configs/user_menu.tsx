@@ -31,7 +31,7 @@ const getUserMenu = (t: TFunction, lng: string, pathName: string): MenuItemType[
             parent: 'logout',
             label: t('menu:logout'),
             icon: <FaArrowRightFromBracket />,
-            to: `/${lng}/${ROUTES.auth.sign_in}`,
+            to: `/${lng}${ROUTES.auth.sign_in}`,
         },
         {
             code: 'change_faculty',

@@ -4,3 +4,4 @@ export * from './Department';
 export * from './Major';
 export * from './Industry';
 export * from './Student';
+export * from './RegistrationPeriod';

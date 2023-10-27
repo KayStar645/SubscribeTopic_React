@@ -1,4 +1,4 @@
-import { AUTH_TOKEN, USER } from '@assets/configs';
+import { AUTH_TOKEN, FACULTY_TOKEN, USER } from '@assets/configs';
 import { getUserMenu } from '@assets/configs/user_menu';
 import { language } from '@assets/helpers';
 import { useDispatch } from '@assets/redux';
@@ -32,6 +32,7 @@ const Header = ({ lng }: LanguageType) => {
         const onLogoutClick = () => {
             deleteCookie(AUTH_TOKEN);
             deleteCookie(USER);
+            deleteCookie(FACULTY_TOKEN);
             dispatch(menuSlice.actions.onItemClick({ activeItem: 'home', openMenu: false, parent: '' }));
         };
 

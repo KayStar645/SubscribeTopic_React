@@ -51,6 +51,8 @@ const Page = ({ params: { lng } }: PageProps) => {
                 }
 
                 router.push(language.addPrefixLanguage(lng, ROUTES.admin.home));
+
+                console.log(language.addPrefixLanguage(lng, ROUTES.admin.home));
             },
         });
     };

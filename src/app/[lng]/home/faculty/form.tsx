@@ -27,27 +27,30 @@ interface FacultyFormType extends LanguageType {
     onSuccess?: (data: FacultyType) => void;
 }
 
+const defaultValues: FacultyType = {
+    id: '0',
+    internalCode: '',
+    name: '',
+    phoneNumber: '',
+    address: '',
+    email: '',
+    dean_TeacherId: '',
+};
+
 const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, lng, onSuccess }, ref) => {
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
     const schema = yup.object({
-        id: yup.string(),
-        internalCode: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:code_of', { obj: t('module:faculty') }).toLowerCase(),
-                }),
-            )
-            .max(50),
-        name: yup
-            .string()
-            .required(
-                t('validation:required', {
-                    attribute: t('common:name_of', { obj: t('module:faculty') }).toLowerCase(),
-                }),
-            )
-            .max(150),
+        internalCode: yup.string().required(
+            t('validation:required', {
+                attribute: t('common:code_of', { obj: t('module:faculty') }).toLowerCase(),
+            }),
+        ),
+        name: yup.string().required(
+            t('validation:required', {
+                attribute: t('common:name_of', { obj: t('module:faculty') }).toLowerCase(),
+            }),
+        ),
         phoneNumber: yup.string().length(
             10,
             t('validation:size.string', {
@@ -56,17 +59,9 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
             }),
         ),
     });
-    const { setValue, control, handleSubmit, reset, getValues } = useForm({
+    const { control, handleSubmit, reset, getValues } = useForm({
         resolver: yupResolver(schema) as Resolver<FacultyType>,
-        defaultValues: {
-            id: '0',
-            internalCode: '',
-            name: '',
-            phoneNumber: '',
-            address: '',
-            email: '',
-            dean_TeacherId: '',
-        },
+        defaultValues,
     });
     const teacherQuery = useQuery({
         queryKey: ['faculty_teachers'],
@@ -92,18 +87,13 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
         teacherQuery.refetch();
 
         if (data) {
-            setValue('id', data.id);
-            setValue('internalCode', data.internalCode);
-            setValue('name', data.name);
-            setValue('phoneNumber', data.phoneNumber);
-            setValue('address', data.address);
-            setValue('email', data.email);
-            setValue('dean_TeacherId', data.dean_TeacherId);
+            reset(data);
         }
     };
 
     const close = () => {
         setVisible(false);
+        reset(defaultValues);
     };
 
     const onSubmit = (data: FacultyType) => {
@@ -111,11 +101,10 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
             onSuccess: (response) => {
                 toast.success(t('request:update_success'));
                 close();
-                reset();
                 onSuccess?.(response.data);
             },
             onError: (error) => {
-                toast.error(error.response?.data?.messages[0] || error.message);
+                toast.error(error.response?.data?.messages?.[0] || error.message);
             },
         });
     };
@@ -134,7 +123,6 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
             contentClassName='mb-8'
             onHide={() => {
                 close();
-                reset();
             }}
         >
             <Loader show={facultyMutation.isLoading} />
@@ -241,7 +229,6 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
                         severity='secondary'
                         onClick={(e) => {
                             e.preventDefault();
-                            reset();
                             close();
                         }}
                     />

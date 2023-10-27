@@ -28,6 +28,7 @@
         "i18next-browser-languagedetector": "^7.1.0",
         "i18next-resources-to-backend": "^1.1.4",
         "js-cookies": "^1.0.4",
+        "jwt-decode": "^4.0.0",
         "lodash": "^4.17.21",
         "moment": "^2.29.4",
         "next": "13.5.4",

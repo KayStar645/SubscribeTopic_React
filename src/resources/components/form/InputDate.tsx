@@ -10,6 +10,7 @@ const InputDate = ({
     blockClassName = '',
     format = 'dd/mm/yy',
     row = false,
+    time = false,
     required = false,
     errorMessage,
     onChange = () => {},
@@ -33,12 +34,14 @@ const InputDate = ({
                 <PrimeCalendar
                     inputId={id}
                     locale='vi'
-                    value={new Date(value || '')}
+                    hideOnDateTimeSelect={true}
+                    value={value ? new Date(value) : null}
                     placeholder={placeholder}
                     onChange={onChange}
                     dateFormat={format}
                     className={classNames('w-full flex-1', { 'p-invalid': !!errorMessage })}
                     inputClassName='w-full p-3'
+                    showTime={time}
                 />
             </div>
 

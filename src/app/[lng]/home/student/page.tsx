@@ -52,7 +52,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
             return response.data.data || [];
         },
         onError: (error) => {
-            toast.error(error?.response?.data?.messages[0] || error.message);
+            toast.error(error?.response?.data?.messages?.[0] || error.message);
         },
     });
     const studentMutation = useMutation<AxiosResponse, AxiosError<any, any>, StudentType>({
@@ -93,7 +93,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                 toast.success(t('request:update_success'));
             },
             onError: (error) => {
-                toast.error(error?.response?.data?.messages[0] || error.message);
+                toast.error(error?.response?.data?.messages?.[0] || error.message);
             },
         });
     };

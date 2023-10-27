@@ -30,5 +30,7 @@
     "yes": "Có",
     "welcome_to_system": "Chào mừng đển với hệ thống",
     "gender": "Giới tính",
-    "date_of_birth": "Ngày sinh"
+    "date_of_birth": "Ngày sinh",
+    "time_start": "Thời gian bắt đầu",
+    "time_end": "Thời gian kết thúc"
 }

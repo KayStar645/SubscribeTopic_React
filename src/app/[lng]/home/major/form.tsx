@@ -27,11 +27,17 @@ interface MajorFormType extends LanguageType {
     onSuccess?: (data: MajorType) => void;
 }
 
+const defaultValues: MajorType = {
+    id: '0',
+    internalCode: '',
+    name: '',
+    industryId: '',
+};
+
 const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onSuccess }, ref) => {
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
     const schema = yup.object({
-        id: yup.string(),
         internalCode: yup.string().required(
             t('validation:required', {
                 attribute: t('common:code_of', { obj: t('module:major') }).toLowerCase(),
@@ -43,14 +49,9 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
             }),
         ),
     });
-    const { setValue, control, handleSubmit, reset } = useForm({
+    const { control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema) as Resolver<MajorType>,
-        defaultValues: {
-            id: '0',
-            internalCode: '',
-            name: '',
-            industryId: '',
-        },
+        defaultValues,
     });
     const industryQuery = useQuery({
         enabled: false,
@@ -64,7 +65,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
     });
     const majorMutation = useMutation<AxiosResponse, AxiosError<any, any>, MajorType>({
         mutationFn: (data: MajorType) => {
-            return data.id === '0' ? request.post(API.admin.major, data) : request.update(API.admin.major, data);
+            return data.id == '0' ? request.post(API.admin.major, data) : request.update(API.admin.major, data);
         },
     });
     const industryOptions: OptionType[] =
@@ -74,10 +75,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
         setVisible(true);
 
         if (data) {
-            setValue('id', data.id);
-            setValue('internalCode', data.internalCode);
-            setValue('name', data.name);
-            setValue('industryId', data.industryId);
+            reset(data);
         }
 
         industryQuery.refetch();
@@ -85,6 +83,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
 
     const close = () => {
         setVisible(false);
+        reset(defaultValues);
     };
 
     const onSubmit = (data: MajorType) => {
@@ -92,11 +91,10 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
             onSuccess: (response) => {
                 toast.success(t('request:update_success'));
                 close();
-                reset();
                 onSuccess?.(response.data);
             },
             onError: (error) => {
-                toast.error(error.response?.data?.messages[0] || error.message);
+                toast.error(error.response?.data?.messages?.[0] || error.message);
             },
         });
     };
@@ -115,7 +113,6 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
             contentClassName='mb-8'
             onHide={() => {
                 close();
-                reset();
             }}
         >
             <Loader show={majorMutation.isLoading} />
@@ -174,7 +171,6 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
                         severity='secondary'
                         onClick={(e) => {
                             e.preventDefault();
-                            reset();
                             close();
                         }}
                     />

@@ -1,6 +1,6 @@
 'use client';
 
-import { API, AUTH_TOKEN, ROUTES, TOKEN_EXPIRE, USER } from '@assets/configs';
+import { API, AUTH_TOKEN, FACULTY_TOKEN, ROUTES } from '@assets/configs';
 import { language, request } from '@assets/helpers';
 import { PageProps } from '@assets/types/UI';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,17 +10,16 @@ import { useTranslation } from '@resources/i18n';
 import brand from '@resources/image/info/brand.png';
 import { useMutation } from '@tanstack/react-query';
 import { setCookie } from 'cookies-next';
-import { usePathname, useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
+import { useRouter } from 'next/navigation';
 import { PrimeIcons } from 'primereact/api';
 import { Button } from 'primereact/button';
-import { DropdownChangeEvent } from 'primereact/dropdown';
 import { Image } from 'primereact/image';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 const Page = ({ params: { lng } }: PageProps) => {
     const router = useRouter();
-    const pathName = usePathname();
     const { t } = useTranslation(lng);
     const schema = yup.object({
         userName: yup.string().required(t('validation:required', { attribute: t('account').toLowerCase() })),
@@ -40,34 +39,24 @@ const Page = ({ params: { lng } }: PageProps) => {
     const onSubmit = (data: any) => {
         signInMutation.mutate(data, {
             onSuccess(response) {
-                setCookie(AUTH_TOKEN, response.data.data.token, { expires: TOKEN_EXPIRE });
-                setCookie(
-                    USER,
-                    { id: response.data.data.id, name: response.data.data.userName },
-                    { expires: TOKEN_EXPIRE },
-                );
+                const tokenData: any = jwtDecode(response.data.data.token);
+                const faculty = JSON.parse(tokenData.faculty);
+
+                if (response.data?.data?.tokenData?.user) {
+                    setCookie(AUTH_TOKEN, response.data.data.tokenData.user, { expires: tokenData.exp });
+                }
+
+                if (faculty) {
+                    setCookie(FACULTY_TOKEN, faculty);
+                }
 
                 router.push(language.addPrefixLanguage(lng, ROUTES.admin.home));
             },
         });
     };
 
-    const onLanguageChange = (e: DropdownChangeEvent) => {
-        router.push(language.createNewPath(e.value, pathName));
-    };
-
     return (
         <div className='flex align-items-center justify-content-center h-full w-full'>
-            {/* <div className='absolute right-0 top-0 p-4 sm:p-4 md:p-6 lg:px-8'>
-				<Dropdown
-					id='language'
-					value={lng}
-					placeholder={t('language')}
-					options={LANGUAGES}
-					onChange={onLanguageChange}
-				/>
-			</div> */}
-
             <div className='flex flex-wrap shadow-2 w-full border-round-2xl overflow-hidden'>
                 <Loader show={signInMutation.isLoading} />
 

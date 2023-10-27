@@ -9,6 +9,7 @@ const ROUTES = {
         major: '/home/major',
         industry: '/home/industry',
         student: '/home/student',
+        registration_period: '/home/registration_period',
     },
 
     auth: {

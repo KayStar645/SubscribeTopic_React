@@ -25,11 +25,17 @@ interface IndustryFormType extends LanguageType {
     onSuccess?: (data: IndustryType) => void;
 }
 
+const defaultValues: IndustryType = {
+    id: '0',
+    internalCode: '',
+    name: '',
+    facultyId: '',
+};
+
 const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title, lng, onSuccess }, ref) => {
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
     const schema = yup.object({
-        id: yup.string(),
         internalCode: yup.string().required(
             t('validation:required', {
                 attribute: t('common:code_of', { obj: t('module:industry') }).toLowerCase(),
@@ -41,18 +47,13 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
             }),
         ),
     });
-    const { setValue, control, handleSubmit, reset } = useForm({
+    const { control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema) as Resolver<IndustryType>,
-        defaultValues: {
-            id: '0',
-            internalCode: '',
-            name: '',
-            facultyId: '',
-        },
+        defaultValues,
     });
     const industryMutation = useMutation<AxiosResponse, AxiosError<any, any>, IndustryType>({
         mutationFn: (data: IndustryType) => {
-            return data.id === '0' ? request.post(API.admin.industry, data) : request.update(API.admin.industry, data);
+            return data.id == '0' ? request.post(API.admin.industry, data) : request.update(API.admin.industry, data);
         },
     });
 
@@ -60,15 +61,13 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
         setVisible(true);
 
         if (data) {
-            setValue('id', data.id);
-            setValue('internalCode', data.internalCode);
-            setValue('name', data.name);
-            setValue('facultyId', data.facultyId);
+            reset(data);
         }
     };
 
     const close = () => {
         setVisible(false);
+        reset();
     };
 
     const onSubmit = (data: IndustryType) => {
@@ -76,11 +75,10 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
             onSuccess: (response) => {
                 toast.success(t('request:update_success'));
                 close();
-                reset();
                 onSuccess?.(response.data);
             },
             onError: (error) => {
-                toast.error(error.response?.data?.messages[0] || error.message);
+                toast.error(error.response?.data?.messages?.[0] || error.message);
             },
         });
     };
@@ -99,7 +97,6 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
             contentClassName='mb-8'
             onHide={() => {
                 close();
-                reset();
             }}
         >
             <Loader show={industryMutation.isLoading} />
@@ -142,7 +139,6 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
                         severity='secondary'
                         onClick={(e) => {
                             e.preventDefault();
-                            reset();
                             close();
                         }}
                     />

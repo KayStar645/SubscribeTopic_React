@@ -5,5 +5,6 @@
     "teacher": "Giảng viên",
     "major": "Chuyên ngành",
     "industry": "Ngành",
-    "student": "Sinh viên"
+    "student": "Sinh viên",
+    "registration_period": "Đợt đăng ký"
 }

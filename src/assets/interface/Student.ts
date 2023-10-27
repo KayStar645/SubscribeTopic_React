@@ -2,7 +2,7 @@ import { ParamType } from '@assets/types/request';
 import { GeneralType } from './Default';
 
 interface StudentType extends GeneralType {
-    dateOfBirth?: Date;
+    dateOfBirth?: Date | null;
     gender?: string;
     class?: string;
     phoneNumber?: string;

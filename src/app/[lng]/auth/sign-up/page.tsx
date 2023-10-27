@@ -53,10 +53,6 @@ const Page = ({ params: { lng } }: PageProps) => {
         });
     };
 
-    const onLanguageChange = (e: DropdownChangeEvent) => {
-        router.push(language.createNewPath(e.value, pathName));
-    };
-
     return (
         <div className='flex align-items-center justify-content-center h-full w-full'>
             <div

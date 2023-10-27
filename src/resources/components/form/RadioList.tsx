@@ -1,7 +1,7 @@
 import { RadioListProps } from '@assets/types/form';
 import { RadioButton as PrimeRadioButton } from 'primereact/radiobutton';
 import { classNames } from 'primereact/utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const RadioList = ({
     label,
@@ -14,6 +14,10 @@ const RadioList = ({
     onChange = () => {},
 }: RadioListProps) => {
     const [current, setCurrent] = useState<string | number | undefined>(value.toString());
+
+    useEffect(() => {
+        setCurrent(value);
+    }, [value]);
 
     return (
         <div className={classNames(blockClassName)}>

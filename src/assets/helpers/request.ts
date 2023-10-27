@@ -1,8 +1,7 @@
 import { AUTH_TOKEN, FACULTY_TOKEN, ROUTES } from '@assets/configs';
-import { FacultyType } from '@assets/interface';
 import { OptionType } from '@assets/types/common';
 import { MetaType, ParamType } from '@assets/types/request';
-import axios, { Axios, AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import _ from 'lodash';
 import { cookie } from '.';
 
@@ -19,7 +18,7 @@ request.interceptors.request.use(
     (config) => {
         while (true) {
             const token = cookie.get(AUTH_TOKEN);
-            const faculty: FacultyType = cookie.get(FACULTY_TOKEN);
+            const faculty: any = cookie.get(FACULTY_TOKEN);
 
             if (!config.headers.Authorization) {
                 config.headers.Authorization = '';
@@ -42,11 +41,11 @@ request.interceptors.request.use(
             }
 
             if (config.method === 'get') {
-                config.params.facultyId = faculty?.id;
+                config.params.facultyId = faculty?.Id;
             }
 
             if (config.method === 'put' || config.method === 'post' || config.method === 'delete') {
-                config.data.facultyId = faculty?.id;
+                config.data.facultyId = faculty?.Id;
             }
 
             break;

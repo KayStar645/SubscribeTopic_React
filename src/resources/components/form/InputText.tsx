@@ -1,7 +1,7 @@
 import { InputTextProps } from '@assets/types/form';
 import { InputText as PrimeInputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const InputText = ({
     id,
@@ -16,6 +16,10 @@ const InputText = ({
     onBlur = () => {},
 }: InputTextProps) => {
     const [inputValue, setInputValue] = useState(value.toString());
+
+    useEffect(() => {
+        setInputValue(value.toString());
+    }, [value]);
 
     return (
         <div className={classNames(blockClassName)}>

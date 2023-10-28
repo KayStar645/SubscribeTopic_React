@@ -77,7 +77,7 @@ const Header = ({ lng }: LanguageType) => {
                     <Avatar icon='pi pi-user' className='bg-primary text-white border-circle' />
                     <p>{user.name}</p>
 
-                    <i className='pi pi-angle-down ml-2'></i>
+                    <i className='pi pi-angle-down ml-2' />
                 </div>
 
                 <OverlayPanel ref={userModalRef} className='px-2 py-1'>

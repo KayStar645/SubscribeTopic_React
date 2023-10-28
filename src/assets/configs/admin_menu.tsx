@@ -60,6 +60,12 @@ const getAdminMenu = (t: TFunction, lng: string): MenuItemType[] => {
                     label: t('menu:registration_period'),
                     to: `/${lng}/${ROUTES.admin.registration_period}`,
                 },
+                {
+                    code: 'student_join',
+                    parent: 'master_data',
+                    label: t('menu:student_join'),
+                    to: `/${lng}/${ROUTES.admin.student_join}`,
+                },
             ],
         },
     ];

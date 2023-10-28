@@ -10,6 +10,7 @@ const ROUTES = {
         industry: '/home/industry',
         student: '/home/student',
         registration_period: '/home/registration_period',
+        student_join: '/home/student_join',
     },
 
     auth: {

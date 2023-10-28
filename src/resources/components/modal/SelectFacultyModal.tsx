@@ -19,6 +19,8 @@ const SelectFacultyModal = forwardRef<SelectFacultyModalRefType, SelectFacultyMo
     const [visible, setVisible] = useState(false);
     const dispatch = useDispatch();
     const facultyQuery = useQuery<FacultyType[]>({
+        refetchOnWindowFocus: false,
+        enabled: false,
         queryKey: ['select_faculty'],
         queryFn: async () => {
             const response = await request.get(`${API.admin.faculty}`);
@@ -31,6 +33,7 @@ const SelectFacultyModal = forwardRef<SelectFacultyModalRefType, SelectFacultyMo
     const show = (selected?: FacultyType) => {
         setSelected(selected || facultyQuery.data?.[0]);
         setVisible(true);
+        facultyQuery.refetch();
     };
 
     const hide = () => {

@@ -11,6 +11,7 @@ const API = {
         industry: '/industry',
         student: '/student',
         registration_period: '/registrationPeriod',
+        student_join: '/studentJoin',
     },
 };
 

@@ -5,6 +5,7 @@
     "industry": "Ngành",
     "student": "Sinh viên",
     "registration_period": "Đợt đăng ký",
+    "student_join": "Đợt tham gia của sinh viên",
 
     "field": {
         "faculty": {
@@ -26,7 +27,11 @@
         "registration_period": {
             "semester": "Học kỳ",
             "phase": "Đợt",
-            "schoolYear": "Năm học"
+            "school_year": "Năm học"
+        },
+        "student_join": {
+            "registration_period": "Đợt tham gia",
+            "student": "Sinh viên"
         }
     }
 }

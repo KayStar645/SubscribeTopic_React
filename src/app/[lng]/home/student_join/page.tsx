@@ -2,7 +2,7 @@
 
 import { API, ROWS_PER_PAGE } from '@assets/configs';
 import { request } from '@assets/helpers';
-import { DepartmentParamType, DepartmentType } from '@assets/interface';
+import { StudentJoinParamType, StudentJoinType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType } from '@assets/types/request';
@@ -19,25 +19,27 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import DepartmentForm, { DepartmentFormRefType } from './form';
+import StudentJoinForm, { StudentJoinFormRefType } from './form';
 
-const DepartmentPage = ({ params: { lng } }: PageProps) => {
+const StudentJoinPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
-    const formRef = useRef<DepartmentFormRefType>(null);
+    const formRef = useRef<StudentJoinFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-    const [params, setParams] = useState<DepartmentParamType>({
+    const [selected, setSelected] = useState<StudentJoinType>();
+    const [params, setParams] = useState<StudentJoinParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
+        isGetStudent: true,
+        isGetRegistrationPeriod: true,
     });
-    const [selected, setSelected] = useState<DepartmentType>();
 
-    const departmentQuery = useQuery<AxiosResponse, AxiosError<any, any>, DepartmentType[]>({
+    const studentJoinQuery = useQuery<AxiosResponse, AxiosError<any, any>, StudentJoinType[]>({
         refetchOnWindowFocus: false,
-        queryKey: ['departments', 'list', params],
+        queryKey: ['student_joins', 'list', params],
         queryFn: async () => {
-            const response = await request.get(`${API.admin.department}`, { params });
+            const response = await request.get(`${API.admin.student_join}`, { params });
 
             setMeta({
                 currentPage: response.data.extra.currentPage,
@@ -55,9 +57,9 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
             toast.error(error?.response?.data?.messages?.[0] || error.message);
         },
     });
-    const departmentMutation = useMutation<AxiosResponse, AxiosError<any, any>, DepartmentType>({
-        mutationFn: (data: DepartmentType) => {
-            return request.remove(`${API.admin.department}`, { params: { id: data.id } });
+    const studentJoinMutation = useMutation<AxiosResponse, AxiosError<any, any>, StudentJoinType>({
+        mutationFn: (data: StudentJoinType) => {
+            return request.remove(`${API.admin.student_join}`, { params: { id: data.id } });
         },
     });
 
@@ -65,7 +67,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (data: DepartmentType) => {
+    const renderActions = (data: StudentJoinType) => {
         return (
             <div className='flex align-items-center gap-3'>
                 <i
@@ -85,10 +87,11 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
         );
     };
 
-    const onRemove = (data: DepartmentType) => {
-        departmentMutation.mutate(data, {
+    const onRemove = (data: StudentJoinType) => {
+        studentJoinMutation.mutate(data, {
             onSuccess: () => {
-                departmentQuery.refetch();
+                studentJoinQuery.refetch();
+
                 toast.success(t('request:update_success'));
             },
             onError: (error) => {
@@ -108,7 +111,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
 
             <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
                 <p className='text-xl font-semibold'>
-                    {t('list_of', { module: t('module:department').toLowerCase() })}
+                    {t('list_of', { module: t('module:student_join').toLowerCase() })}
                 </p>
                 <Button
                     label={t('create_new')}
@@ -124,10 +127,10 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 <InputText placeholder={`${t('search')}...`} className='col-4' />
             </div>
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={departmentQuery.isLoading || departmentMutation.isLoading} />
+                <Loader show={studentJoinQuery.isLoading || studentJoinMutation.isLoading} />
 
                 <DataTable
-                    value={departmentQuery.data || []}
+                    value={studentJoinQuery.data || []}
                     rowHover={true}
                     stripedRows={true}
                     emptyMessage={t('list_empty')}
@@ -139,28 +142,23 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='internalCode'
-                        header={t('code_of', { obj: t('module:department').toLowerCase() })}
+                        field='student.name'
+                        header={t('name_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='name'
-                        header={t('name_of', { obj: t('module:department').toLowerCase() })}
+                        field='registrationPeriod.schoolYear'
+                        header={t('module:field.registration_period.school_year')}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='address'
-                        header={t('address')}
+                        field='registrationPeriod.semester'
+                        header={t('module:field.registration_period.semester')}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='phoneNumber'
-                        header={t('phone_number')}
-                    />
-                    <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='email'
-                        header={t('email')}
+                        field='registrationPeriod.phase'
+                        header={t('module:field.registration_period.phase')}
                     />
                 </DataTable>
 
@@ -201,18 +199,18 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 </div>
             </div>
 
-            <DepartmentForm
+            <StudentJoinForm
                 lng={lng}
                 title={
                     selected?.id
                         ? t('update_at', { obj: selected.name })
-                        : t('create_new_at', { obj: t('module:department').toLowerCase() })
+                        : t('create_new_at', { obj: t('module:student_join').toLowerCase() })
                 }
                 ref={formRef}
-                onSuccess={(data) => departmentQuery.refetch()}
+                onSuccess={(data) => studentJoinQuery.refetch()}
             />
         </div>
     );
 };
 
-export default DepartmentPage;
+export default StudentJoinPage;

@@ -6,6 +6,7 @@ interface RegistrationPeriodType extends GeneralType {
     timeStart?: Date | null;
     timeEnd?: Date | null;
     phase?: string;
+    schoolYear?: string;
 }
 
 interface RegistrationPeriodParamType extends ParamType {}

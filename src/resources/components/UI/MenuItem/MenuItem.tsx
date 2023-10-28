@@ -114,7 +114,7 @@ const MenuItem = (item: MenuItemType) => {
                     {label}
                 </p>
 
-                {items && items.length > 0 && <i className='pi pi-chevron-down text-sm'></i>}
+                {items && items.length > 0 && <i className='pi pi-chevron-down text-sm' />}
             </Link>
 
             <motion.div

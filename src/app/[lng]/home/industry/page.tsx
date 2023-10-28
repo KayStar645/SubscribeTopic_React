@@ -74,13 +74,13 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                         formRef.current?.show?.(data);
                         setSelected(data);
                     }}
-                ></i>
+                />
                 <i
                     className='pi pi-trash hover:text-red-600 cursor-pointer'
                     onClick={(e) => {
                         confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
                     }}
-                ></i>
+                />
             </div>
         );
     };

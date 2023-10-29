@@ -181,4 +181,3 @@ const NotificationForm = ({ params }: PageProps) => {
 };
 
 export default NotificationForm;
-export type { NotificationFormRefType };

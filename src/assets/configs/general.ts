@@ -1,33 +1,49 @@
 import { OptionType } from '@assets/types/common';
+import { TFunction } from 'i18next';
 
-const genders: OptionType[] = [
+const genders = (t: TFunction): OptionType[] => [
     {
-        label: 'Nam',
-        value: 'Nam',
+        label: t('male'),
+        value: t('male'),
     },
     {
-        label: 'Nữ',
-        value: 'Nữ',
+        label: t('female'),
+        value: t('female'),
     },
     {
-        label: 'Khác',
-        value: 'Khác',
+        label: t('other'),
+        value: t('other'),
     },
 ];
 
-const semesters: OptionType[] = [
+const semesters = (t: TFunction): OptionType[] => [
     {
-        label: 'Học kỳ 1',
-        value: 'Học kỳ 1',
+        label: t('semester', { number: 1 }),
+        value: t('semester', { number: 1 }),
     },
     {
-        label: 'Học kỳ 2',
-        value: 'Học kỳ 2',
+        label: t('semester', { number: 2 }),
+        value: t('semester', { number: 2 }),
     },
     {
-        label: 'Học kỳ 3',
-        value: 'Học kỳ 3',
+        label: t('semester', { number: 3 }),
+        value: t('semester', { number: 3 }),
     },
 ];
 
-export { genders, semesters };
+const dateFilters = (t: TFunction): OptionType[] => [
+    {
+        label: `${t('filter_date_created_down')}`,
+        value: 0,
+        name: 'DateCreated',
+        code: 'date_decrease',
+    },
+    {
+        label: `${t('filter_date_created_up')}`,
+        value: 1,
+        name: 'DateCreated',
+        code: 'date_increase',
+    },
+];
+
+export { genders, semesters, dateFilters };

@@ -1,13 +1,13 @@
 'use client';
 
-import '../../resources/styles/index.scss';
+import 'react-toastify/dist/ReactToastify.css';
+import '../../resources/styles/index.css';
 
 import ReduxProvider from '@assets/providers/ReduxProvider';
 import { PageProps } from '@assets/types/UI';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dir } from 'i18next';
-
-import { locale, addLocale } from 'primereact/api';
+import { APIOptions, PrimeReactProvider, addLocale, locale } from 'primereact/api';
 
 const queryClient = new QueryClient();
 
@@ -50,11 +50,17 @@ addLocale('vi', {
     clear: 'Hủy',
 });
 
+const primeReactValue: Partial<APIOptions> = {
+    ripple: true,
+};
+
 export default function RootLayout({ children, params: { lng } }: PageProps) {
     return (
         <html lang={lng} dir={dir(lng)}>
             <ReduxProvider>
-                <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+                <QueryClientProvider client={queryClient}>
+                    <PrimeReactProvider value={primeReactValue}>{children}</PrimeReactProvider>
+                </QueryClientProvider>
             </ReduxProvider>
         </html>
     );

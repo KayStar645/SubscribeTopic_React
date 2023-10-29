@@ -11,9 +11,9 @@ const Dropdown = ({
     placeholder = '',
     blockClassName = '',
     row = false,
+    optionValue = 'value',
     errorMessage,
     onChange = () => {},
-    onSelect = () => {},
 }: DropdownProps) => {
     const [selected, setSelected] = useState(value);
 
@@ -40,13 +40,13 @@ const Dropdown = ({
                     inputId={id}
                     options={options}
                     value={selected}
-                    optionValue='value'
+                    optionValue={optionValue}
                     placeholder={placeholder}
                     className={classNames('w-full', { 'p-invalid': !!errorMessage })}
                     onChange={(e) => {
+                        console.log('🚀 ~ file: Dropdown.tsx:47 ~ e:', e);
                         onChange(e.value);
                         setSelected(e.value);
-                        onSelect(options.find((t) => t.code === e.value));
                     }}
                 />
             </div>

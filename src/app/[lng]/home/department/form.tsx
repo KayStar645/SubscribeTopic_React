@@ -2,12 +2,14 @@ import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
 import { DepartmentType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
+import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Loader from '@resources/components/UI/Loader';
+import { Loader } from '@resources/components/UI';
 import { InputText } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
+import { TFunction } from 'i18next';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { forwardRef, useImperativeHandle, useState } from 'react';
@@ -35,44 +37,51 @@ const defaultValues: DepartmentType = {
     facultyId: '',
 };
 
-const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ title, lng, onSuccess }, ref) => {
-    const [visible, setVisible] = useState(false);
-    const { t } = useTranslation(lng);
-    const schema = yup.object({
+const schema = (t: TFunction) =>
+    yup.object({
         internalCode: yup.string().required(
             t('validation:required', {
-                attribute: t('common:code_of', { obj: t('module:department') }).toLowerCase(),
+                attribute: t('code_of', { obj: t('module:department') }).toLowerCase(),
             }),
         ),
         name: yup.string().required(
             t('validation:required', {
-                attribute: t('common:name_of', { obj: t('module:department') }).toLowerCase(),
+                attribute: t('name_of', { obj: t('module:department') }).toLowerCase(),
             }),
         ),
         phoneNumber: yup.string().length(
             10,
             t('validation:size.string', {
-                attribute: t('common:phone_number').toLowerCase(),
+                attribute: t('phone_number').toLowerCase(),
                 size: 10,
             }),
         ),
     });
+
+const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ title, lng, onSuccess }, ref) => {
+    const [visible, setVisible] = useState(false);
+    const { t } = useTranslation(lng);
+
     const { control, handleSubmit, reset } = useForm({
-        resolver: yupResolver(schema) as Resolver<DepartmentType>,
+        resolver: yupResolver(schema(t)) as Resolver<DepartmentType>,
         defaultValues,
     });
-    const departmentMutation = useMutation<AxiosResponse, AxiosError<any, any>, DepartmentType>({
+
+    const departmentMutation = useMutation<any, AxiosError<ResponseType>, DepartmentType>({
         mutationFn: (data: DepartmentType) => {
             return data.id == '0'
                 ? request.post(API.admin.department, data)
                 : request.update(API.admin.department, data);
         },
     });
+
     const show = (data?: DepartmentType) => {
         setVisible(true);
 
         if (data) {
             reset(data);
+        } else {
+            reset(defaultValues);
         }
     };
 
@@ -84,12 +93,12 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
     const onSubmit = (data: DepartmentType) => {
         departmentMutation.mutate(data, {
             onSuccess: (response) => {
-                toast.success(t('request:update_success'));
                 close();
                 onSuccess?.(response.data);
+                toast.success(t('request:update_success'));
             },
-            onError: (error) => {
-                toast.error(error.response?.data?.messages?.[0] || error.message);
+            onError: (err) => {
+                toast.error(err.response?.data.messages?.[0] || err.message);
             },
         });
     };
@@ -106,9 +115,7 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
             style={{ width: '50vw' }}
             className='overflow-hidden'
             contentClassName='mb-8'
-            onHide={() => {
-                close();
-            }}
+            onHide={close}
         >
             <Loader show={departmentMutation.isLoading} />
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>

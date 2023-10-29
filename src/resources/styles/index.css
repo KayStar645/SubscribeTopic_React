@@ -1,6 +1,11 @@
-@import url('./themes/light.css');
 @import url('primeflex/primeflex.min.css');
+@import url('./themes/light.css');
 @import url('primeicons/primeicons.css');
+@import url('./custom/ckeditor.css');
+
+body {
+    font-family: var(--font-family);
+}
 
 * {
     box-sizing: border-box;
@@ -10,10 +15,6 @@
 
 .p-divider-solid.p-divider-horizontal:before {
     border-top-style: solid;
-}
-
-body {
-    font-family: var(--font-family);
 }
 
 .p-overlaypanel-content {

@@ -5,13 +5,13 @@ import { request } from '@assets/helpers';
 import { DepartmentParamType, DepartmentType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
-import { MetaType } from '@assets/types/request';
-import Loader from '@resources/components/UI/Loader';
+import { MetaType, ResponseType } from '@assets/types/request';
+import { Loader } from '@resources/components/UI';
 import { Dropdown } from '@resources/components/form';
-import ConfirmModal from '@resources/components/modal/ConfirmModal';
+import { ConfirmModal } from '@resources/components/modal';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -20,43 +20,46 @@ import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import DepartmentForm, { DepartmentFormRefType } from './form';
+import { dateFilters } from '@assets/configs/general';
 
 const DepartmentPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
     const formRef = useRef<DepartmentFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
+    const [selected, setSelected] = useState<DepartmentType>();
+
     const [params, setParams] = useState<DepartmentParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
     });
-    const [selected, setSelected] = useState<DepartmentType>();
 
-    const departmentQuery = useQuery<AxiosResponse, AxiosError<any, any>, DepartmentType[]>({
+    const departmentQuery = useQuery<DepartmentType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
         queryKey: ['departments', 'list', params],
         queryFn: async () => {
-            const response = await request.get(`${API.admin.department}`, { params });
+            const response = await request.get<DepartmentType[]>(`${API.admin.department}`, { params });
 
             setMeta({
-                currentPage: response.data.extra.currentPage,
-                hasNextPage: response.data.extra.hasNextPage,
-                hasPreviousPage: response.data.extra.hasPreviousPage,
-                pageSize: response.data.extra.pageSize,
-                totalCount: response.data.extra.totalCount,
-                totalPages: response.data.extra.totalPages,
-                messages: response.data.extra.messages,
+                currentPage: response.data.extra?.currentPage,
+                hasNextPage: response.data.extra?.hasNextPage,
+                hasPreviousPage: response.data.extra?.hasPreviousPage,
+                pageSize: response.data.extra?.pageSize,
+                totalCount: response.data.extra?.totalCount,
+                totalPages: response.data.extra?.totalPages,
+                messages: response.data.extra?.messages,
             });
 
             return response.data.data || [];
         },
-        onError: (error) => {
-            toast.error(error?.response?.data?.messages?.[0] || error.message);
+        onError: (err) => {
+            toast.error(err.response?.data.messages?.[0] || err.message);
         },
     });
-    const departmentMutation = useMutation<AxiosResponse, AxiosError<any, any>, DepartmentType>({
-        mutationFn: (data: DepartmentType) => {
+
+    const departmentMutation = useMutation<any, AxiosError<ResponseType>, DepartmentType>({
+        mutationFn: (data) => {
             return request.remove(`${API.admin.department}`, { params: { id: data.id } });
         },
     });
@@ -91,8 +94,8 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 departmentQuery.refetch();
                 toast.success(t('request:update_success'));
             },
-            onError: (error) => {
-                toast.error(error?.response?.data?.messages?.[0] || error.message);
+            onError: (err) => {
+                toast.error(err.response?.data.messages?.[0] || err.message);
             },
         });
     };
@@ -127,7 +130,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 <Loader show={departmentQuery.isLoading || departmentMutation.isLoading} />
 
                 <DataTable
-                    value={departmentQuery.data || []}
+                    value={departmentQuery.data}
                     rowHover={true}
                     stripedRows={true}
                     emptyMessage={t('list_empty')}
@@ -167,31 +170,23 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
                     <Dropdown
                         id='date_created_filter'
-                        value={0}
-                        onSelect={(sort) => {
-                            setParams((prev) => ({
-                                ...prev,
-                                sorts: request.handleSort(sort, prev),
-                            }));
+                        value='date_decrease'
+                        optionValue='code'
+                        onChange={(sortCode) => {
+                            const filter = dateFilters(t).find((t) => t.code === sortCode);
+
+                            setParams((prev) => {
+                                return {
+                                    ...prev,
+                                    sorts: request.handleSort(filter, prev),
+                                };
+                            });
                         }}
-                        options={[
-                            {
-                                label: `${t('filter_date_created_down')}`,
-                                value: 0,
-                                name: 'DateCreated',
-                                code: 'date_decrease',
-                            },
-                            {
-                                label: `${t('filter_date_created_up')}`,
-                                value: 1,
-                                name: 'DateCreated',
-                                code: 'date_increase',
-                            },
-                        ]}
+                        options={dateFilters(t)}
                     />
 
                     <Paginator
-                        first={meta.currentPage - 1}
+                        first={request.currentPage(meta.currentPage)}
                         rows={meta.pageSize}
                         totalRecords={meta.totalCount}
                         rowsPerPageOptions={ROWS_PER_PAGE}

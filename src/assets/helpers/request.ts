@@ -1,13 +1,13 @@
 import { AUTH_TOKEN, FACULTY_TOKEN, ROUTES } from '@assets/configs';
 import { OptionType } from '@assets/types/common';
-import { MetaType, ParamType } from '@assets/types/request';
-import axios, { AxiosRequestConfig } from 'axios';
+import { MetaType, ParamType, ResponseType } from '@assets/types/request';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import _ from 'lodash';
 import { cookie } from '.';
 
 const request = axios.create({
     baseURL: ROUTES.base,
-    timeout: 5000,
+    // timeout: 5000,
     headers: {
         accept: 'text/plain',
         'Content-Type': 'application/json',
@@ -67,19 +67,27 @@ request.interceptors.response.use(
     },
 );
 
-const get = (path: string, configs?: AxiosRequestConfig) => {
+const get = <T = any>(path: string, configs?: AxiosRequestConfig): Promise<AxiosResponse<ResponseType<T>, any>> => {
     const response = request.get(path, configs);
 
     return response;
 };
 
-const post = (path: string, data: any, configs?: AxiosRequestConfig) => {
+const post = <T = any>(
+    path: string,
+    data: any,
+    configs?: AxiosRequestConfig,
+): Promise<AxiosResponse<ResponseType<T>, any>> => {
     const response = request.post(path, data, configs);
 
     return response;
 };
 
-const update = (path: string, data: any, configs?: AxiosRequestConfig) => {
+const update = <T = any>(
+    path: string,
+    data: any,
+    configs?: AxiosRequestConfig,
+): Promise<AxiosResponse<ResponseType<T>, any>> => {
     const response = request.put(path, data, configs);
 
     return response;
@@ -95,7 +103,7 @@ const defaultMeta: MetaType = {
     currentPage: 1,
     hasNextPage: false,
     hasPreviousPage: false,
-    messages: null,
+    messages: [],
     pageSize: 10,
     totalCount: 1,
     totalPages: 1,
@@ -125,4 +133,8 @@ const handleSort = (sorts: OptionType | undefined, params: ParamType): string =>
     return result;
 };
 
-export { defaultMeta, get, handleSort, post, remove, update };
+const currentPage = (page: number | undefined) => {
+    return page ? page - 1 : 0;
+};
+
+export { defaultMeta, currentPage, get, handleSort, post, remove, update };

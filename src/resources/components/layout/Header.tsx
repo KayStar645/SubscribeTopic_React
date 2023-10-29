@@ -12,8 +12,7 @@ import { usePathname } from 'next/navigation';
 import { Avatar } from 'primereact/avatar';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useEffect, useRef, useState } from 'react';
-import Breadcrumb from '../UI/Breadcrumb';
-import { MenuItem } from '../UI/MenuItem';
+import { Breadcrumb, MenuItem } from '../UI';
 
 const Header = ({ lng }: LanguageType) => {
     const { t } = useTranslation(lng);
@@ -62,7 +61,7 @@ const Header = ({ lng }: LanguageType) => {
     };
 
     return (
-        <div className='flex align-items-center justify-content-between flex-1 h-5rem shadow-1 bg-white px-4'>
+        <div className='flex align-items-center justify-content-between flex-1 h-4rem shadow-1 bg-white px-4'>
             <Breadcrumb lng={lng} />
 
             <div className='flex align-items-center justify-content-end gap-6' style={{ marginRight: '-0.5rem' }}>

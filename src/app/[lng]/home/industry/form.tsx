@@ -2,12 +2,14 @@ import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
 import { IndustryType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
+import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Loader from '@resources/components/UI/Loader';
+import { Loader } from '@resources/components/UI';
 import { InputText } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
+import { TFunction } from 'i18next';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { forwardRef, useImperativeHandle, useState } from 'react';
@@ -32,27 +34,31 @@ const defaultValues: IndustryType = {
     facultyId: '',
 };
 
-const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title, lng, onSuccess }, ref) => {
-    const [visible, setVisible] = useState(false);
-    const { t } = useTranslation(lng);
-    const schema = yup.object({
+const schema = (t: TFunction) =>
+    yup.object({
         internalCode: yup.string().required(
             t('validation:required', {
-                attribute: t('common:code_of', { obj: t('module:industry') }).toLowerCase(),
+                attribute: t('code_of', { obj: t('module:industry') }).toLowerCase(),
             }),
         ),
         name: yup.string().required(
             t('validation:required', {
-                attribute: t('common:name_of', { obj: t('module:industry') }).toLowerCase(),
+                attribute: t('name_of', { obj: t('module:industry') }).toLowerCase(),
             }),
         ),
     });
+
+const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title, lng, onSuccess }, ref) => {
+    const [visible, setVisible] = useState(false);
+    const { t } = useTranslation(lng);
+
     const { control, handleSubmit, reset } = useForm({
-        resolver: yupResolver(schema) as Resolver<IndustryType>,
+        resolver: yupResolver(schema(t)) as Resolver<IndustryType>,
         defaultValues,
     });
-    const industryMutation = useMutation<AxiosResponse, AxiosError<any, any>, IndustryType>({
-        mutationFn: (data: IndustryType) => {
+
+    const industryMutation = useMutation<any, AxiosError<ResponseType>, IndustryType>({
+        mutationFn: (data) => {
             return data.id == '0' ? request.post(API.admin.industry, data) : request.update(API.admin.industry, data);
         },
     });
@@ -62,23 +68,25 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
 
         if (data) {
             reset(data);
+        } else {
+            reset(defaultValues);
         }
     };
 
     const close = () => {
         setVisible(false);
-        reset();
+        reset(defaultValues);
     };
 
     const onSubmit = (data: IndustryType) => {
         industryMutation.mutate(data, {
             onSuccess: (response) => {
-                toast.success(t('request:update_success'));
                 close();
                 onSuccess?.(response.data);
+                toast.success(t('request:update_success'));
             },
-            onError: (error) => {
-                toast.error(error.response?.data?.messages?.[0] || error.message);
+            onError: (err) => {
+                toast.error(err.response?.data.messages?.[0] || err.message);
             },
         });
     };
@@ -95,9 +103,7 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
             style={{ width: '50vw' }}
             className='overflow-hidden'
             contentClassName='mb-8'
-            onHide={() => {
-                close();
-            }}
+            onHide={close}
         >
             <Loader show={industryMutation.isLoading} />
 

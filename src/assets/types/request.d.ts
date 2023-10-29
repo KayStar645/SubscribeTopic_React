@@ -1,11 +1,11 @@
 interface MetaType {
-    currentPage: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-    messages: string | null;
-    pageSize: number;
-    totalCount: number;
-    totalPages: number;
+    currentPage?: number;
+    hasNextPage?: boolean;
+    hasPreviousPage?: boolean;
+    messages?: string[];
+    pageSize?: number;
+    totalCount?: number;
+    totalPages?: number;
 }
 
 interface ParamType {
@@ -18,12 +18,14 @@ interface ParamType {
     IsGetFaculty?: boolean;
 }
 
-interface ResponseType {
-    data: object | any[];
-    extra: object;
-    messages: string | null;
+interface ResponseType<dataType = any> {
+    data: dataType | null;
+    extra?: MetaType;
+    messages: string[] | null;
+    message: string | null;
     exception: string | null;
-    succeeded: boolean;
+    succeeded?: boolean;
+    code?: number;
 }
 
 export type { MetaType, ParamType, ResponseType };

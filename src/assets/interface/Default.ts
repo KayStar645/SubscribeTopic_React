@@ -4,7 +4,7 @@ interface GeneralType {
     internalCode?: string;
     phoneNumber?: string;
     address?: string;
-    email?: string | number;
+    email?: string;
 }
 
 export type { GeneralType };

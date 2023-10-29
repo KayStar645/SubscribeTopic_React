@@ -6,3 +6,4 @@ export * from './Industry';
 export * from './Student';
 export * from './RegistrationPeriod';
 export * from './StudentJoin';
+export * from './Notification';

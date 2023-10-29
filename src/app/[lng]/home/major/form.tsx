@@ -1,15 +1,15 @@
 import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
 import { IndustryType, MajorType } from '@assets/interface';
-import { OptionType } from '@assets/types/common';
 import { LanguageType } from '@assets/types/lang';
+import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Loader from '@resources/components/UI/Loader';
+import { Loader } from '@resources/components/UI';
 import { Dropdown, InputText } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
-import _ from 'lodash';
+import { AxiosError } from 'axios';
+import { TFunction } from 'i18next';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { forwardRef, useImperativeHandle, useState } from 'react';
@@ -34,48 +34,56 @@ const defaultValues: MajorType = {
     industryId: '',
 };
 
-const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onSuccess }, ref) => {
-    const [visible, setVisible] = useState(false);
-    const { t } = useTranslation(lng);
-    const schema = yup.object({
+const schema = (t: TFunction) =>
+    yup.object({
         internalCode: yup.string().required(
             t('validation:required', {
-                attribute: t('common:code_of', { obj: t('module:major') }).toLowerCase(),
+                attribute: t('code_of', { obj: t('module:major') }).toLowerCase(),
             }),
         ),
         name: yup.string().required(
             t('validation:required', {
-                attribute: t('common:name_of', { obj: t('module:major') }).toLowerCase(),
+                attribute: t('name_of', { obj: t('module:major') }).toLowerCase(),
             }),
         ),
     });
+
+const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onSuccess }, ref) => {
+    const [visible, setVisible] = useState(false);
+    const { t } = useTranslation(lng);
+
     const { control, handleSubmit, reset } = useForm({
-        resolver: yupResolver(schema) as Resolver<MajorType>,
+        resolver: yupResolver(schema(t)) as Resolver<MajorType>,
         defaultValues,
     });
-    const industryQuery = useQuery({
+
+    const industryQuery = useQuery<IndustryType[], AxiosError<ResponseType>>({
         enabled: false,
         refetchOnWindowFocus: false,
-        queryKey: ['major_industry'],
+        queryKey: ['major_industries'],
         queryFn: async () => {
-            const responseData: IndustryType[] = (await request.get(API.admin.industry)).data.data;
+            const response = await request.get<IndustryType[]>(API.admin.industry);
 
-            return responseData || [];
+            return response.data.data || [];
+        },
+        onError: (err) => {
+            toast.error(err.response?.data.messages?.[0] || err.message);
         },
     });
-    const majorMutation = useMutation<AxiosResponse, AxiosError<any, any>, MajorType>({
-        mutationFn: (data: MajorType) => {
+
+    const majorMutation = useMutation<any, AxiosError<ResponseType>, MajorType>({
+        mutationFn: (data) => {
             return data.id == '0' ? request.post(API.admin.major, data) : request.update(API.admin.major, data);
         },
     });
-    const industryOptions: OptionType[] =
-        _.map(industryQuery.data, (t) => ({ label: t.name, value: t.id, code: t.id })) || [];
 
     const show = (data?: MajorType) => {
         setVisible(true);
 
         if (data) {
             reset(data);
+        } else {
+            reset(defaultValues);
         }
 
         industryQuery.refetch();
@@ -89,12 +97,12 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
     const onSubmit = (data: MajorType) => {
         majorMutation.mutate(data, {
             onSuccess: (response) => {
-                toast.success(t('request:update_success'));
                 close();
                 onSuccess?.(response.data);
+                toast.success(t('request:update_success'));
             },
-            onError: (error) => {
-                toast.error(error.response?.data?.messages?.[0] || error.message);
+            onError: (err) => {
+                toast.error(err.response?.data.messages?.[0] || err.message);
             },
         });
     };
@@ -115,7 +123,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
                 close();
             }}
         >
-            <Loader show={majorMutation.isLoading} />
+            <Loader show={majorMutation.isLoading || industryQuery.isLoading} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller
@@ -154,7 +162,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
                     render={({ field, fieldState }) => (
                         <Dropdown
                             id='form_data_industry_id'
-                            options={industryOptions}
+                            options={industryQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
                             value={field.value}
                             label={t('module:field.major.industry')}
                             placeholder={t('module:field.major.industry')}

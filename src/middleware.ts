@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import acceptLanguage from 'accept-language';
 import { COOKIE_LANGUAGE_NAME, LANGUAGE, LANGUAGES, LANGUAGE_EXPIRE, FACULTY_TOKEN } from '@assets/configs';
 
-const languages = LANGUAGES.map((t) => t.value);
+const languages = LANGUAGES.map((t) => t.value) as string[];
 
 acceptLanguage.languages(languages);
 
@@ -27,7 +27,7 @@ export function middleware(req: NextRequest) {
     }
 
     if (!req.cookies.has(FACULTY_TOKEN) && !req.url.includes('/auth/sign-in')) {
-        return NextResponse.redirect(new URL(`/${lng}/auth/sign-in`, req.url));
+        return NextResponse.redirect(new URL(`/vi/auth/sign-in`, req.url));
     }
 
     if (

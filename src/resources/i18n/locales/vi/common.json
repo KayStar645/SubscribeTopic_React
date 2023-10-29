@@ -32,5 +32,13 @@
     "gender": "Giới tính",
     "date_of_birth": "Ngày sinh",
     "time_start": "Thời gian bắt đầu",
-    "time_end": "Thời gian kết thúc"
+    "time_end": "Thời gian kết thúc",
+    "describe": "Mô tả",
+    "content": "Nội dung",
+    "image": "Ảnh",
+    "file": "File",
+    "semester": "Học kỳ {{ number }}",
+    "male": "Nam",
+    "female": "Nữ",
+    "other": "Khác"
 }

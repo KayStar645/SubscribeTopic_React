@@ -1,7 +1,5 @@
 'use client';
 
-import styles from './MenuItem.module.scss';
-
 import { useDispatch, useSelector } from '@assets/redux';
 import { selectMenu } from '@assets/redux/slices/menu';
 import menuSlice from '@assets/redux/slices/menu/slice';
@@ -10,6 +8,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { classNames } from 'primereact/utils';
 import { useState } from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 const MenuItem = (item: MenuItemType) => {
     const {
@@ -28,8 +27,9 @@ const MenuItem = (item: MenuItemType) => {
     const Icon = () => icon;
     const dispatch = useDispatch();
     const menu = useSelector(selectMenu);
-    const active = code === menu.activeItem;
+    const active = code === menu.activeItem || code === menu.parent;
     const [isOpenMenu, setIsOpenMenu] = useState(false);
+    const { classes } = useStyles();
 
     const onClick = (currItem: MenuItemType) => {
         if (items && items.length > 0) {
@@ -95,13 +95,12 @@ const MenuItem = (item: MenuItemType) => {
             <Link
                 className={classNames(
                     'flex align-items-center gap-2 py-2 px-3 no-underline cursor-pointer transition-linear transition-duration-200 border-round-lg',
-                    styles['menu-item'],
                     itemClassName,
                     {
                         'hover:surface-hover': !active,
                         'text-900': !active,
-                        'bg-highlight': code === menu.activeItem,
-                        'p-highlight': code === menu.activeItem,
+                        'bg-highlight': active,
+                        'p-highlight': active,
                     },
                 )}
                 href={to || '#'}
@@ -110,7 +109,7 @@ const MenuItem = (item: MenuItemType) => {
                 <div className={classNames('p-1', iconClassName)}>
                     <Icon />
                 </div>
-                <p className={classNames('flex-1 text-sm font-semibold', styles['item-label'], labelClassName)}>
+                <p className={classNames('flex-1 text-sm font-semibold item-label', labelClassName, classes.itemLabel)}>
                     {label}
                 </p>
 
@@ -124,12 +123,22 @@ const MenuItem = (item: MenuItemType) => {
                         : { height: 0 }
                 }
                 transition={{ duration: 0.3 }}
-                className={classNames(styles['sub-menu'], 'overflow-hidden my-1 border-left-1 border-300')}
+                className={classNames('overflow-hidden my-1 border-left-1 border-300', classes.subMenu)}
             >
                 {<SubItem />}
             </motion.div>
         </div>
     );
 };
+
+const useStyles = makeStyles<void, 'itemLabel'>()((_theme, _params, classes) => ({
+    subMenu: {
+        marginLeft: 30,
+        [`.${classes.itemLabel}`]: {
+            fontWeight: '400 !important',
+        },
+    },
+    itemLabel: {},
+}));
 
 export default MenuItem;

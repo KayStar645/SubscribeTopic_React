@@ -1,15 +1,15 @@
 import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
 import { FacultyType, TeacherType } from '@assets/interface';
-import { OptionType } from '@assets/types/common';
 import { LanguageType } from '@assets/types/lang';
+import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Loader from '@resources/components/UI/Loader';
+import { Loader } from '@resources/components/UI';
 import { Dropdown, InputText } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
-import _ from 'lodash';
+import { AxiosError } from 'axios';
+import { TFunction } from 'i18next';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { forwardRef, useImperativeHandle, useState } from 'react';
@@ -37,18 +37,16 @@ const defaultValues: FacultyType = {
     dean_TeacherId: '',
 };
 
-const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, lng, onSuccess }, ref) => {
-    const [visible, setVisible] = useState(false);
-    const { t } = useTranslation(lng);
-    const schema = yup.object({
+const schema = (t: TFunction) =>
+    yup.object({
         internalCode: yup.string().required(
             t('validation:required', {
-                attribute: t('common:code_of', { obj: t('module:faculty') }).toLowerCase(),
+                attribute: t('code_of', { obj: t('module:faculty') }).toLowerCase(),
             }),
         ),
         name: yup.string().required(
             t('validation:required', {
-                attribute: t('common:name_of', { obj: t('module:faculty') }).toLowerCase(),
+                attribute: t('name_of', { obj: t('module:faculty') }).toLowerCase(),
             }),
         ),
         phoneNumber: yup.string().length(
@@ -59,27 +57,35 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
             }),
         ),
     });
+
+const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, lng, onSuccess }, ref) => {
+    const [visible, setVisible] = useState(false);
+    const { t } = useTranslation(lng);
+
     const { control, handleSubmit, reset, getValues } = useForm({
-        resolver: yupResolver(schema) as Resolver<FacultyType>,
+        resolver: yupResolver(schema(t)) as Resolver<FacultyType>,
         defaultValues,
     });
-    const teacherQuery = useQuery({
+
+    const teacherQuery = useQuery<TeacherType[], AxiosError<ResponseType>>({
         queryKey: ['faculty_teachers'],
         enabled: false,
         refetchOnWindowFocus: false,
         queryFn: async () => {
-            const responseData: TeacherType[] = (await request.get(API.admin.teacher)).data.data;
+            const response = await request.get<TeacherType[]>(API.admin.teacher);
 
-            return responseData || [];
+            return response.data.data || [];
+        },
+        onError: (err) => {
+            toast.error(err.response?.data.messages?.[0] || err.message);
         },
     });
-    const facultyMutation = useMutation<AxiosResponse, AxiosError<any, any>, FacultyType>({
-        mutationFn: (data: FacultyType) => {
+
+    const facultyMutation = useMutation<any, AxiosError<ResponseType>, FacultyType>({
+        mutationFn: (data) => {
             return data.id == '0' ? request.post(API.admin.faculty, data) : request.update(API.admin.faculty, data);
         },
     });
-    const teacherOptions: OptionType[] =
-        _.map(teacherQuery.data, (t) => ({ label: t.name, value: t.id, code: t.id })) || [];
 
     const show = (data?: FacultyType) => {
         setVisible(true);
@@ -88,6 +94,8 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
 
         if (data) {
             reset(data);
+        } else {
+            reset(defaultValues);
         }
     };
 
@@ -99,12 +107,12 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
     const onSubmit = (data: FacultyType) => {
         facultyMutation.mutate(data, {
             onSuccess: (response) => {
-                toast.success(t('request:update_success'));
                 close();
                 onSuccess?.(response.data);
+                toast.success(t('request:update_success'));
             },
-            onError: (error) => {
-                toast.error(error.response?.data?.messages?.[0] || error.message);
+            onError: (err) => {
+                toast.error(err.response?.data.messages?.[0] || err.message);
             },
         });
     };
@@ -121,11 +129,10 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
             style={{ width: '50vw' }}
             className='overflow-hidden'
             contentClassName='mb-8'
-            onHide={() => {
-                close();
-            }}
+            onHide={close}
         >
-            <Loader show={facultyMutation.isLoading} />
+            <Loader show={facultyMutation.isLoading || teacherQuery.isLoading} />
+
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller
                     name='internalCode'
@@ -211,7 +218,7 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
                         render={({ field, fieldState }) => (
                             <Dropdown
                                 id='form_data_teacher_id'
-                                options={teacherOptions}
+                                options={teacherQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
                                 value={field.value}
                                 label={t('module:field.faculty.dean')}
                                 placeholder={t('module:field.faculty.dean')}

@@ -5,13 +5,13 @@ import { request } from '@assets/helpers';
 import { StudentParamType, StudentType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
-import { MetaType } from '@assets/types/request';
+import { MetaType, ResponseType } from '@assets/types/request';
 import Loader from '@resources/components/UI/Loader';
 import { Dropdown } from '@resources/components/form';
 import ConfirmModal from '@resources/components/modal/ConfirmModal';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -20,6 +20,7 @@ import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import MajorForm, { StudentFormRefType } from './form';
+import { dateFilters } from '@assets/configs/general';
 
 const StudentPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
@@ -33,30 +34,30 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
         sorts: '-DateCreated',
     });
 
-    const studentQuery = useQuery<AxiosResponse, AxiosError<any, any>, StudentType[]>({
+    const studentQuery = useQuery<StudentType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
         queryKey: ['students', 'list', params],
         queryFn: async () => {
-            const response = await request.get(`${API.admin.student}`, { params });
+            const response = await request.get<StudentType[]>(`${API.admin.student}`, { params });
 
             setMeta({
-                currentPage: response.data.extra.currentPage,
-                hasNextPage: response.data.extra.hasNextPage,
-                hasPreviousPage: response.data.extra.hasPreviousPage,
-                pageSize: response.data.extra.pageSize,
-                totalCount: response.data.extra.totalCount,
-                totalPages: response.data.extra.totalPages,
-                messages: response.data.extra.messages,
+                currentPage: response.data.extra?.currentPage,
+                hasNextPage: response.data.extra?.hasNextPage,
+                hasPreviousPage: response.data.extra?.hasPreviousPage,
+                pageSize: response.data.extra?.pageSize,
+                totalCount: response.data.extra?.totalCount,
+                totalPages: response.data.extra?.totalPages,
+                messages: response.data.extra?.messages,
             });
 
             return response.data.data || [];
         },
-        onError: (error) => {
-            toast.error(error?.response?.data?.messages?.[0] || error.message);
+        onError: (err) => {
+            toast.error(err.response?.data.messages?.[0] || err.message);
         },
     });
-    const studentMutation = useMutation<AxiosResponse, AxiosError<any, any>, StudentType>({
-        mutationFn: (data: StudentType) => {
+    const studentMutation = useMutation<any, AxiosError<ResponseType>, StudentType>({
+        mutationFn: (data) => {
             return request.remove(`${API.admin.student}`, { params: { id: data.id } });
         },
     });
@@ -92,8 +93,8 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
 
                 toast.success(t('request:update_success'));
             },
-            onError: (error) => {
-                toast.error(error?.response?.data?.messages?.[0] || error.message);
+            onError: (err) => {
+                toast.error(err.response?.data.messages?.[0] || err.message);
             },
         });
     };
@@ -119,9 +120,11 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                     }}
                 />
             </div>
+
             <div className='flex align-items-center justify-content-between'>
                 <InputText placeholder={`${t('search')}...`} className='col-4' />
             </div>
+
             <div className='border-round-xl overflow-hidden relative shadow-5'>
                 <Loader show={studentQuery.isLoading || studentMutation.isLoading} />
 
@@ -166,31 +169,23 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                 <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
                     <Dropdown
                         id='date_created_filter'
-                        value={0}
-                        onSelect={(sort) => {
-                            setParams((prev) => ({
-                                ...prev,
-                                sorts: request.handleSort(sort, prev),
-                            }));
+                        value='date_decrease'
+                        optionValue='code'
+                        onChange={(sortCode) => {
+                            const filter = dateFilters(t).find((t) => t.code === sortCode);
+
+                            setParams((prev) => {
+                                return {
+                                    ...prev,
+                                    sorts: request.handleSort(filter, prev),
+                                };
+                            });
                         }}
-                        options={[
-                            {
-                                label: `${t('filter_date_created_down')}`,
-                                value: 0,
-                                name: 'DateCreated',
-                                code: 'date_decrease',
-                            },
-                            {
-                                label: `${t('filter_date_created_up')}`,
-                                value: 1,
-                                name: 'DateCreated',
-                                code: 'date_increase',
-                            },
-                        ]}
+                        options={dateFilters(t)}
                     />
 
                     <Paginator
-                        first={meta.currentPage - 1}
+                        first={request.currentPage(meta.currentPage)}
                         rows={meta.pageSize}
                         totalRecords={meta.totalCount}
                         rowsPerPageOptions={ROWS_PER_PAGE}

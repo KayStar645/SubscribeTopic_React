@@ -1,8 +1,9 @@
 'use client';
 
-import { API, ROWS_PER_PAGE } from '@assets/configs';
-import { request } from '@assets/helpers';
-import { IndustryParamType, IndustryType } from '@assets/interface';
+import { API, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
+import { dateFilters } from '@assets/configs/general';
+import { language, request } from '@assets/helpers';
+import { NotificationParamType, NotificationType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
@@ -11,6 +12,8 @@ import { Dropdown } from '@resources/components/form';
 import { ConfirmModal } from '@resources/components/modal';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -18,27 +21,24 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import IndustryForm, { IndustryFormRefType } from './form';
-import { AxiosError } from 'axios';
 
-const IndustryPage = ({ params: { lng } }: PageProps) => {
+const NotificationPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
-    const formRef = useRef<IndustryFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-    const [selected, setSelected] = useState<IndustryType>();
+    const router = useRouter();
 
-    const [params, setParams] = useState<IndustryParamType>({
+    const [params, setParams] = useState<NotificationParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
     });
 
-    const industryQuery = useQuery<IndustryType[], AxiosError<ResponseType>>({
+    const notificationQuery = useQuery<NotificationType[], AxiosError<ResponseType>, NotificationType[]>({
         refetchOnWindowFocus: false,
-        queryKey: ['industries', 'list', params],
+        queryKey: ['notifications', 'list', params],
         queryFn: async () => {
-            const response = await request.get<IndustryType[]>(`${API.admin.industry}`, { params });
+            const response = await request.get<NotificationType[]>(`${API.admin.notification}`, { params });
 
             setMeta({
                 currentPage: response.data.extra?.currentPage,
@@ -57,9 +57,9 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
         },
     });
 
-    const industryMutation = useMutation<any, AxiosError<ResponseType>, IndustryType>({
+    const notificationMutation = useMutation<any, AxiosError<ResponseType>, NotificationType>({
         mutationFn: (data) => {
-            return request.remove(`${API.admin.industry}`, { params: { id: data.id } });
+            return request.remove(`${API.admin.notification}`, { params: { id: data.id } });
         },
     });
 
@@ -67,14 +67,13 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (data: IndustryType) => {
+    const renderActions = (data: NotificationType) => {
         return (
             <div className='flex align-items-center gap-3'>
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
                     onClick={() => {
-                        formRef.current?.show?.(data);
-                        setSelected(data);
+                        router.push(language.addPrefixLanguage(lng, `${ROUTES.admin.notification}/${data.id}`));
                     }}
                 />
                 <i
@@ -87,11 +86,10 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
         );
     };
 
-    const onRemove = (data: IndustryType) => {
-        industryMutation.mutate(data, {
+    const onRemove = (data: NotificationType) => {
+        notificationMutation.mutate(data, {
             onSuccess: () => {
-                industryQuery.refetch();
-
+                notificationQuery.refetch();
                 toast.success(t('request:update_success'));
             },
             onError: (err) => {
@@ -110,14 +108,15 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
             />
 
             <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
-                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:industry').toLowerCase() })}</p>
+                <p className='text-xl font-semibold'>
+                    {t('list_of', { module: t('module:notification').toLowerCase() })}
+                </p>
                 <Button
                     label={t('create_new')}
                     icon='pi pi-plus'
                     size='small'
                     onClick={() => {
-                        formRef.current?.show?.();
-                        setSelected(undefined);
+                        router.push(language.addPrefixLanguage(lng, `${ROUTES.admin.notification}/0`));
                     }}
                 />
             </div>
@@ -127,9 +126,14 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={industryQuery.isLoading || industryMutation.isLoading} />
+                <Loader show={notificationQuery.isLoading || notificationMutation.isLoading} />
 
-                <DataTable value={industryQuery.data} rowHover={true} stripedRows={true} emptyMessage={t('list_empty')}>
+                <DataTable
+                    value={notificationQuery.data || []}
+                    rowHover={true}
+                    stripedRows={true}
+                    emptyMessage={t('list_empty')}
+                >
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         header={t('action')}
@@ -137,40 +141,27 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='internalCode'
-                        header={t('code_of', { obj: t('module:industry').toLowerCase() })}
-                    />
-                    <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='name'
-                        header={t('name_of', { obj: t('module:industry').toLowerCase() })}
+                        header={t('name_of', { obj: t('module:notification').toLowerCase() })}
                     />
                 </DataTable>
 
                 <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
                     <Dropdown
                         id='date_created_filter'
-                        value={0}
-                        onSelect={(sort) => {
-                            setParams((prev) => ({
-                                ...prev,
-                                sorts: request.handleSort(sort, prev),
-                            }));
+                        value='date_decrease'
+                        optionValue='code'
+                        onChange={(sortCode) => {
+                            const filter = dateFilters(t).find((t) => t.code === sortCode);
+
+                            setParams((prev) => {
+                                return {
+                                    ...prev,
+                                    sorts: request.handleSort(filter, prev),
+                                };
+                            });
                         }}
-                        options={[
-                            {
-                                label: `${t('filter_date_created_down')}`,
-                                value: 0,
-                                name: 'DateCreated',
-                                code: 'date_decrease',
-                            },
-                            {
-                                label: `${t('filter_date_created_up')}`,
-                                value: 1,
-                                name: 'DateCreated',
-                                code: 'date_increase',
-                            },
-                        ]}
+                        options={dateFilters(t)}
                     />
 
                     <Paginator
@@ -183,19 +174,8 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                     />
                 </div>
             </div>
-
-            <IndustryForm
-                lng={lng}
-                title={
-                    selected?.id
-                        ? t('update_at', { obj: selected.name })
-                        : t('create_new_at', { obj: t('module:industry').toLowerCase() })
-                }
-                ref={formRef}
-                onSuccess={(data) => industryQuery.refetch()}
-            />
         </div>
     );
 };
 
-export default IndustryPage;
+export default NotificationPage;

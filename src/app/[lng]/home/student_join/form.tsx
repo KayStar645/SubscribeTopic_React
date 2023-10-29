@@ -2,12 +2,13 @@ import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
 import { RegistrationPeriodType, StudentJoinType, StudentType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
+import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Loader from '@resources/components/UI/Loader';
-import { Dropdown, InputText } from '@resources/components/form';
+import { Loader } from '@resources/components/UI';
+import { Dropdown } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import { TFunction } from 'i18next';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
@@ -55,26 +56,29 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
         defaultValues,
     });
 
-    const studentJoinMutation = useMutation<AxiosResponse, AxiosError<any, any>, StudentJoinType>({
-        mutationFn: (data: StudentJoinType) => {
+    const studentJoinMutation = useMutation<any, AxiosError<ResponseType>, StudentJoinType>({
+        mutationFn: (data) => {
             return data.id == '0'
                 ? request.post(API.admin.student_join, data)
                 : request.update(API.admin.student_join, data);
         },
     });
 
-    const studentQuery = useQuery<AxiosResponse, AxiosError<any, any>, StudentType[]>({
+    const studentQuery = useQuery<StudentType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
         enabled: false,
         queryKey: ['student_join_students', 'list'],
         queryFn: async () => {
-            const response = await request.get(API.admin.student);
+            const response = await request.get<StudentType[]>(API.admin.student);
 
             return response.data.data || [];
         },
+        onError: (err) => {
+            toast.error(err.response?.data.messages?.[0] || err.message);
+        },
     });
 
-    const registrationPeriodQuery = useQuery<AxiosResponse, AxiosError<any, any>, RegistrationPeriodType[]>({
+    const registrationPeriodQuery = useQuery<RegistrationPeriodType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
         enabled: false,
         queryKey: ['student_join_registration_periods', 'list'],
@@ -82,6 +86,9 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
             const response = await request.get(API.admin.registration_period);
 
             return response.data.data || [];
+        },
+        onError: (err) => {
+            toast.error(err.response?.data.messages?.[0] || err.message);
         },
     });
 
@@ -108,8 +115,8 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
                 close();
                 onSuccess?.(response.data);
             },
-            onError: (error) => {
-                toast.error(error.response?.data?.messages?.[0] || error.message);
+            onError: (err) => {
+                toast.error(err.response?.data.messages?.[0] || err.message);
             },
         });
     };
@@ -126,9 +133,7 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
             style={{ width: '50vw' }}
             className='overflow-hidden'
             contentClassName='mb-8'
-            onHide={() => {
-                close();
-            }}
+            onHide={close}
         >
             <Loader
                 show={studentJoinMutation.isLoading || studentQuery.isLoading || registrationPeriodQuery.isLoading}

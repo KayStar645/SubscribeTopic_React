@@ -4,12 +4,13 @@ import { API, AUTH_TOKEN, FACULTY_TOKEN, ROUTES } from '@assets/configs';
 import { language, request } from '@assets/helpers';
 import { PageProps } from '@assets/types/UI';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Loader from '@resources/components/UI/Loader';
+import { Loader } from '@resources/components/UI';
 import { InputText, Password } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import brand from '@resources/image/info/brand.png';
 import { useMutation } from '@tanstack/react-query';
 import { setCookie } from 'cookies-next';
+import { TFunction } from 'i18next';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import { PrimeIcons } from 'primereact/api';
@@ -18,15 +19,18 @@ import { Image } from 'primereact/image';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
-const Page = ({ params: { lng } }: PageProps) => {
-    const router = useRouter();
-    const { t } = useTranslation(lng);
-    const schema = yup.object({
+const schema = (t: TFunction) =>
+    yup.object({
         userName: yup.string().required(t('validation:required', { attribute: t('account').toLowerCase() })),
         password: yup.string().required(t('validation:required', { attribute: t('password').toLowerCase() })),
         remember_password: yup.boolean(),
     });
-    const { control, handleSubmit } = useForm({ resolver: yupResolver(schema) });
+
+const Page = ({ params: { lng } }: PageProps) => {
+    const router = useRouter();
+    const { t } = useTranslation(lng);
+    const { control, handleSubmit } = useForm({ resolver: yupResolver(schema(t)) });
+
     const signInMutation = useMutation({
         mutationFn: (data: any) => {
             return request.post(API.auth.sign_in, {
@@ -51,8 +55,6 @@ const Page = ({ params: { lng } }: PageProps) => {
                 }
 
                 router.push(language.addPrefixLanguage(lng, ROUTES.admin.home));
-
-                console.log(language.addPrefixLanguage(lng, ROUTES.admin.home));
             },
         });
     };

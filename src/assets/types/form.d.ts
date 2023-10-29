@@ -27,7 +27,7 @@ interface FormType extends PropsWithChildren {
 }
 
 interface InputProps {
-    id: string;
+    id?: string;
     value?: string | number;
     label?: string;
     placeholder?: string;
@@ -50,8 +50,8 @@ interface CheckboxProps extends InputProps {
 
 interface DropdownProps extends InputProps {
     options?: OptionType[];
-    onChange?: (e: DropdownChangeEvent) => void;
-    onSelect?: (option: OptionType | undefined) => void;
+    optionValue?: string;
+    onChange?: (e: string) => void;
 }
 
 interface TextAreaProps extends InputProps {
@@ -71,6 +71,10 @@ interface InputDateProps extends InputProps {
     onChange?: (e: FormEvent<Date, SyntheticEvent<Element, Event>>) => void;
 }
 
+interface EditorProps extends InputProps {
+    onChange?: (e: string) => void;
+}
+
 export default FormType;
 export type {
     CheckboxProps,
@@ -80,4 +84,5 @@ export type {
     TextAreaProps,
     RadioListProps,
     InputDateProps,
+    EditorProps,
 };

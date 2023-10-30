@@ -40,5 +40,6 @@
     "semester": "Học kỳ {{ number }}",
     "male": "Nam",
     "female": "Nữ",
-    "other": "Khác"
+    "other": "Khác",
+    "back": "Quay lại"
 }

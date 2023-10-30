@@ -1,45 +1,42 @@
 'use client';
 
 import { API, ROWS_PER_PAGE } from '@assets/configs';
+import { dateFilters } from '@assets/configs/general';
 import { request } from '@assets/helpers';
-import { IndustryParamType, IndustryType } from '@assets/interface';
+import { GroupParamType, GroupType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
-import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
 import { Loader } from '@resources/components/UI';
 import { Dropdown } from '@resources/components/form';
-import { ConfirmModal } from '@resources/components/modal';
 import { useTranslation } from '@resources/i18n';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { Button } from 'primereact/button';
+import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import IndustryForm, { IndustryFormRefType } from './form';
-import { AxiosError } from 'axios';
-import { dateFilters } from '@assets/configs/general';
+import GroupForm, { GroupFormRefType } from './form';
 
-const IndustryPage = ({ params: { lng } }: PageProps) => {
+const GroupPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
-    const formRef = useRef<IndustryFormRefType>(null);
-    const confirmModalRef = useRef<ConfirmModalRefType>(null);
+    const formRef = useRef<GroupFormRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-    const [selected, setSelected] = useState<IndustryType>();
+    const [selected, setSelected] = useState<GroupType>();
 
-    const [params, setParams] = useState<IndustryParamType>({
+    const [params, setParams] = useState<GroupParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
+        isGetLeader: true,
     });
 
-    const industryQuery = useQuery<IndustryType[], AxiosError<ResponseType>>({
+    const groupQuery = useQuery<GroupType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
         queryKey: ['industries', 'list', params],
         queryFn: async () => {
-            const response = await request.get<IndustryType[]>(`${API.admin.industry}`, { params });
+            const response = await request.get<GroupType[]>(`${API.admin.group}`, { params });
 
             setMeta({
                 currentPage: response.data.extra?.currentPage,
@@ -58,69 +55,56 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
         },
     });
 
-    const industryMutation = useMutation<any, AxiosError<ResponseType>, IndustryType>({
-        mutationFn: (data) => {
-            return request.remove(`${API.admin.industry}`, { params: { id: data.id } });
-        },
-    });
-
     const onPageChange = (e: PaginatorPageChangeEvent) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (data: IndustryType) => {
+    const renderActions = (data: GroupType) => {
         return (
-            <div className='flex align-items-center gap-3'>
-                <i
-                    className='pi pi-pencil hover:text-primary cursor-pointer'
-                    onClick={() => {
-                        formRef.current?.show?.(data);
-                        setSelected(data);
-                    }}
-                />
-                <i
-                    className='pi pi-trash hover:text-red-600 cursor-pointer'
-                    onClick={(e) => {
-                        confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
-                    }}
-                />
+            <i
+                className='pi pi-pencil hover:text-primary cursor-pointer'
+                onClick={() => {
+                    formRef.current?.show?.(data);
+                    setSelected(data);
+                }}
+            />
+        );
+    };
+
+    const rowExpansionTemplate = (data: GroupType) => {
+        return (
+            <div className='p-3'>
+                <p>{t('module:field.group.members')}</p>
+                <DataTable value={data.members}>
+                    <Column
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        field='student.internalCode'
+                        header={t('code_of', { obj: t('module:student').toLowerCase() })}
+                    />
+                    <Column
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        field='student.name'
+                        header={t('name_of', { obj: t('module:student').toLowerCase() })}
+                    />
+                    <Column
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        field='student.major.name'
+                        header={t('name_of', { obj: t('module:major').toLowerCase() })}
+                    />
+                    <Column headerStyle={{ width: '4rem' }} />
+                </DataTable>
             </div>
         );
     };
 
-    const onRemove = (data: IndustryType) => {
-        industryMutation.mutate(data, {
-            onSuccess: () => {
-                industryQuery.refetch();
-
-                toast.success(t('request:update_success'));
-            },
-            onError: (err) => {
-                toast.error(err.response?.data.messages?.[0] || err.message);
-            },
-        });
+    const allowExpansion = (data: GroupType) => {
+        return data.members ? data.members.length > 0 : false;
     };
 
     return (
         <div className='flex flex-column gap-4'>
-            <ConfirmModal
-                ref={confirmModalRef}
-                onAccept={onRemove}
-                acceptLabel={t('confirm')}
-                rejectLabel={t('cancel')}
-            />
-
-            <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
-                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:industry').toLowerCase() })}</p>
-                <Button
-                    label={t('create_new')}
-                    icon='pi pi-plus'
-                    size='small'
-                    onClick={() => {
-                        formRef.current?.show?.();
-                        setSelected(undefined);
-                    }}
-                />
+            <div className='flex align-items-center justify-content-between bg-white p-3 border-round-lg shadow-3'>
+                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:group').toLowerCase() })}</p>
             </div>
 
             <div className='flex align-items-center justify-content-between'>
@@ -128,9 +112,18 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={industryQuery.isLoading || industryMutation.isLoading} />
+                <Loader show={groupQuery.isLoading} />
 
-                <DataTable value={industryQuery.data} rowHover={true} stripedRows={true} emptyMessage={t('list_empty')}>
+                <DataTable
+                    value={groupQuery.data}
+                    rowExpansionTemplate={rowExpansionTemplate}
+                    tableStyle={{ minWidth: '60rem' }}
+                >
+                    <Column
+                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        expander={allowExpansion}
+                        style={{ width: '5rem' }}
+                    />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         header={t('action')}
@@ -138,13 +131,13 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='internalCode'
-                        header={t('code_of', { obj: t('module:industry').toLowerCase() })}
+                        field='name'
+                        header={t('name_of', { obj: t('module:group').toLowerCase() })}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='name'
-                        header={t('name_of', { obj: t('module:industry').toLowerCase() })}
+                        field='countMember'
+                        header={t('module:field.group.count_member')}
                     />
                 </DataTable>
 
@@ -177,18 +170,17 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                 </div>
             </div>
 
-            <IndustryForm
+            <GroupForm
                 lng={lng}
                 title={
                     selected?.id
                         ? t('update_at', { obj: selected.name })
-                        : t('create_new_at', { obj: t('module:industry').toLowerCase() })
+                        : t('create_new_at', { obj: t('module:group').toLowerCase() })
                 }
                 ref={formRef}
-                onSuccess={(data) => industryQuery.refetch()}
             />
         </div>
     );
 };
 
-export default IndustryPage;
+export default GroupPage;

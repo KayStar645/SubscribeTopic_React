@@ -12,6 +12,7 @@ const ROUTES = {
         registration_period: '/home/registration_period',
         student_join: '/home/student_join',
         notification: '/home/notification',
+        group: '/home/group',
     },
 
     auth: {

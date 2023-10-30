@@ -13,9 +13,11 @@ const API = {
         registration_period: '/registrationPeriod',
         student_join: '/studentJoin',
         notification: '/notification',
+        group: '/group',
 
         detail: {
             notification: '/notification/detail',
+            group: '/group/detail',
         },
     },
 };

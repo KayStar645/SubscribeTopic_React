@@ -135,7 +135,10 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                        }}
                         header={t('action')}
                         body={renderActions}
                     />

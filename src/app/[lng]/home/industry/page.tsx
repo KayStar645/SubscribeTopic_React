@@ -20,6 +20,7 @@ import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import IndustryForm, { IndustryFormRefType } from './form';
 import { AxiosError } from 'axios';
+import { dateFilters } from '@assets/configs/general';
 
 const IndustryPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
@@ -131,7 +132,10 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
 
                 <DataTable value={industryQuery.data} rowHover={true} stripedRows={true} emptyMessage={t('list_empty')}>
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                        }}
                         header={t('action')}
                         body={renderActions}
                     />
@@ -150,27 +154,19 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                 <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
                     <Dropdown
                         id='date_created_filter'
-                        value={0}
-                        onSelect={(sort) => {
-                            setParams((prev) => ({
-                                ...prev,
-                                sorts: request.handleSort(sort, prev),
-                            }));
+                        value='date_decrease'
+                        optionValue='code'
+                        onChange={(sortCode) => {
+                            const filter = dateFilters(t).find((t) => t.code === sortCode);
+
+                            setParams((prev) => {
+                                return {
+                                    ...prev,
+                                    sorts: request.handleSort(filter, prev),
+                                };
+                            });
                         }}
-                        options={[
-                            {
-                                label: `${t('filter_date_created_down')}`,
-                                value: 0,
-                                name: 'DateCreated',
-                                code: 'date_decrease',
-                            },
-                            {
-                                label: `${t('filter_date_created_up')}`,
-                                value: 1,
-                                name: 'DateCreated',
-                                code: 'date_increase',
-                            },
-                        ]}
+                        options={dateFilters(t)}
                     />
 
                     <Paginator

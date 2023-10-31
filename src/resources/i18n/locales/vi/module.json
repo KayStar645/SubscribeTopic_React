@@ -7,6 +7,7 @@
     "registration_period": "Đợt đăng ký",
     "student_join": "Đợt tham gia của sinh viên",
     "notification": "Thông báo",
+    "group": "Nhóm",
 
     "field": {
         "faculty": {
@@ -33,6 +34,12 @@
         "student_join": {
             "registration_period": "Đợt tham gia",
             "student": "Sinh viên"
+        },
+        "group": {
+            "count_member": "Thành viên",
+            "leader": "Trưởng nhóm",
+            "members": "Thành viên trong nhóm",
+            "score": "Điểm"
         }
     }
 }

@@ -38,7 +38,8 @@
         "group": {
             "count_member": "Thành viên",
             "leader": "Trưởng nhóm",
-            "members": "Thành viên trong nhóm"
+            "members": "Thành viên trong nhóm",
+            "score": "Điểm"
         }
     }
 }

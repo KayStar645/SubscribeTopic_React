@@ -12,7 +12,7 @@ import { useTranslation } from '@resources/i18n';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
+import { DataTable, DataTableExpandedRows } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
@@ -24,6 +24,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
     const formRef = useRef<GroupFormRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
     const [selected, setSelected] = useState<GroupType>();
+    const [expandedRows, setExpandedRows] = useState<DataTableExpandedRows | any[]>();
 
     const [params, setParams] = useState<GroupParamType>({
         page: meta.currentPage,
@@ -73,8 +74,8 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
 
     const rowExpansionTemplate = (data: GroupType) => {
         return (
-            <div className='p-3'>
-                <p>{t('module:field.group.members')}</p>
+            <div>
+                <p className='pb-3 text-900 font-semibold'>{t('module:field.group.members')}</p>
                 <DataTable value={data.members}>
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
@@ -88,10 +89,9 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='student.major.name'
-                        header={t('name_of', { obj: t('module:major').toLowerCase() })}
+                        field='student.phoneNumber'
+                        header={t('phone_number')}
                     />
-                    <Column headerStyle={{ width: '4rem' }} />
                 </DataTable>
             </div>
         );
@@ -117,25 +117,38 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                 <DataTable
                     value={groupQuery.data}
                     rowExpansionTemplate={rowExpansionTemplate}
-                    tableStyle={{ minWidth: '60rem' }}
+                    expandedRows={expandedRows}
+                    onRowToggle={(e) => setExpandedRows(e.data)}
                 >
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            width: '4rem',
+                        }}
                         expander={allowExpansion}
-                        style={{ width: '5rem' }}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                        }}
                         header={t('action')}
                         body={renderActions}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                        }}
                         field='name'
                         header={t('name_of', { obj: t('module:group').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                        }}
                         field='countMember'
                         header={t('module:field.group.count_member')}
                     />
@@ -170,15 +183,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                 </div>
             </div>
 
-            <GroupForm
-                lng={lng}
-                title={
-                    selected?.id
-                        ? t('update_at', { obj: selected.name })
-                        : t('create_new_at', { obj: t('module:group').toLowerCase() })
-                }
-                ref={formRef}
-            />
+            <GroupForm lng={lng} title={`Thông tin nhóm ${selected?.name}`} ref={formRef} />
         </div>
     );
 };

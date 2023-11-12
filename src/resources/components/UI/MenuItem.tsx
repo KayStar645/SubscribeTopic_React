@@ -8,7 +8,6 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { classNames } from 'primereact/utils';
 import { useState } from 'react';
-import { makeStyles } from 'tss-react/mui';
 
 const MenuItem = (item: MenuItemType) => {
     const {
@@ -29,7 +28,6 @@ const MenuItem = (item: MenuItemType) => {
     const menu = useSelector(selectMenu);
     const active = code === menu.activeItem || code === menu.parent;
     const [isOpenMenu, setIsOpenMenu] = useState(false);
-    const { classes } = useStyles();
 
     const onClick = (currItem: MenuItemType) => {
         if (items && items.length > 0) {
@@ -70,7 +68,7 @@ const MenuItem = (item: MenuItemType) => {
 
     const SubItem = () => {
         return (
-            <ul>
+            <div>
                 {items?.map((child) => {
                     return (
                         <MenuItem
@@ -86,7 +84,7 @@ const MenuItem = (item: MenuItemType) => {
                         />
                     );
                 })}
-            </ul>
+            </div>
         );
     };
 
@@ -109,9 +107,7 @@ const MenuItem = (item: MenuItemType) => {
                 <div className={classNames('p-1', iconClassName)}>
                     <Icon />
                 </div>
-                <p className={classNames('flex-1 text-sm font-semibold item-label', labelClassName, classes.itemLabel)}>
-                    {label}
-                </p>
+                <p className={classNames('flex-1 text-sm font-semibold itemLabel', labelClassName)}>{label}</p>
 
                 {items && items.length > 0 && <i className='pi pi-chevron-down text-sm' />}
             </Link>
@@ -123,22 +119,12 @@ const MenuItem = (item: MenuItemType) => {
                         : { height: 0 }
                 }
                 transition={{ duration: 0.3 }}
-                className={classNames('overflow-hidden my-1 border-left-1 border-300', classes.subMenu)}
+                className={classNames('overflow-hidden my-1 border-left-1 border-300 subMenu')}
             >
                 {<SubItem />}
             </motion.div>
         </div>
     );
 };
-
-const useStyles = makeStyles<void, 'itemLabel'>()((_theme, _params, classes) => ({
-    subMenu: {
-        marginLeft: 30,
-        [`.${classes.itemLabel}`]: {
-            fontWeight: '400 !important',
-        },
-    },
-    itemLabel: {},
-}));
 
 export default MenuItem;

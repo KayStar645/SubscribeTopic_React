@@ -1,0 +1,7 @@
+.subMenu {
+    margin-left: 30px;
+}
+
+.subMenu .itemLabel {
+    font-weight: 400 !important;
+}

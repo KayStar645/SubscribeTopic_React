@@ -9,8 +9,6 @@
     "code_of": "Mã {{ obj }}",
     "email": "Địa chỉ email",
     "name_of": "Tên {{ obj }}",
-    "filter_date_created_down": "Giảm dần theo ngày thêm",
-    "filter_date_created_up": "Tăng dần theo ngày thêm",
     "forgot_password": "Quên mật khẩu",
     "password": "Mật khẩu",
     "phone_number": "Số điện thoại",

@@ -40,7 +40,7 @@ const InputDate = ({
                     onChange={onChange}
                     dateFormat={format}
                     className={classNames('w-full flex-1', { 'p-invalid': !!errorMessage })}
-                    inputClassName='w-full p-3'
+                    inputClassName='w-full h-3rem'
                     showTime={time}
                 />
             </div>

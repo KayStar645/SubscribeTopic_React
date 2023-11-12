@@ -51,6 +51,7 @@ interface CheckboxProps extends InputProps {
 interface DropdownProps extends InputProps {
     options?: OptionType[];
     optionValue?: string;
+    emptyMessage?: string;
     onChange?: (e: string) => void;
 }
 

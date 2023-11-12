@@ -33,17 +33,58 @@ const semesters = (t: TFunction): OptionType[] => [
 
 const dateFilters = (t: TFunction): OptionType[] => [
     {
-        label: `${t('filter_date_created_down')}`,
+        label: t('request:filter_date_created_down'),
         value: 0,
         name: 'DateCreated',
         code: 'date_decrease',
     },
     {
-        label: `${t('filter_date_created_up')}`,
+        label: t('request:filter_date_created_up'),
         value: 1,
         name: 'DateCreated',
         code: 'date_increase',
     },
 ];
 
-export { genders, semesters, dateFilters };
+const academics = (t: TFunction): OptionType[] => [
+    {
+        label: t('info:academic.bachelor'),
+        value: t('info:academic.bachelor'),
+    },
+    {
+        label: t('info:academic.engineer'),
+        value: t('info:academic.engineer'),
+    },
+    {
+        label: t('info:academic.master'),
+        value: t('info:academic.master'),
+    },
+    {
+        label: t('info:academic.doctor'),
+        value: t('info:academic.doctor'),
+    },
+];
+
+const degrees = (t: TFunction): OptionType[] => [
+    {
+        label: t('info:degree.associate_professor'),
+        value: t('info:degree.associate_professor'),
+    },
+    {
+        label: t('info:degree.professor'),
+        value: t('info:degree.professor'),
+    },
+];
+
+const employeeTypes = (t: TFunction): OptionType[] => [
+    {
+        label: t('info:employee_type.teacher'),
+        value: 'L',
+    },
+    {
+        label: t('info:employee_type.ministry'),
+        value: 'M',
+    },
+];
+
+export { genders, semesters, dateFilters, academics, degrees, employeeTypes };

@@ -15,10 +15,10 @@ const InputText = ({
     onChange = () => {},
     onBlur = () => {},
 }: InputTextProps) => {
-    const [inputValue, setInputValue] = useState(value.toString());
+    const [inputValue, setInputValue] = useState(value ? value.toString() : '');
 
     useEffect(() => {
-        setInputValue(value.toString());
+        setInputValue(value ? value.toString() : '');
     }, [value]);
 
     return (
@@ -42,7 +42,7 @@ const InputText = ({
                     value={inputValue}
                     placeholder={placeholder}
                     spellCheck={false}
-                    className={classNames('w-full flex-1 p-3', { 'p-invalid': !!errorMessage })}
+                    className={classNames('w-full flex-1 px-3 h-3rem', { 'p-invalid': !!errorMessage })}
                     onChange={(e) => {
                         setInputValue(e.target.value);
                         onChange(e);

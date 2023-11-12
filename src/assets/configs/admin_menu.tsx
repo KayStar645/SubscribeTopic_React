@@ -24,12 +24,6 @@ const getAdminMenu = (t: TFunction, lng: string): MenuItemType[] => {
                     label: t('menu:faculty'),
                     to: `/${lng}/${ROUTES.admin.faculty}`,
                 },
-                // {
-                //     code: 'teacher',
-                //     parent: 'master_data',
-                //     label: t('menu:teacher'),
-                //     to: `/${lng}/${ROUTES.admin.teacher}`,
-                // },
                 {
                     code: 'industry',
                     parent: 'master_data',
@@ -47,6 +41,12 @@ const getAdminMenu = (t: TFunction, lng: string): MenuItemType[] => {
                     parent: 'master_data',
                     label: t('menu:department'),
                     to: `/${lng}/${ROUTES.admin.department}`,
+                },
+                {
+                    code: 'teacher',
+                    parent: 'master_data',
+                    label: t('menu:teacher'),
+                    to: `/${lng}/${ROUTES.admin.teacher}`,
                 },
                 {
                     code: 'student',

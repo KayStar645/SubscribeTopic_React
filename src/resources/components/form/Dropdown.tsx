@@ -12,6 +12,7 @@ const Dropdown = ({
     blockClassName = '',
     row = false,
     optionValue = 'value',
+    emptyMessage = 'No results found',
     errorMessage,
     onChange = () => {},
 }: DropdownProps) => {
@@ -37,6 +38,7 @@ const Dropdown = ({
                 )}
 
                 <PrimeDropdown
+                    emptyMessage={emptyMessage}
                     inputId={id}
                     options={options}
                     value={selected}
@@ -44,7 +46,6 @@ const Dropdown = ({
                     placeholder={placeholder}
                     className={classNames('w-full', { 'p-invalid': !!errorMessage })}
                     onChange={(e) => {
-                        console.log('🚀 ~ file: Dropdown.tsx:47 ~ e:', e);
                         onChange(e.value);
                         setSelected(e.value);
                     }}

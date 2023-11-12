@@ -34,6 +34,7 @@ const defaultValues: RegistrationPeriodType = {
     timeStart: null,
     timeEnd: null,
 };
+
 const schema = (t: TFunction) =>
     yup.object({
         semester: yup.string(),

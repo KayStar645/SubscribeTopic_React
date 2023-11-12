@@ -1,3 +1,4 @@
+import { OptionType } from '@assets/types/common';
 import { RadioListProps } from '@assets/types/form';
 import { RadioButton as PrimeRadioButton } from 'primereact/radiobutton';
 import { classNames } from 'primereact/utils';
@@ -19,6 +20,24 @@ const RadioList = ({
         setCurrent(value);
     }, [value]);
 
+    const Item = (data: OptionType) => {
+        return (
+            <div key={data.value} className='flex align-items-center gap-2'>
+                <PrimeRadioButton
+                    inputId={data.value?.toString()}
+                    value={data.value}
+                    checked={data.value === current}
+                    onChange={(e) => {
+                        setCurrent(data.value);
+                        onChange(e);
+                    }}
+                />
+
+                <label htmlFor={data.value?.toString()}>{data.label}</label>
+            </div>
+        );
+    };
+
     return (
         <div className={classNames(blockClassName)}>
             <div className={classNames('block', { 'flex align-items-center': row })}>
@@ -35,25 +54,7 @@ const RadioList = ({
                     </label>
                 )}
 
-                <div className='flex gap-5 align-items-center' style={{ height: 55 }}>
-                    {options.map((t) => {
-                        return (
-                            <div key={t.value} className='flex align-items-center gap-2'>
-                                <PrimeRadioButton
-                                    inputId={t.value?.toString()}
-                                    value={t.value}
-                                    checked={t.value === current}
-                                    onChange={(e) => {
-                                        setCurrent(t.value);
-                                        onChange(e);
-                                    }}
-                                />
-
-                                <label htmlFor={t.value?.toString()}>{t.label}</label>
-                            </div>
-                        );
-                    })}
-                </div>
+                <div className='flex gap-5 align-items-center h-3rem'>{options.map(Item)}</div>
             </div>
 
             <small className='p-error'>{errorMessage}</small>

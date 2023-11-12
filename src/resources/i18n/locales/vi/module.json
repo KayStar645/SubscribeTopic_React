@@ -8,6 +8,7 @@
     "student_join": "Đợt tham gia của sinh viên",
     "notification": "Thông báo",
     "group": "Nhóm",
+    "teacher": "Giảng viên",
 
     "field": {
         "faculty": {
@@ -40,6 +41,12 @@
             "leader": "Trưởng nhóm",
             "members": "Thành viên trong nhóm",
             "score": "Điểm"
+        },
+        "teacher": {
+            "academic": "Học vị",
+            "degree": "Học hàm",
+            "type": "Chức vụ",
+            "department": "Bộ môn"
         }
     }
 }

@@ -1,3 +1,17 @@
 {
-	"product_name": "Tiến trình khóa luận"
+    "product_name": "Tiến trình khóa luận",
+    "academic": {
+        "bachelor": "Cử nhân",
+        "engineer": "Kỹ sư",
+        "master": "Thạc sĩ",
+        "doctor": "Tiến sĩ"
+    },
+    "degree": {
+        "associate_professor": "Phó giáo sư",
+        "professor": "Giáo sư"
+    },
+    "employee_type": {
+        "ministry": "Giáo vụ",
+        "teacher": "Giáo viên"
+    }
 }

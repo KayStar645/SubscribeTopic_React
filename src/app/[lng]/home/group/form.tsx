@@ -15,6 +15,7 @@ interface GroupFormRefType {
 interface GroupFormType extends LanguageType {
     title: string;
 }
+
 const GroupForm = forwardRef<GroupFormRefType, GroupFormType>(({ title, lng }, ref) => {
     const [visible, setVisible] = useState(false);
     const [info, setInfo] = useState<GroupType>();

@@ -16,7 +16,7 @@ import { Breadcrumb, MenuItem } from '../UI';
 
 const Header = ({ lng }: LanguageType) => {
     const { t } = useTranslation(lng);
-    const [user, setUser] = useState({ name: '' });
+    const [user, setUser] = useState({ userName: '' });
     const userModalRef = useRef<OverlayPanel>(null);
     const pathName = usePathname();
     const menu = getUserMenu(t, lng, language.getRealPathName(pathName));
@@ -74,7 +74,7 @@ const Header = ({ lng }: LanguageType) => {
                     onClick={(e) => userModalRef?.current?.toggle(e)}
                 >
                     <Avatar icon='pi pi-user' className='bg-primary text-white border-circle' />
-                    <p>{user.name}</p>
+                    <p>{user.userName}</p>
 
                     <i className='pi pi-angle-down ml-2' />
                 </div>

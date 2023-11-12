@@ -5,27 +5,6 @@ import { DropdownChangeEvent } from 'primereact/dropdown';
 import { CheckboxChangeEvent } from 'primereact/checkbox';
 import { RadioButtonChangeEvent } from 'primereact/radiobutton';
 
-interface FormType extends PropsWithChildren {
-    headers?: Record<string, string>;
-    validateStatus?: (status: number) => boolean;
-    onError?: ({
-        response,
-        error,
-    }:
-        | {
-              response: Response;
-              error?: undefined;
-          }
-        | {
-              response?: undefined;
-              error: unknown;
-          }) => void;
-    onSuccess?: ({ response }: { response: Response }) => void;
-    onSubmit?: (data) => void;
-    method?: 'post' | 'put' | 'delete';
-    schema: yup.ObjectSchema;
-}
-
 interface InputProps {
     id?: string;
     value?: string | number;
@@ -76,7 +55,19 @@ interface EditorProps extends InputProps {
     onChange?: (e: string) => void;
 }
 
-export default FormType;
+interface EditorProps extends InputProps {
+    onChange?: (e: string) => void;
+}
+
+interface InputRangeProps extends InputProps {
+    min?: number;
+    max: number;
+    minPlaceHolder?: string;
+    maxPlaceHolder?: string;
+    value?: [number, number];
+    onChange?: (e: [number, number]) => void;
+}
+
 export type {
     CheckboxProps,
     InputTextProps,
@@ -86,4 +77,5 @@ export type {
     RadioListProps,
     InputDateProps,
     EditorProps,
+    InputRangeProps,
 };

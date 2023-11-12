@@ -139,13 +139,13 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
                         }}
-                        header={t('action')}
+                        header={t('common:action')}
                         body={renderActions}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='name'
-                        header={t('name_of', { obj: t('module:notification').toLowerCase() })}
+                        header={t('common:name_of', { obj: t('module:notification').toLowerCase() })}
                     />
                 </DataTable>
 

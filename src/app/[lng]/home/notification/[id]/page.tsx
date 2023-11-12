@@ -31,7 +31,7 @@ const schema = (t: TFunction) =>
     yup.object({
         name: yup.string().required(
             t('validation:required', {
-                attribute: t('name_of', { obj: t('module:notification') }).toLowerCase(),
+                attribute: t('common:name_of', { obj: t('module:notification') }).toLowerCase(),
             }),
         ),
         content: yup.string().required(
@@ -109,8 +109,8 @@ const NotificationForm = ({ params }: PageProps) => {
                         <InputText
                             id='form_data_name'
                             value={field.value}
-                            label={t('name_of', { obj: t('module:notification').toLowerCase() })}
-                            placeholder={t('name_of', { obj: t('module:notification').toLowerCase() })}
+                            label={t('common:name_of', { obj: t('module:notification').toLowerCase() })}
+                            placeholder={t('common:name_of', { obj: t('module:notification').toLowerCase() })}
                             errorMessage={fieldState.error?.message}
                             onChange={field.onChange}
                         />

@@ -1,8 +1,9 @@
 'use client';
 
 import { API, ROWS_PER_PAGE } from '@assets/configs';
+import { dateFilters } from '@assets/configs/general';
 import { request } from '@assets/helpers';
-import { StudentJoinParamType, StudentJoinType } from '@assets/interface';
+import { ThesisParamType, ThesisType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
@@ -19,29 +20,23 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import StudentJoinForm, { StudentJoinFormRefType } from './form';
-import { dateFilters } from '@assets/configs/general';
 
-const StudentJoinPage = ({ params: { lng } }: PageProps) => {
+const ThesisPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
-    const formRef = useRef<StudentJoinFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-    const [selected, setSelected] = useState<StudentJoinType>();
 
-    const [params, setParams] = useState<StudentJoinParamType>({
+    const [params, setParams] = useState<ThesisParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
-        isGetStudent: true,
-        isGetRegistrationPeriod: true,
     });
 
-    const studentJoinQuery = useQuery<StudentJoinType[], AxiosError<ResponseType>>({
+    const thesisQuery = useQuery<ThesisType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
-        queryKey: ['student_joins', 'list', params],
+        queryKey: ['thesis', 'list', params],
         queryFn: async () => {
-            const response = await request.get<StudentJoinType[]>(`${API.admin.student_join}`, { params });
+            const response = await request.get<ThesisType[]>(`${API.admin.thesis}`, { params });
 
             setMeta({
                 currentPage: response.data.extra?.currentPage,
@@ -60,9 +55,9 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
         },
     });
 
-    const studentJoinMutation = useMutation<any, AxiosError<ResponseType>, StudentJoinType>({
+    const thesisMutation = useMutation<any, AxiosError<ResponseType>, ThesisType>({
         mutationFn: (data) => {
-            return request.remove(`${API.admin.student_join}`, { params: { id: data.id } });
+            return request.remove(`${API.admin.thesis}`, { params: { id: data.id } });
         },
     });
 
@@ -70,16 +65,10 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (data: StudentJoinType) => {
+    const renderActions = (data: ThesisType) => {
         return (
             <div className='flex align-items-center gap-3'>
-                <i
-                    className='pi pi-pencil hover:text-primary cursor-pointer'
-                    onClick={() => {
-                        formRef.current?.show?.(data);
-                        setSelected(data);
-                    }}
-                />
+                <i className='pi pi-pencil hover:text-primary cursor-pointer' />
                 <i
                     className='pi pi-trash hover:text-red-600 cursor-pointer'
                     onClick={(e) => {
@@ -90,11 +79,10 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
         );
     };
 
-    const onRemove = (data: StudentJoinType) => {
-        studentJoinMutation.mutate(data, {
+    const onRemove = (data: ThesisType) => {
+        thesisMutation.mutate(data, {
             onSuccess: () => {
-                studentJoinQuery.refetch();
-
+                thesisQuery.refetch();
                 toast.success(t('request:update_success'));
             },
             onError: (err) => {
@@ -113,18 +101,8 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
             />
 
             <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
-                <p className='text-xl font-semibold'>
-                    {t('list_of', { module: t('module:student_join').toLowerCase() })}
-                </p>
-                <Button
-                    label={t('create_new')}
-                    icon='pi pi-plus'
-                    size='small'
-                    onClick={() => {
-                        formRef.current?.show?.();
-                        setSelected(undefined);
-                    }}
-                />
+                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:thesis').toLowerCase() })}</p>
+                <Button label={t('create_new')} icon='pi pi-plus' size='small' />
             </div>
 
             <div className='flex align-items-center justify-content-between'>
@@ -132,14 +110,9 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={studentJoinQuery.isLoading || studentJoinMutation.isLoading} />
+                <Loader show={thesisQuery.isLoading || thesisMutation.isLoading} />
 
-                <DataTable
-                    value={studentJoinQuery.data || []}
-                    rowHover={true}
-                    stripedRows={true}
-                    emptyMessage={t('list_empty')}
-                >
+                <DataTable value={thesisQuery.data} rowHover={true} stripedRows={true} emptyMessage={t('list_empty')}>
                     <Column
                         headerStyle={{
                             background: 'var(--primary-color)',
@@ -150,23 +123,18 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='student.name'
-                        header={t('common:name_of', { obj: t('module:student').toLowerCase() })}
+                        field='internalCode'
+                        header={t('common:code_of', { obj: t('module:thesis').toLowerCase() })}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='registrationPeriod.schoolYear'
-                        header={t('module:field.registration_period.school_year')}
+                        field='name'
+                        header={t('common:name_of', { obj: t('module:thesis').toLowerCase() })}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='registrationPeriod.semester'
-                        header={t('module:field.registration_period.semester')}
-                    />
-                    <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
-                        field='registrationPeriod.phase'
-                        header={t('module:field.registration_period.phase')}
+                        field='summary'
+                        header={t('common:summary')}
                     />
                 </DataTable>
 
@@ -198,19 +166,8 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
                     />
                 </div>
             </div>
-
-            <StudentJoinForm
-                lng={lng}
-                title={
-                    selected?.id
-                        ? t('update_at', { obj: selected.name })
-                        : t('create_new_at', { obj: t('module:student_join').toLowerCase() })
-                }
-                ref={formRef}
-                onSuccess={(data) => studentJoinQuery.refetch()}
-            />
         </div>
     );
 };
 
-export default StudentJoinPage;
+export default ThesisPage;

@@ -39,5 +39,6 @@
     "male": "Nam",
     "female": "Nữ",
     "other": "Khác",
-    "back": "Quay lại"
+    "back": "Quay lại",
+    "summary": "Mô tả"
 }

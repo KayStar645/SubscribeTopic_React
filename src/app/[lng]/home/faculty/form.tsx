@@ -41,12 +41,12 @@ const schema = (t: TFunction) =>
     yup.object({
         internalCode: yup.string().required(
             t('validation:required', {
-                attribute: t('code_of', { obj: t('module:faculty') }).toLowerCase(),
+                attribute: t('common:code_of', { obj: t('module:faculty') }).toLowerCase(),
             }),
         ),
         name: yup.string().required(
             t('validation:required', {
-                attribute: t('name_of', { obj: t('module:faculty') }).toLowerCase(),
+                attribute: t('common:name_of', { obj: t('module:faculty') }).toLowerCase(),
             }),
         ),
         phoneNumber: yup.string().length(
@@ -141,8 +141,8 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
                         <InputText
                             id='form_data_internal_code'
                             value={field.value}
-                            label={t('code_of', { obj: t('module:faculty').toLowerCase() })}
-                            placeholder={t('code_of', { obj: t('module:faculty').toLowerCase() })}
+                            label={t('common:code_of', { obj: t('module:faculty').toLowerCase() })}
+                            placeholder={t('common:code_of', { obj: t('module:faculty').toLowerCase() })}
                             errorMessage={fieldState.error?.message}
                             required={true}
                             onChange={field.onChange}
@@ -158,8 +158,8 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
                             id='form_data_name'
                             value={field.value}
                             required={true}
-                            label={t('name_of', { obj: t('module:faculty').toLowerCase() })}
-                            placeholder={t('name_of', { obj: t('module:faculty').toLowerCase() })}
+                            label={t('common:name_of', { obj: t('module:faculty').toLowerCase() })}
+                            placeholder={t('common:name_of', { obj: t('module:faculty').toLowerCase() })}
                             errorMessage={fieldState.error?.message}
                             onChange={field.onChange}
                         />

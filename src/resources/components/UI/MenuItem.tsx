@@ -92,7 +92,7 @@ const MenuItem = (item: MenuItemType) => {
         <div className='my-1'>
             <Link
                 className={classNames(
-                    'flex align-items-center gap-2 py-2 px-3 no-underline cursor-pointer transition-linear transition-duration-200 border-round-lg',
+                    'flex align-items-center gap-2 h-3rem px-3 no-underline cursor-pointer transition-linear transition-duration-200 border-round-lg',
                     itemClassName,
                     {
                         'hover:surface-hover': !active,
@@ -107,22 +107,24 @@ const MenuItem = (item: MenuItemType) => {
                 <div className={classNames('p-1', iconClassName)}>
                     <Icon />
                 </div>
-                <p className={classNames('flex-1 text-sm font-semibold itemLabel', labelClassName)}>{label}</p>
+                <p className={classNames('flex-1 text-sm font-semibold itemLabel m-0', labelClassName)}>{label}</p>
 
                 {items && items.length > 0 && <i className='pi pi-chevron-down text-sm' />}
             </Link>
 
-            <motion.div
-                animate={
-                    (isOpenMenu && active) || (isOpenMenu && menu.openMenu) || parent === menu.parent
-                        ? { height: 'auto' }
-                        : { height: 0 }
-                }
-                transition={{ duration: 0.3 }}
-                className={classNames('overflow-hidden my-1 border-left-1 border-300 subMenu')}
-            >
-                {<SubItem />}
-            </motion.div>
+            {items && items.length && (
+                <motion.div
+                    animate={
+                        (isOpenMenu && active) || (isOpenMenu && menu.openMenu) || parent === menu.parent
+                            ? { height: 'auto' }
+                            : { height: 0 }
+                    }
+                    transition={{ duration: 0.3 }}
+                    className={classNames('overflow-hidden border-left-1 border-300 subMenu')}
+                >
+                    {<SubItem />}
+                </motion.div>
+            )}
         </div>
     );
 };

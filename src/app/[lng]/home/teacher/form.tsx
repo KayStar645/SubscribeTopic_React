@@ -48,12 +48,12 @@ const schema = (t: TFunction) =>
         id: yup.string(),
         internalCode: yup.string().required(
             t('validation:required', {
-                attribute: t('code_of', { obj: t('module:teacher') }).toLowerCase(),
+                attribute: t('common:code_of', { obj: t('module:teacher') }).toLowerCase(),
             }),
         ),
         name: yup.string().required(
             t('validation:required', {
-                attribute: t('name_of', { obj: t('module:teacher') }).toLowerCase(),
+                attribute: t('common:name_of', { obj: t('module:teacher') }).toLowerCase(),
             }),
         ),
         dateOfBirth: yup
@@ -152,8 +152,8 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                             <InputText
                                 id='form_data_internal_code'
                                 value={field.value}
-                                label={t('code_of', { obj: t('module:teacher').toLowerCase() })}
-                                placeholder={t('code_of', { obj: t('module:teacher').toLowerCase() })}
+                                label={t('common:code_of', { obj: t('module:teacher').toLowerCase() })}
+                                placeholder={t('common:code_of', { obj: t('module:teacher').toLowerCase() })}
                                 errorMessage={fieldState.error?.message}
                                 onChange={(e) => field.onChange(e.target.value)}
                             />
@@ -167,8 +167,8 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                             <InputText
                                 id='form_data_name'
                                 value={field.value}
-                                label={t('name_of', { obj: t('module:teacher').toLowerCase() })}
-                                placeholder={t('name_of', { obj: t('module:teacher').toLowerCase() })}
+                                label={t('common:name_of', { obj: t('module:teacher').toLowerCase() })}
+                                placeholder={t('common:name_of', { obj: t('module:teacher').toLowerCase() })}
                                 errorMessage={fieldState.error?.message}
                                 onChange={field.onChange}
                             />

@@ -135,18 +135,18 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
                         }}
-                        header={t('action')}
+                        header={t('common:action')}
                         body={renderActions}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='internalCode'
-                        header={t('code_of', { obj: t('module:faculty').toLowerCase() })}
+                        header={t('common:code_of', { obj: t('module:faculty').toLowerCase() })}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
                         field='name'
-                        header={t('name_of', { obj: t('module:faculty').toLowerCase() })}
+                        header={t('common:name_of', { obj: t('module:faculty').toLowerCase() })}
                     />
                     <Column
                         headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}

@@ -9,6 +9,7 @@
     "notification": "Thông báo",
     "group": "Nhóm",
     "teacher": "Giảng viên",
+    "thesis": "Đề tài",
 
     "field": {
         "faculty": {
@@ -47,6 +48,11 @@
             "degree": "Học hàm",
             "type": "Chức vụ",
             "department": "Bộ môn"
+        },
+        "thesis": {
+            "summary": "Mô tả",
+            "min_quantity": "Số lượng thành viên tối thiểu",
+            "max_quantity": "Số lượng thành viên tối đa"
         }
     }
 }

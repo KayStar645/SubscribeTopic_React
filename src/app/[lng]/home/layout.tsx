@@ -14,7 +14,7 @@ const HomeLayout = ({ children, params: { lng } }: PageProps) => {
     // }, []);
 
     return (
-        <body className='min-h-screen surface-200 overflow-hidden'>
+        <body className='min-h-screen surface-200 overflow-hidden m-0'>
             <div className='flex'>
                 <Sidebar lng={lng} />
 

@@ -12,6 +12,7 @@ import { useMutation } from '@tanstack/react-query';
 import { setCookie } from 'cookies-next';
 import { TFunction } from 'i18next';
 import { jwtDecode } from 'jwt-decode';
+import moment from 'moment';
 import { useRouter } from 'next/navigation';
 import { PrimeIcons } from 'primereact/api';
 import { Button } from 'primereact/button';
@@ -46,8 +47,8 @@ const Page = ({ params: { lng } }: PageProps) => {
                 const tokenData: any = jwtDecode(response.data.data.token);
                 const faculty = JSON.parse(tokenData.faculty);
 
-                if (response.data?.data?.tokenData?.user) {
-                    setCookie(AUTH_TOKEN, response.data.data.tokenData.user, { expires: tokenData.exp });
+                if (tokenData) {
+                    setCookie(AUTH_TOKEN, tokenData, { expires: new Date(tokenData.exp * 1000) });
                 }
 
                 if (faculty) {
@@ -60,7 +61,7 @@ const Page = ({ params: { lng } }: PageProps) => {
     };
 
     return (
-        <div className='flex align-items-center justify-content-center h-full w-full'>
+        <div className='flex align-items-center justify-content-center h-full w-full p-0'>
             <div className='flex flex-wrap shadow-2 w-full border-round-2xl overflow-hidden'>
                 <Loader show={signInMutation.isLoading} />
 

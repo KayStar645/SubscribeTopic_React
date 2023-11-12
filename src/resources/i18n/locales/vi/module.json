@@ -51,8 +51,10 @@
         },
         "thesis": {
             "summary": "Mô tả",
-            "min_quantity": "Số lượng thành viên tối thiểu",
-            "max_quantity": "Số lượng thành viên tối đa"
+            "quantity": "Số lượng thành viên",
+            "instruction": "Giảng viên hướng dẫn",
+            "review": "Giảng viên phản biện",
+            "major": "Chuyên ngành phù hợp"
         }
     }
 }

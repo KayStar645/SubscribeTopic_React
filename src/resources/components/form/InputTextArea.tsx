@@ -30,7 +30,8 @@ const InputTextArea = ({
                 <PrimeInputTextarea
                     value={value.toString()}
                     placeholder={placeholder}
-                    className={classNames('w-full', { 'p-invalid': !!errorMessage })}
+                    rows={5}
+                    className={classNames('w-full line-height-3', { 'p-invalid': !!errorMessage })}
                     onChange={(e) => {
                         onChange?.(e);
                     }}

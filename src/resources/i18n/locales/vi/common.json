@@ -40,5 +40,7 @@
     "female": "Nữ",
     "other": "Khác",
     "back": "Quay lại",
-    "summary": "Mô tả"
+    "summary": "Mô tả",
+    "max": "Tối đa",
+    "min": "Tối thiểu"
 }

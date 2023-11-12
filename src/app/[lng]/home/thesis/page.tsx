@@ -1,8 +1,8 @@
 'use client';
 
-import { API, ROWS_PER_PAGE } from '@assets/configs';
+import { API, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
 import { dateFilters } from '@assets/configs/general';
-import { request } from '@assets/helpers';
+import { language, request } from '@assets/helpers';
 import { ThesisParamType, ThesisType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
@@ -13,6 +13,7 @@ import { ConfirmModal } from '@resources/components/modal';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -25,6 +26,7 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
+    const router = useRouter();
 
     const [params, setParams] = useState<ThesisParamType>({
         page: meta.currentPage,
@@ -68,7 +70,10 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
     const renderActions = (data: ThesisType) => {
         return (
             <div className='flex align-items-center gap-3'>
-                <i className='pi pi-pencil hover:text-primary cursor-pointer' />
+                <i
+                    className='pi pi-pencil hover:text-primary cursor-pointer'
+                    onClick={() => router.push(language.addPrefixLanguage(lng, `${ROUTES.admin.thesis}/${data.id}`))}
+                />
                 <i
                     className='pi pi-trash hover:text-red-600 cursor-pointer'
                     onClick={(e) => {

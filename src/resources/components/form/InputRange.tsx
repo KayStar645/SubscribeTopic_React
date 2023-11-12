@@ -13,7 +13,7 @@ const InputRange = ({
     maxPlaceHolder = 'max',
     row = false,
     required = false,
-    min = 1,
+    min,
     max,
     onChange = () => {},
 }: InputRangeProps) => {
@@ -21,7 +21,7 @@ const InputRange = ({
     const [_max, setMax] = useState<number | null>(value[1] || 0);
 
     return (
-        <div className={classNames(blockClassName)}>
+        <div className={classNames('w-fit', blockClassName)}>
             <div className={classNames('block', { 'flex align-items-center': row })}>
                 {label && (
                     <label
@@ -38,6 +38,7 @@ const InputRange = ({
 
                 <div className='flex align-items-center'>
                     <InputNumber
+                        inputClassName='w-5rem h-3rem text-center'
                         min={min}
                         useGrouping={false}
                         placeholder={minPlaceHolder}
@@ -51,7 +52,9 @@ const InputRange = ({
                     <Divider />
 
                     <InputNumber
+                        inputClassName='w-5rem h-3rem text-center'
                         max={max}
+                        value={_max}
                         useGrouping={false}
                         placeholder={maxPlaceHolder}
                         onChange={(e) => {

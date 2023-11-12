@@ -34,6 +34,14 @@ interface DropdownProps extends InputProps {
     onChange?: (e: string) => void;
 }
 
+interface MultiSelectProps extends InputProps {
+    value?: OptionType[];
+    options?: OptionType[];
+    optionValue?: string;
+    emptyMessage?: string;
+    onChange?: (e: string) => void;
+}
+
 interface TextAreaProps extends InputProps {
     onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 }

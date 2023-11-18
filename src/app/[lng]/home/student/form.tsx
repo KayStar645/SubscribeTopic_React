@@ -1,5 +1,5 @@
 import { API } from '@assets/configs';
-import { genders } from '@assets/configs/general';
+import { GENDER } from '@assets/configs/general';
 import { request } from '@assets/helpers';
 import { StudentType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
@@ -257,7 +257,7 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
                             <RadioList
                                 value={field.value}
                                 label={t('gender')}
-                                options={genders(t)}
+                                options={GENDER(t)}
                                 onChange={field.onChange}
                                 errorMessage={fieldState.error?.message}
                             />

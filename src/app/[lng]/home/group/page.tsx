@@ -1,7 +1,7 @@
 'use client';
 
 import { API, ROWS_PER_PAGE } from '@assets/configs';
-import { dateFilters } from '@assets/configs/general';
+import { DATE_FILTER } from '@assets/configs/general';
 import { request } from '@assets/helpers';
 import { GroupParamType, GroupType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
@@ -108,7 +108,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='flex align-items-center justify-content-between'>
-                <InputText placeholder={`${t('search')}...`} className='col-4' />
+                <InputText placeholder={`${t('search')}...`} className='w-30rem' />
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
@@ -160,7 +160,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                         value='date_decrease'
                         optionValue='code'
                         onChange={(sortCode) => {
-                            const filter = dateFilters(t).find((t) => t.code === sortCode);
+                            const filter = DATE_FILTER(t).find((t) => t.code === sortCode);
 
                             setParams((prev) => {
                                 return {
@@ -169,7 +169,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                                 };
                             });
                         }}
-                        options={dateFilters(t)}
+                        options={DATE_FILTER(t)}
                     />
 
                     <Paginator

@@ -1,5 +1,5 @@
 import { API } from '@assets/configs';
-import { academics, degrees as _degrees, genders, employeeTypes } from '@assets/configs/general';
+import { ACADEMIC, degrees as _degrees, GENDER, USER_TYPE } from '@assets/configs/general';
 import { request } from '@assets/helpers';
 import { DepartmentType, TeacherType } from '@assets/interface';
 import { OptionType } from '@assets/types/common';
@@ -181,7 +181,7 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                         render={({ field, fieldState }) => (
                             <Dropdown
                                 id='form_data_academic_title'
-                                options={academics(t)}
+                                options={ACADEMIC(t)}
                                 value={field.value}
                                 label={t('module:field.teacher.academic')}
                                 placeholder={t('module:field.teacher.academic')}
@@ -242,7 +242,7 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                         render={({ field, fieldState }) => (
                             <Dropdown
                                 id='form_data_type'
-                                options={employeeTypes(t)}
+                                options={USER_TYPE(t)}
                                 value={field.value}
                                 label={t('module:field.teacher.type')}
                                 placeholder={t('module:field.teacher.type')}
@@ -305,7 +305,7 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                             <RadioList
                                 value={field.value}
                                 label={t('gender')}
-                                options={genders(t)}
+                                options={GENDER(t)}
                                 onChange={field.onChange}
                                 errorMessage={fieldState.error?.message}
                             />

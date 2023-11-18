@@ -1,37 +1,34 @@
-import { AUTH_TOKEN, FACULTY_TOKEN, USER } from '@assets/configs';
-import { getUserMenu } from '@assets/configs/user_menu';
+import { AUTH_RAW_TOKEN, AUTH_TOKEN } from '@assets/configs';
+import { USER_MENU } from '@assets/configs/user_menu';
 import { language } from '@assets/helpers';
+import useCookies from '@assets/hooks/useCookies';
+import { AuthType } from '@assets/interface/Auth';
 import { useDispatch } from '@assets/redux';
 import menuSlice from '@assets/redux/slices/menu/slice';
 import { LanguageType } from '@assets/types/lang';
 import { MenuItemType } from '@assets/types/menu';
 import { SelectFacultyModalRefType } from '@assets/types/modal';
 import { useTranslation } from '@resources/i18n';
-import { deleteCookie, getCookie } from 'cookies-next';
+import { deleteCookie } from 'cookies-next';
 import { usePathname } from 'next/navigation';
 import { Avatar } from 'primereact/avatar';
 import { OverlayPanel } from 'primereact/overlaypanel';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Breadcrumb, MenuItem } from '../UI';
 
 const Header = ({ lng }: LanguageType) => {
     const { t } = useTranslation(lng);
-    const [user, setUser] = useState({ userName: '' });
+    const [auth] = useCookies<AuthType>(AUTH_TOKEN);
     const userModalRef = useRef<OverlayPanel>(null);
     const pathName = usePathname();
-    const menu = getUserMenu(t, lng, language.getRealPathName(pathName));
+    const menu = USER_MENU(t, lng, language.getRealPathName(pathName));
     const dispatch = useDispatch();
     const selectFacultyRef = useRef<SelectFacultyModalRefType>(null);
-
-    useEffect(() => {
-        setUser(getCookie(AUTH_TOKEN) ? JSON.parse(getCookie(AUTH_TOKEN)!) : '');
-    }, []);
 
     const renderItem = (item: MenuItemType) => {
         const onLogoutClick = () => {
             deleteCookie(AUTH_TOKEN);
-            deleteCookie(USER);
-            deleteCookie(FACULTY_TOKEN);
+            deleteCookie(AUTH_RAW_TOKEN);
             dispatch(menuSlice.actions.onItemClick({ activeItem: 'home', openMenu: false, parent: '' }));
         };
 
@@ -42,19 +39,22 @@ const Header = ({ lng }: LanguageType) => {
         return (
             <MenuItem
                 key={item.code}
-                {...item}
-                onItemClick={() => {
-                    let event = () => {};
+                permissions={auth?.permission || []}
+                item={{
+                    ...item,
+                    onItemClick: () => {
+                        let event = () => {};
 
-                    if (item.code === 'logout') {
-                        event = onLogoutClick;
-                    }
+                        if (item.code === 'logout') {
+                            event = onLogoutClick;
+                        }
 
-                    if (item.code === 'change_faculty') {
-                        event = onChangeFacultyClick;
-                    }
+                        if (item.code === 'change_faculty') {
+                            event = onChangeFacultyClick;
+                        }
 
-                    event();
+                        event();
+                    },
                 }}
             />
         );
@@ -74,7 +74,7 @@ const Header = ({ lng }: LanguageType) => {
                     onClick={(e) => userModalRef?.current?.toggle(e)}
                 >
                     <Avatar icon='pi pi-user' className='bg-primary text-white border-circle' />
-                    <p>{user.userName}</p>
+                    <p>{auth?.customer.Name}</p>
 
                     <i className='pi pi-angle-down ml-2' />
                 </div>

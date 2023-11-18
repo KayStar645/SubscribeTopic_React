@@ -1,4 +1,5 @@
 {
+    "account": "Tài khoản",
     "faculty": "Khoa",
     "department": "Bộ môn",
     "major": "Chuyên ngành",
@@ -10,6 +11,11 @@
     "group": "Nhóm",
     "teacher": "Giảng viên",
     "thesis": "Đề tài",
+    "role": "Vai trò",
+    "faculty_duty": "Nhiệm vụ khoa",
+    "department_duty": "Nhiệm vụ bộ môn",
+    "feedback": "Góp ý chỉnh sửa",
+    "permission": "Quyền",
 
     "field": {
         "faculty": {
@@ -55,6 +61,7 @@
             "instruction": "Giảng viên hướng dẫn",
             "review": "Giảng viên phản biện",
             "major": "Chuyên ngành phù hợp"
-        }
+        },
+        "role": {}
     }
 }

@@ -18,13 +18,13 @@ import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 interface FacultyFormRefType {
-    show?: (data?: FacultyType) => void;
+    show?: (_data?: FacultyType) => void;
     close?: () => void;
 }
 
 interface FacultyFormType extends LanguageType {
     title: string;
-    onSuccess?: (data: FacultyType) => void;
+    onSuccess?: (_data: FacultyType) => void;
 }
 
 const defaultValues: FacultyType = {
@@ -90,7 +90,9 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
     const show = (data?: FacultyType) => {
         setVisible(true);
 
-        teacherQuery.refetch();
+        if (data?.id) {
+            teacherQuery.refetch();
+        }
 
         if (data) {
             reset(data);
@@ -131,7 +133,7 @@ const FacultyForm = forwardRef<FacultyFormRefType, FacultyFormType>(({ title, ln
             contentClassName='mb-8'
             onHide={close}
         >
-            <Loader show={facultyMutation.isLoading || teacherQuery.isLoading} />
+            <Loader show={facultyMutation.isLoading || teacherQuery.isFetching} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller

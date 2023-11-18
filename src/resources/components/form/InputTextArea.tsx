@@ -18,7 +18,7 @@ const InputTextArea = ({
                 {label && (
                     <label
                         htmlFor={id}
-                        className={classNames('text-900 font-medium block', {
+                        className={classNames('text-900 font-medium block text-800', {
                             'w-10rem mr-2': row,
                             'mb-2': !row,
                         })}

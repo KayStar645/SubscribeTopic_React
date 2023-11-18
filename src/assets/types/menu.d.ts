@@ -10,8 +10,10 @@ interface MenuItemType {
     itemClassName?: string;
     labelClassName?: string;
     iconClassName?: string;
-    onItemClick?: (item: MenuItemType) => void;
-    onSubItemClick?: (item: MenuItemType) => void;
+    permission?: string;
+    checkPermission?: boolean;
+    onItemClick?: (_item: MenuItemType) => void;
+    onSubItemClick?: (_item: MenuItemType) => void;
 }
 
 export type { MenuItemType };

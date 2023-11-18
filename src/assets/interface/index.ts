@@ -10,3 +10,4 @@ export * from './StudentJoin';
 export * from './Notification';
 export * from './Group';
 export * from './Thesis';
+export * from './Role';

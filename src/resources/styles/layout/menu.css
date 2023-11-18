@@ -2,6 +2,11 @@
     margin-left: 28px;
 }
 
+.subMenu .childBody {
+    height: 2.5rem !important;
+    margin-left: 0.5rem !important;
+}
+
 .subMenu .itemLabel {
     font-weight: 400 !important;
 }

@@ -21,7 +21,7 @@ const InputDate = ({
                 {label && (
                     <label
                         htmlFor={id}
-                        className={classNames('font-medium block', {
+                        className={classNames('font-medium block text-800', {
                             'w-10rem mr-2': row,
                             'mb-2': !row,
                             'p-error': !!errorMessage,

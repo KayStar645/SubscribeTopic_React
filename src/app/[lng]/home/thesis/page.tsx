@@ -109,7 +109,12 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
 
             <div className='flex align-items-center justify-content-between bg-white h-4rem px-3 border-round-lg shadow-3'>
                 <p className='text-xl font-semibold'>{t('list_of', { module: t('module:thesis').toLowerCase() })}</p>
-                <Button label={t('create_new')} icon='pi pi-plus' size='small' />
+                <Button
+                    label={t('create_new')}
+                    icon='pi pi-plus'
+                    size='small'
+                    onClick={() => router.push(language.addPrefixLanguage(lng, `${ROUTES.admin.thesis}/0`))}
+                />
             </div>
 
             <div className='flex align-items-center justify-content-between'>

@@ -41,7 +41,7 @@ const schema = (t: TFunction) =>
         ),
     });
 
-const NotificationForm = ({ params }: PageProps) => {
+const ThesisForm = ({ params }: PageProps) => {
     const { lng, id } = params;
     const { t } = useTranslation(lng);
     const router = useRouter();
@@ -151,11 +151,11 @@ const NotificationForm = ({ params }: PageProps) => {
                     </div>
 
                     <div className='col-5 flex flex-column gap-3'>
-                        <MultiSelect label={t('module:field.thesis.major')} />
+                        {/* <MultiSelect label={t('module:field.thesis.major')} />
 
                         <MultiSelect label={t('module:field.thesis.instruction')} />
 
-                        <MultiSelect label={t('module:field.thesis.review')} />
+                        <MultiSelect label={t('module:field.thesis.review')} /> */}
                     </div>
                 </div>
 
@@ -179,4 +179,4 @@ const NotificationForm = ({ params }: PageProps) => {
     );
 };
 
-export default NotificationForm;
+export default ThesisForm;

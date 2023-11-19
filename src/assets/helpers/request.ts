@@ -3,7 +3,7 @@ import { AuthType } from '@assets/interface/Auth';
 import { OptionType } from '@assets/types/common';
 import { MetaType, ParamType, ResponseType } from '@assets/types/request';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import _ from 'lodash';
+import _, { uniq } from 'lodash';
 import { cookies } from '.';
 
 const request = axios.create({
@@ -134,8 +134,23 @@ const handleSort = (sorts: OptionType | undefined, params: ParamType): string =>
     return result;
 };
 
+const handleFilter = (original: string | undefined, field: string, operator: '>' | '@=', value: string | number) => {
+    let filters = original?.split(', ') || [];
+
+    filters = filters.filter((t) => t != '');
+    let index = filters.findIndex((t) => t.includes(field + operator));
+
+    if (filters.length > 0 && index > -1) {
+        filters.splice(index, 1);
+    }
+
+    filters.push(field + operator + value);
+
+    return filters.join(', ') || '';
+};
+
 const currentPage = (page: number | undefined) => {
     return page ? page - 1 : 0;
 };
 
-export { currentPage, defaultMeta, get, handleSort, post, remove, update };
+export { currentPage, defaultMeta, get, handleSort, post, remove, update, handleFilter };

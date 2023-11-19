@@ -124,7 +124,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 />
             </div>
             <div className='flex align-items-center justify-content-between'>
-                <InputText placeholder={`${t('search')}...`} className='w-30rem' />
+                <InputText placeholder={`${t('search')}...`} className='w-20rem' />
             </div>
             <div className='border-round-xl overflow-hidden relative shadow-5'>
                 <Loader show={departmentQuery.isLoading || departmentMutation.isLoading} />
@@ -133,6 +133,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                     value={departmentQuery.data}
                     rowHover={true}
                     stripedRows={true}
+                    showGridlines={true}
                     emptyMessage={t('list_empty')}
                 >
                     <Column

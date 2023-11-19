@@ -122,7 +122,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='flex align-items-center justify-content-between'>
-                <InputText placeholder={`${t('search')}...`} className='w-30rem' />
+                <InputText placeholder={`${t('search')}...`} className='w-20rem' />
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
@@ -132,6 +132,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                     value={studentQuery.data || []}
                     rowHover={true}
                     stripedRows={true}
+                    showGridlines={true}
                     emptyMessage={t('list_empty')}
                 >
                     <Column

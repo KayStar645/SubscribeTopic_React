@@ -1,7 +1,7 @@
 import { DropdownProps } from '@assets/types/form';
 import { Dropdown as PrimeDropdown } from 'primereact/dropdown';
 import { classNames } from 'primereact/utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const Dropdown = ({
     id,
@@ -17,10 +17,6 @@ const Dropdown = ({
     onChange = () => {},
 }: DropdownProps) => {
     const [selected, setSelected] = useState(value);
-
-    useEffect(() => {
-        setSelected(value);
-    }, [value]);
 
     return (
         <div className={classNames(blockClassName)}>

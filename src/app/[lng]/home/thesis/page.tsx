@@ -3,8 +3,7 @@
 import { API, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
 import { DATE_FILTER } from '@assets/configs/general';
 import { language, request } from '@assets/helpers';
-import { HTML, renderHTML } from '@assets/helpers/string';
-import { ThesisParamType, ThesisType } from '@assets/interface';
+import { TeacherType, ThesisParamType, ThesisType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
@@ -22,17 +21,23 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useDebouncedCallback } from 'use-debounce';
 
 const ThesisPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
     const router = useRouter();
+    const debounceKeyword = useDebouncedCallback((keyword) => {
+        setParams((prev) => ({ ...prev, filters: request.handleFilter(prev.filters, 'name', '@=', keyword) }));
+    }, 600);
 
     const [params, setParams] = useState<ThesisParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
+        filters: '',
+        isAllDetail: true,
     });
 
     const thesisQuery = useQuery<ThesisType[], AxiosError<ResponseType>>({
@@ -57,6 +62,16 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
             if (err.response?.status === 403) {
                 toast.error('Bạn không có quyền thao tác');
             }
+        },
+    });
+
+    const teacherQuery = useQuery<TeacherType[], AxiosError<ResponseType>>({
+        queryKey: ['thesis_teachers_filter', 'list'],
+        refetchOnWindowFocus: false,
+        queryFn: async () => {
+            const response = await request.get<TeacherType[]>(API.admin.teacher);
+
+            return response.data.data || [];
         },
     });
 
@@ -118,14 +133,38 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                 />
             </div>
 
-            <div className='flex align-items-center justify-content-between'>
-                <InputText placeholder={`${t('search')}...`} className='w-30rem' />
+            <div className='flex align-items-center gap-3'>
+                <InputText
+                    placeholder={`${t('search')}...`}
+                    className='w-20rem'
+                    onChange={(e) => debounceKeyword(e.target.value)}
+                />
+
+                <Dropdown
+                    id='thesis_lecturer'
+                    placeholder={t('module:field.thesis.lecturer')}
+                    options={teacherQuery?.data?.map((t) => ({ label: t.name, value: t.id }))}
+                    onChange={(teacherId) => {
+                        setParams((prev) => {
+                            return {
+                                ...prev,
+                                filters: request.handleFilter(prev.filters || '', 'lecturerThesisId', '@=', teacherId),
+                            };
+                        });
+                    }}
+                />
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={thesisQuery.isLoading || thesisMutation.isLoading} />
+                <Loader show={thesisQuery.isFetching || thesisMutation.isLoading || teacherQuery.isFetching} />
 
-                <DataTable value={thesisQuery.data} rowHover={true} stripedRows={true} emptyMessage={t('list_empty')}>
+                <DataTable
+                    value={thesisQuery.data}
+                    rowHover={true}
+                    stripedRows={true}
+                    showGridlines={true}
+                    emptyMessage={t('list_empty')}
+                >
                     <Column
                         headerStyle={{
                             background: 'var(--primary-color)',
@@ -159,11 +198,26 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                             color: 'var(--surface-a)',
                             whiteSpace: 'nowrap',
                         }}
-                        field='summary'
-                        header={t('common:summary')}
-                        body={(data: ThesisType) => (
-                            <p dangerouslySetInnerHTML={HTML(data.summary)} className='m-0 text-justify' />
-                        )}
+                        field='lecturerThesis.name'
+                        header={t('module:field.thesis.lecturer')}
+                    />
+                    <Column
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header={t('module:field.thesis.instruction')}
+                        body={(data: ThesisType) => <p>{data.thesisInstructions?.map((t) => t.name).join(', ')}</p>}
+                    />
+                    <Column
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header={t('module:field.thesis.review')}
+                        body={(data: ThesisType) => <p>{data.thesisReviews?.map((t) => t.name).join(', ')}</p>}
                     />
                 </DataTable>
 

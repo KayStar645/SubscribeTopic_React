@@ -124,13 +124,19 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='flex align-items-center justify-content-between'>
-                <InputText placeholder={`${t('search')}...`} className='w-30rem' />
+                <InputText placeholder={`${t('search')}...`} className='w-20rem' />
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
                 <Loader show={industryQuery.isLoading || industryMutation.isLoading} />
 
-                <DataTable value={industryQuery.data} rowHover={true} stripedRows={true} emptyMessage={t('list_empty')}>
+                <DataTable
+                    value={industryQuery.data}
+                    rowHover={true}
+                    stripedRows={true}
+                    showGridlines={true}
+                    emptyMessage={t('list_empty')}
+                >
                     <Column
                         headerStyle={{
                             background: 'var(--primary-color)',

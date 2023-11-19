@@ -1,3 +1,7 @@
 .p-dropdown .p-dropdown-label.p-placeholder {
     height: 3rem !important;
 }
+
+.p-card .p-card-title {
+    font-size: 1.2rem !important;
+}

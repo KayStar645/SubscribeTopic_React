@@ -1,6 +1,6 @@
 'use client';
 
-import { API, ROWS_PER_PAGE } from '@assets/configs';
+import { API, MODULE, ROWS_PER_PAGE } from '@assets/configs';
 import { request } from '@assets/helpers';
 import { FacultyParamType, FacultyType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
@@ -20,7 +20,8 @@ import FacultyForm, { FacultyFormRefType } from './form';
 import { Loader } from '@resources/components/UI';
 import { ConfirmModal } from '@resources/components/modal';
 import { AxiosError } from 'axios';
-import { dateFilters } from '@assets/configs/general';
+import { DATE_FILTER } from '@assets/configs/general';
+import usePermission from '@assets/hooks/usePermission';
 
 const FacultyPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
@@ -28,6 +29,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
     const [selected, setSelected] = useState<FacultyType>();
+    const permission = usePermission(MODULE.faculty);
 
     const [params, setParams] = useState<FacultyParamType>({
         page: meta.currentPage,
@@ -71,19 +73,23 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
     const renderActions = (data: FacultyType) => {
         return (
             <div className='flex align-items-center gap-3'>
-                <i
-                    className='pi pi-pencil hover:text-primary cursor-pointer'
-                    onClick={() => {
-                        formRef.current?.show?.(data);
-                        setSelected(data);
-                    }}
-                />
-                <i
-                    className='pi pi-trash hover:text-red-600 cursor-pointer'
-                    onClick={(e) => {
-                        confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
-                    }}
-                />
+                {permission.update && (
+                    <i
+                        className='pi pi-pencil hover:text-primary cursor-pointer'
+                        onClick={() => {
+                            formRef.current?.show?.(data);
+                            setSelected(data);
+                        }}
+                    />
+                )}
+                {permission.remove && (
+                    <i
+                        className='pi pi-trash hover:text-red-600 cursor-pointer'
+                        onClick={(e) => {
+                            confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
+                        }}
+                    />
+                )}
             </div>
         );
     };
@@ -109,12 +115,14 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                 rejectLabel={t('cancel')}
             />
 
-            <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
+            <div className='flex align-items-center justify-content-between bg-white h-4rem px-3 border-round-lg shadow-3'>
                 <p className='text-xl font-semibold'>{t('list_of', { module: t('module:faculty').toLowerCase() })}</p>
+
                 <Button
                     label={t('create_new')}
                     icon='pi pi-plus'
                     size='small'
+                    visible={permission.create}
                     onClick={() => {
                         formRef.current?.show?.();
                         setSelected(undefined);
@@ -123,43 +131,69 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='flex align-items-center justify-content-between'>
-                <InputText placeholder={`${t('search')}...`} className='col-4' />
+                <InputText placeholder={`${t('search')}...`} className='w-20rem' />
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
                 <Loader show={facultyQuery.isLoading || facultyMutation.isLoading} />
 
-                <DataTable value={facultyQuery.data} rowHover={true} stripedRows={true} emptyMessage={t('list_empty')}>
+                <DataTable
+                    value={facultyQuery.data}
+                    rowHover={true}
+                    stripedRows={true}
+                    showGridlines={true}
+                    emptyMessage={t('list_empty')}
+                >
                     <Column
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
                         }}
-                        header={t('action')}
+                        header={t('common:action')}
                         body={renderActions}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='internalCode'
-                        header={t('code_of', { obj: t('module:faculty').toLowerCase() })}
+                        header={t('common:code_of', { obj: t('module:faculty').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='name'
-                        header={t('name_of', { obj: t('module:faculty').toLowerCase() })}
+                        header={t('common:name_of', { obj: t('module:faculty').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='address'
                         header={t('address')}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='phoneNumber'
                         header={t('phone_number')}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='email'
                         header={t('email')}
                     />
@@ -171,7 +205,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                         value='date_decrease'
                         optionValue='code'
                         onChange={(sortCode) => {
-                            const filter = dateFilters(t).find((t) => t.code === sortCode);
+                            const filter = DATE_FILTER(t).find((t) => t.code === sortCode);
 
                             setParams((prev) => {
                                 return {
@@ -180,7 +214,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                                 };
                             });
                         }}
-                        options={dateFilters(t)}
+                        options={DATE_FILTER(t)}
                     />
 
                     <Paginator

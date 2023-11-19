@@ -1,5 +1,5 @@
 import { API } from '@assets/configs';
-import { semesters } from '@assets/configs/general';
+import { SEMESTER } from '@assets/configs/general';
 import { request } from '@assets/helpers';
 import { RegistrationPeriodType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
@@ -114,7 +114,7 @@ const RegistrationPeriodForm = forwardRef<RegistrationPeriodFormRefType, Registr
                             <RadioList
                                 value={field.value}
                                 label={t('module:field.registration_period.semester')}
-                                options={semesters(t)}
+                                options={SEMESTER(t)}
                                 onChange={field.onChange}
                                 errorMessage={fieldState.error?.message}
                             />

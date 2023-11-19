@@ -1,5 +1,5 @@
 import { API } from '@assets/configs';
-import { genders } from '@assets/configs/general';
+import { GENDER } from '@assets/configs/general';
 import { request } from '@assets/helpers';
 import { StudentType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
@@ -46,12 +46,12 @@ const schema = (t: TFunction) =>
         id: yup.string(),
         internalCode: yup.string().required(
             t('validation:required', {
-                attribute: t('code_of', { obj: t('module:major') }).toLowerCase(),
+                attribute: t('common:code_of', { obj: t('module:major') }).toLowerCase(),
             }),
         ),
         name: yup.string().required(
             t('validation:required', {
-                attribute: t('name_of', { obj: t('module:major') }).toLowerCase(),
+                attribute: t('common:name_of', { obj: t('module:major') }).toLowerCase(),
             }),
         ),
         dateOfBirth: yup
@@ -149,8 +149,8 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
                             <InputText
                                 id='form_data_internal_code'
                                 value={field.value}
-                                label={t('code_of', { obj: t('module:student') })}
-                                placeholder={t('code_of', { obj: t('module:student') })}
+                                label={t('common:code_of', { obj: t('module:student') })}
+                                placeholder={t('common:code_of', { obj: t('module:student') })}
                                 errorMessage={fieldState.error?.message}
                                 onChange={(e) => field.onChange(e.target.value)}
                             />
@@ -164,8 +164,8 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
                             <InputText
                                 id='form_data_name'
                                 value={field.value}
-                                label={t('name_of', { obj: t('module:student') })}
-                                placeholder={t('name_of', { obj: t('module:student') })}
+                                label={t('common:name_of', { obj: t('module:student') })}
+                                placeholder={t('common:name_of', { obj: t('module:student') })}
                                 errorMessage={fieldState.error?.message}
                                 onChange={field.onChange}
                             />
@@ -257,7 +257,7 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
                             <RadioList
                                 value={field.value}
                                 label={t('gender')}
-                                options={genders(t)}
+                                options={GENDER(t)}
                                 onChange={field.onChange}
                                 errorMessage={fieldState.error?.message}
                             />

@@ -1,18 +1,23 @@
 'use client';
 
+import { cookies } from '@assets/helpers';
 import { useDispatch, useSelector } from '@assets/redux';
 import { selectMenu } from '@assets/redux/slices/menu';
 import menuSlice from '@assets/redux/slices/menu/slice';
 import { MenuItemType } from '@assets/types/menu';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { classNames } from 'primereact/utils';
 import { useState } from 'react';
 
-const MenuItem = (item: MenuItemType) => {
+interface MenuItemProps {
+    item: MenuItemType;
+    permissions: string[];
+}
+
+const MenuItem = ({ item, permissions }: MenuItemProps) => {
     const {
         parent,
-        to,
         code,
         icon,
         items,
@@ -21,13 +26,17 @@ const MenuItem = (item: MenuItemType) => {
         iconClassName,
         itemClassName,
         onItemClick,
-        onSubItemClick,
+        permission,
+        checkPermission,
     } = item;
+
     const Icon = () => icon;
     const dispatch = useDispatch();
     const menu = useSelector(selectMenu);
     const active = code === menu.activeItem || code === menu.parent;
     const [isOpenMenu, setIsOpenMenu] = useState(false);
+    const router = useRouter();
+    const checkChildPermission = cookies.checkChildPermission(item, permissions);
 
     const onClick = (currItem: MenuItemType) => {
         if (items && items.length > 0) {
@@ -64,65 +73,61 @@ const MenuItem = (item: MenuItemType) => {
         }
 
         onItemClick?.(currItem);
+
+        if (currItem.to) {
+            router.push(currItem.to);
+        }
     };
 
     const SubItem = () => {
-        return (
-            <div>
-                {items?.map((child) => {
-                    return (
-                        <MenuItem
-                            key={child.label}
-                            code={child.code}
-                            label={child.label}
-                            icon={child.icon}
-                            to={child.to}
-                            itemClassName='ml-2'
-                            iconClassName='hidden'
-                            parent={child.parent}
-                            onItemClick={onSubItemClick}
-                        />
-                    );
-                })}
-            </div>
-        );
+        return items?.map((child) => (
+            <MenuItem key={child.label} item={{ ...child, itemClassName: 'childBody' }} permissions={permissions} />
+        ));
     };
 
     return (
         <div className='my-1'>
-            <Link
-                className={classNames(
-                    'flex align-items-center gap-2 py-2 px-3 no-underline cursor-pointer transition-linear transition-duration-200 border-round-lg',
-                    itemClassName,
-                    {
-                        'hover:surface-hover': !active,
-                        'text-900': !active,
-                        'bg-highlight': active,
-                        'p-highlight': active,
-                    },
-                )}
-                href={to || '#'}
-                onClick={() => onClick(item)}
-            >
-                <div className={classNames('p-1', iconClassName)}>
-                    <Icon />
+            {(!checkPermission ||
+                code === 'home' ||
+                cookies.checkPermission(permission || '', permissions) ||
+                (items && items.length > 0 && checkChildPermission && typeof permission !== 'undefined')) && (
+                <div
+                    className={classNames(
+                        'flex align-items-center gap-2 h-3rem px-3 no-underline cursor-pointer transition-linear transition-duration-200 border-round-lg',
+                        itemClassName,
+                        {
+                            'hover:bg-blue-100': !active,
+                            'text-900': !active,
+                            'bg-primary': active,
+                            'p-highlight': active,
+                        },
+                    )}
+                    onClick={() => onClick(item)}
+                >
+                    {icon && (
+                        <div className={classNames('p-1', iconClassName)}>
+                            <Icon />
+                        </div>
+                    )}
+                    <p className={classNames('flex-1 text-sm font-semibold itemLabel m-0', labelClassName)}>{label}</p>
+
+                    {items && items.length > 0 && checkChildPermission && <i className='pi pi-chevron-down text-sm' />}
                 </div>
-                <p className={classNames('flex-1 text-sm font-semibold itemLabel', labelClassName)}>{label}</p>
+            )}
 
-                {items && items.length > 0 && <i className='pi pi-chevron-down text-sm' />}
-            </Link>
-
-            <motion.div
-                animate={
-                    (isOpenMenu && active) || (isOpenMenu && menu.openMenu) || parent === menu.parent
-                        ? { height: 'auto' }
-                        : { height: 0 }
-                }
-                transition={{ duration: 0.3 }}
-                className={classNames('overflow-hidden my-1 border-left-1 border-300 subMenu')}
-            >
-                {<SubItem />}
-            </motion.div>
+            {items && items.length > 0 && (
+                <motion.div
+                    animate={
+                        (isOpenMenu && active) || (isOpenMenu && menu.openMenu) || parent === menu.parent
+                            ? { height: 'auto' }
+                            : { height: 0 }
+                    }
+                    transition={{ duration: 0.3 }}
+                    className={classNames('overflow-hidden border-left-1 border-300 subMenu mt-1')}
+                >
+                    <SubItem />
+                </motion.div>
+            )}
         </div>
     );
 };

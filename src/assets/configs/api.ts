@@ -14,10 +14,15 @@ const API = {
         student_join: '/studentJoin',
         notification: '/notification',
         group: '/group',
+        thesis: '/thesis',
+        role: '/role',
+        permission: '/permission',
 
         detail: {
             notification: '/notification/detail',
             group: '/group/detail',
+            thesis: '/thesis/detail',
+            role: '/role/detail',
         },
     },
 };

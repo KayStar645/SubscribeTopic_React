@@ -1,5 +1,5 @@
 import { API } from '@assets/configs';
-import { academics, degrees as _degrees, genders, employeeTypes } from '@assets/configs/general';
+import { ACADEMIC, degrees as _degrees, GENDER, USER_TYPE } from '@assets/configs/general';
 import { request } from '@assets/helpers';
 import { DepartmentType, TeacherType } from '@assets/interface';
 import { OptionType } from '@assets/types/common';
@@ -48,12 +48,12 @@ const schema = (t: TFunction) =>
         id: yup.string(),
         internalCode: yup.string().required(
             t('validation:required', {
-                attribute: t('code_of', { obj: t('module:teacher') }).toLowerCase(),
+                attribute: t('common:code_of', { obj: t('module:teacher') }).toLowerCase(),
             }),
         ),
         name: yup.string().required(
             t('validation:required', {
-                attribute: t('name_of', { obj: t('module:teacher') }).toLowerCase(),
+                attribute: t('common:name_of', { obj: t('module:teacher') }).toLowerCase(),
             }),
         ),
         dateOfBirth: yup
@@ -152,8 +152,8 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                             <InputText
                                 id='form_data_internal_code'
                                 value={field.value}
-                                label={t('code_of', { obj: t('module:teacher').toLowerCase() })}
-                                placeholder={t('code_of', { obj: t('module:teacher').toLowerCase() })}
+                                label={t('common:code_of', { obj: t('module:teacher').toLowerCase() })}
+                                placeholder={t('common:code_of', { obj: t('module:teacher').toLowerCase() })}
                                 errorMessage={fieldState.error?.message}
                                 onChange={(e) => field.onChange(e.target.value)}
                             />
@@ -167,8 +167,8 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                             <InputText
                                 id='form_data_name'
                                 value={field.value}
-                                label={t('name_of', { obj: t('module:teacher').toLowerCase() })}
-                                placeholder={t('name_of', { obj: t('module:teacher').toLowerCase() })}
+                                label={t('common:name_of', { obj: t('module:teacher').toLowerCase() })}
+                                placeholder={t('common:name_of', { obj: t('module:teacher').toLowerCase() })}
                                 errorMessage={fieldState.error?.message}
                                 onChange={field.onChange}
                             />
@@ -181,7 +181,7 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                         render={({ field, fieldState }) => (
                             <Dropdown
                                 id='form_data_academic_title'
-                                options={academics(t)}
+                                options={ACADEMIC(t)}
                                 value={field.value}
                                 label={t('module:field.teacher.academic')}
                                 placeholder={t('module:field.teacher.academic')}
@@ -242,7 +242,7 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                         render={({ field, fieldState }) => (
                             <Dropdown
                                 id='form_data_type'
-                                options={employeeTypes(t)}
+                                options={USER_TYPE(t)}
                                 value={field.value}
                                 label={t('module:field.teacher.type')}
                                 placeholder={t('module:field.teacher.type')}
@@ -305,7 +305,7 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                             <RadioList
                                 value={field.value}
                                 label={t('gender')}
-                                options={genders(t)}
+                                options={GENDER(t)}
                                 onChange={field.onChange}
                                 errorMessage={fieldState.error?.message}
                             />

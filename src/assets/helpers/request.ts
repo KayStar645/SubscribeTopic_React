@@ -1,9 +1,10 @@
-import { AUTH_TOKEN, FACULTY_TOKEN, ROUTES } from '@assets/configs';
+import { AUTH_RAW_TOKEN, AUTH_TOKEN, ROUTES } from '@assets/configs';
+import { AuthType } from '@assets/interface/Auth';
 import { OptionType } from '@assets/types/common';
 import { MetaType, ParamType, ResponseType } from '@assets/types/request';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import _ from 'lodash';
-import { cookie } from '.';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import _, { uniq } from 'lodash';
+import { cookies } from '.';
 
 const request = axios.create({
     baseURL: ROUTES.base,
@@ -17,8 +18,8 @@ const request = axios.create({
 request.interceptors.request.use(
     (config) => {
         while (true) {
-            const token = cookie.get(AUTH_TOKEN);
-            const faculty: any = cookie.get(FACULTY_TOKEN);
+            const token = cookies.get(AUTH_RAW_TOKEN);
+            const auth = cookies.get<AuthType>(AUTH_TOKEN);
 
             if (!config.headers.Authorization) {
                 config.headers.Authorization = '';
@@ -28,7 +29,7 @@ request.interceptors.request.use(
                 config.headers.Authorization = `Bearer ${token}`;
             }
 
-            if (!faculty) {
+            if (!auth) {
                 break;
             }
 
@@ -41,11 +42,11 @@ request.interceptors.request.use(
             }
 
             if (config.method === 'get') {
-                config.params.facultyId = faculty?.Id;
+                config.params.facultyId = auth?.faculty?.Id;
             }
 
             if (config.method === 'put' || config.method === 'post' || config.method === 'delete') {
-                config.data.facultyId = faculty?.Id;
+                config.data.facultyId = auth?.faculty.Id;
             }
 
             break;
@@ -62,7 +63,7 @@ request.interceptors.response.use(
     (response) => {
         return response;
     },
-    (error) => {
+    (error: AxiosError) => {
         return Promise.reject(error);
     },
 );
@@ -133,8 +134,23 @@ const handleSort = (sorts: OptionType | undefined, params: ParamType): string =>
     return result;
 };
 
+const handleFilter = (original: string | undefined, field: string, operator: '>' | '@=', value: string | number) => {
+    let filters = original?.split(', ') || [];
+
+    filters = filters.filter((t) => t != '');
+    let index = filters.findIndex((t) => t.includes(field + operator));
+
+    if (filters.length > 0 && index > -1) {
+        filters.splice(index, 1);
+    }
+
+    filters.push(field + operator + value);
+
+    return filters.join(', ') || '';
+};
+
 const currentPage = (page: number | undefined) => {
     return page ? page - 1 : 0;
 };
 
-export { defaultMeta, currentPage, get, handleSort, post, remove, update };
+export { currentPage, defaultMeta, get, handleSort, post, remove, update, handleFilter };

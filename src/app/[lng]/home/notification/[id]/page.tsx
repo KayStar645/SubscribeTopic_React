@@ -31,7 +31,7 @@ const schema = (t: TFunction) =>
     yup.object({
         name: yup.string().required(
             t('validation:required', {
-                attribute: t('name_of', { obj: t('module:notification') }).toLowerCase(),
+                attribute: t('common:name_of', { obj: t('module:notification') }).toLowerCase(),
             }),
         ),
         content: yup.string().required(
@@ -109,8 +109,8 @@ const NotificationForm = ({ params }: PageProps) => {
                         <InputText
                             id='form_data_name'
                             value={field.value}
-                            label={t('name_of', { obj: t('module:notification').toLowerCase() })}
-                            placeholder={t('name_of', { obj: t('module:notification').toLowerCase() })}
+                            label={t('common:name_of', { obj: t('module:notification').toLowerCase() })}
+                            placeholder={t('common:name_of', { obj: t('module:notification').toLowerCase() })}
                             errorMessage={fieldState.error?.message}
                             onChange={field.onChange}
                         />
@@ -124,8 +124,8 @@ const NotificationForm = ({ params }: PageProps) => {
                         <InputText
                             id='form_data_describe'
                             value={field.value}
-                            label={t('describe')}
-                            placeholder={t('describe')}
+                            label={t('common:describe')}
+                            placeholder={t('common:describe')}
                             errorMessage={fieldState.error?.message}
                             onChange={field.onChange}
                         />
@@ -139,8 +139,8 @@ const NotificationForm = ({ params }: PageProps) => {
                         <InputText
                             id='form_data_image'
                             value={field.value}
-                            label={t('image')}
-                            placeholder={t('image')}
+                            label={t('common:image')}
+                            placeholder={t('common:image')}
                             errorMessage={fieldState.error?.message}
                             onChange={field.onChange}
                         />
@@ -152,7 +152,7 @@ const NotificationForm = ({ params }: PageProps) => {
                     control={control}
                     render={({ field, fieldState }) => (
                         <Editor
-                            label={t('content')}
+                            label={t('common:content')}
                             value={field.value}
                             onChange={(data) => setValue(field.name, data)}
                             errorMessage={fieldState.error?.message}
@@ -162,7 +162,7 @@ const NotificationForm = ({ params }: PageProps) => {
 
                 <div
                     className='flex align-items-center justify-content-end gap-2 absolute bottom-0 left-0 right-0 bg-white px-6 h-4rem shadow-8'
-                    style={{ zIndex: 1000 }}
+                    style={{ zIndex: 500 }}
                 >
                     <Button
                         size='small'

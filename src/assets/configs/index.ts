@@ -4,3 +4,5 @@ export * from './request';
 export * from './language';
 export * from './routes';
 export * from './admin_menu';
+export * from './permission';
+export * from './module';

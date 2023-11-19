@@ -1,4 +1,6 @@
-import { getAdminMenu } from '@assets/configs';
+import { AUTH_TOKEN, ADMIN_MENU } from '@assets/configs';
+import useCookies from '@assets/hooks/useCookies';
+import { AuthType } from '@assets/interface/Auth';
 import { LanguageType } from '@assets/types/lang';
 import { useTranslation } from '@resources/i18n';
 import LogoImage from '@resources/image/info/logo.png';
@@ -7,7 +9,8 @@ import { MenuItem } from '../UI';
 
 const Menu = ({ lng }: LanguageType) => {
     const { t } = useTranslation(lng);
-    const menu = getAdminMenu(t, lng);
+    const menu = ADMIN_MENU(t, lng);
+    const [auth] = useCookies<AuthType>(AUTH_TOKEN);
 
     return (
         <div className='flex flex-column gap-2 bg-white w-19rem h-screen relative shadow-2' style={{ zIndex: 1000 }}>
@@ -17,9 +20,7 @@ const Menu = ({ lng }: LanguageType) => {
             </div>
 
             <ul className='p-2 overflow-y-auto h-full' style={{ marginTop: 170 }}>
-                {menu.map((item) => (
-                    <MenuItem key={item.code} {...item} />
-                ))}
+                {auth && menu.map((item) => <MenuItem key={item.code} item={item} permissions={auth.permission} />)}
             </ul>
         </div>
     );

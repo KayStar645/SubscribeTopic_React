@@ -39,5 +39,15 @@
     "male": "Nam",
     "female": "Nữ",
     "other": "Khác",
-    "back": "Quay lại"
+    "back": "Quay lại",
+    "summary": "Mô tả",
+    "max": "Tối đa",
+    "min": "Tối thiểu",
+    "view": "Xem",
+    "update": "Sửa",
+    "change": "Cập nhập trạng thái",
+    "create": "Thêm",
+    "delete": "Xóa",
+    "assign": "Cấp quyền",
+    "info_of": "Thông tin {{ obj }}"
 }

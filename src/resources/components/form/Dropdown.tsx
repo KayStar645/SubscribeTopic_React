@@ -1,7 +1,7 @@
 import { DropdownProps } from '@assets/types/form';
 import { Dropdown as PrimeDropdown } from 'primereact/dropdown';
 import { classNames } from 'primereact/utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const Dropdown = ({
     id,
@@ -18,17 +18,13 @@ const Dropdown = ({
 }: DropdownProps) => {
     const [selected, setSelected] = useState(value);
 
-    useEffect(() => {
-        setSelected(value);
-    }, [value]);
-
     return (
         <div className={classNames(blockClassName)}>
             <div className={classNames({ 'flex align-items-center': row })}>
                 {label && (
                     <label
                         htmlFor={id}
-                        className={classNames('text-900 font-medium block', {
+                        className={classNames('text-900 font-medium block text-800', {
                             'w-10rem mr-2': row,
                             'mb-2': !row,
                         })}

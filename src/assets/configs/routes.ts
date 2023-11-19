@@ -13,6 +13,9 @@ const ROUTES = {
         student_join: '/home/student_join',
         notification: '/home/notification',
         group: '/home/group',
+        thesis: '/home/thesis',
+        role: '/home/role',
+        user: '/home/user',
     },
 
     auth: {

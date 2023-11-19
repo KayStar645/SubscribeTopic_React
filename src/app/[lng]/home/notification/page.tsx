@@ -1,7 +1,7 @@
 'use client';
 
 import { API, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
-import { dateFilters } from '@assets/configs/general';
+import { DATE_FILTER } from '@assets/configs/general';
 import { language, request } from '@assets/helpers';
 import { NotificationParamType, NotificationType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
@@ -107,7 +107,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                 rejectLabel={t('cancel')}
             />
 
-            <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
+            <div className='flex align-items-center justify-content-between bg-white h-4rem px-3 border-round-lg shadow-3'>
                 <p className='text-xl font-semibold'>
                     {t('list_of', { module: t('module:notification').toLowerCase() })}
                 </p>
@@ -122,7 +122,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='flex align-items-center justify-content-between'>
-                <InputText placeholder={`${t('search')}...`} className='col-4' />
+                <InputText placeholder={`${t('search')}...`} className='w-20rem' />
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
@@ -132,6 +132,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                     value={notificationQuery.data || []}
                     rowHover={true}
                     stripedRows={true}
+                    showGridlines={true}
                     emptyMessage={t('list_empty')}
                 >
                     <Column
@@ -139,13 +140,17 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
                         }}
-                        header={t('action')}
+                        header={t('common:action')}
                         body={renderActions}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='name'
-                        header={t('name_of', { obj: t('module:notification').toLowerCase() })}
+                        header={t('common:name_of', { obj: t('module:notification').toLowerCase() })}
                     />
                 </DataTable>
 
@@ -155,7 +160,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                         value='date_decrease'
                         optionValue='code'
                         onChange={(sortCode) => {
-                            const filter = dateFilters(t).find((t) => t.code === sortCode);
+                            const filter = DATE_FILTER(t).find((t) => t.code === sortCode);
 
                             setParams((prev) => {
                                 return {
@@ -164,7 +169,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                                 };
                             });
                         }}
-                        options={dateFilters(t)}
+                        options={DATE_FILTER(t)}
                     />
 
                     <Paginator

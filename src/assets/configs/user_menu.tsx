@@ -1,10 +1,10 @@
 import { MenuItemType } from '@assets/types/menu';
 import { TFunction } from 'i18next';
-import { FaArrowRightArrowLeft, FaArrowRightFromBracket, FaUser } from 'react-icons/fa6';
+import { FaArrowRightFromBracket, FaUser } from 'react-icons/fa6';
 import { LuLanguages } from 'react-icons/lu';
 import { LANGUAGE, LANGUAGES, ROUTES } from '.';
 
-const getUserMenu = (t: TFunction, lng: string, pathName: string): MenuItemType[] => {
+const USER_MENU = (t: TFunction, lng: string, pathName: string): MenuItemType[] => {
     const currLanguage = LANGUAGE[lng.toUpperCase()].label || t('language');
 
     return [
@@ -33,13 +33,7 @@ const getUserMenu = (t: TFunction, lng: string, pathName: string): MenuItemType[
             icon: <FaArrowRightFromBracket />,
             to: `/${lng}${ROUTES.auth.sign_in}`,
         },
-        {
-            code: 'change_faculty',
-            parent: 'change_faculty',
-            label: t('menu:change_faculty'),
-            icon: <FaArrowRightArrowLeft />,
-        },
     ];
 };
 
-export { getUserMenu };
+export { USER_MENU };

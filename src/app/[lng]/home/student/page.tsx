@@ -20,7 +20,7 @@ import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import MajorForm, { StudentFormRefType } from './form';
-import { dateFilters } from '@assets/configs/general';
+import { DATE_FILTER } from '@assets/configs/general';
 
 const StudentPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
@@ -108,7 +108,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                 rejectLabel={t('cancel')}
             />
 
-            <div className='flex align-items-center justify-content-between bg-white py-2 px-3 border-round-lg shadow-3'>
+            <div className='flex align-items-center justify-content-between bg-white h-4rem px-3 border-round-lg shadow-3'>
                 <p className='text-xl font-semibold'>{t('list_of', { module: t('module:student').toLowerCase() })}</p>
                 <Button
                     label={t('create_new')}
@@ -122,7 +122,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='flex align-items-center justify-content-between'>
-                <InputText placeholder={`${t('search')}...`} className='col-4' />
+                <InputText placeholder={`${t('search')}...`} className='w-20rem' />
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
@@ -132,6 +132,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                     value={studentQuery.data || []}
                     rowHover={true}
                     stripedRows={true}
+                    showGridlines={true}
                     emptyMessage={t('list_empty')}
                 >
                     <Column
@@ -139,31 +140,51 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
                         }}
-                        header={t('action')}
+                        header={t('common:action')}
                         body={renderActions}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='internalCode'
-                        header={t('code_of', { obj: t('module:student').toLowerCase() })}
+                        header={t('common:code_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='name'
-                        header={t('name_of', { obj: t('module:student').toLowerCase() })}
+                        header={t('common:name_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='email'
                         header={t('email')}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='phoneNumber'
                         header={t('phone_number')}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='class'
                         header={t('module:field.student.class')}
                     />
@@ -175,7 +196,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                         value='date_decrease'
                         optionValue='code'
                         onChange={(sortCode) => {
-                            const filter = dateFilters(t).find((t) => t.code === sortCode);
+                            const filter = DATE_FILTER(t).find((t) => t.code === sortCode);
 
                             setParams((prev) => {
                                 return {
@@ -184,7 +205,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                                 };
                             });
                         }}
-                        options={dateFilters(t)}
+                        options={DATE_FILTER(t)}
                     />
 
                     <Paginator

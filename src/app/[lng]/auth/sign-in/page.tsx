@@ -1,7 +1,7 @@
 'use client';
 
-import { API, AUTH_TOKEN, FACULTY_TOKEN, ROUTES } from '@assets/configs';
-import { language, request } from '@assets/helpers';
+import { API, AUTH_RAW_TOKEN, AUTH_TOKEN, ROUTES } from '@assets/configs';
+import { cookies, language, request } from '@assets/helpers';
 import { PageProps } from '@assets/types/UI';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Loader } from '@resources/components/UI';
@@ -9,7 +9,6 @@ import { InputText, Password } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import brand from '@resources/image/info/brand.png';
 import { useMutation } from '@tanstack/react-query';
-import { setCookie } from 'cookies-next';
 import { TFunction } from 'i18next';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
@@ -43,24 +42,35 @@ const Page = ({ params: { lng } }: PageProps) => {
     const onSubmit = (data: any) => {
         signInMutation.mutate(data, {
             onSuccess(response) {
-                const tokenData: any = jwtDecode(response.data.data.token);
-                const faculty = JSON.parse(tokenData.faculty);
+                try {
+                    const tokenData: any = jwtDecode(response.data.data.token);
+                    const faculty = JSON.parse(tokenData.faculty);
+                    const customer = JSON.parse(tokenData.customer);
 
-                if (response.data?.data?.tokenData?.user) {
-                    setCookie(AUTH_TOKEN, response.data.data.tokenData.user, { expires: tokenData.exp });
-                }
+                    if (!tokenData) {
+                        return;
+                    }
 
-                if (faculty) {
-                    setCookie(FACULTY_TOKEN, faculty);
-                }
+                    if (faculty) {
+                        tokenData.faculty = faculty;
+                    }
+                    if (customer) {
+                        tokenData.customer = customer;
+                    }
 
-                router.push(language.addPrefixLanguage(lng, ROUTES.admin.home));
+                    cookies.set(AUTH_TOKEN, tokenData, { expires: new Date(tokenData.exp * 1000) });
+                    cookies.set(AUTH_RAW_TOKEN, response.data.data.token, {
+                        expires: new Date(tokenData.exp * 1000),
+                    });
+
+                    router.push(language.addPrefixLanguage(lng, ROUTES.admin.home));
+                } catch (error) {}
             },
         });
     };
 
     return (
-        <div className='flex align-items-center justify-content-center h-full w-full'>
+        <div className='flex align-items-center justify-content-center h-full w-full p-0'>
             <div className='flex flex-wrap shadow-2 w-full border-round-2xl overflow-hidden'>
                 <Loader show={signInMutation.isLoading} />
 

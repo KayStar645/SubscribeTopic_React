@@ -1,7 +1,7 @@
 'use client';
 
 import { API, ROWS_PER_PAGE } from '@assets/configs';
-import { dateFilters } from '@assets/configs/general';
+import { DATE_FILTER } from '@assets/configs/general';
 import { request } from '@assets/helpers';
 import { GroupParamType, GroupType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
@@ -78,17 +78,29 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                 <p className='pb-3 text-900 font-semibold'>{t('module:field.group.members')}</p>
                 <DataTable value={data.members}>
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='student.internalCode'
-                        header={t('code_of', { obj: t('module:student').toLowerCase() })}
+                        header={t('common:code_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='student.name'
-                        header={t('name_of', { obj: t('module:student').toLowerCase() })}
+                        header={t('common:name_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='student.phoneNumber'
                         header={t('phone_number')}
                     />
@@ -108,7 +120,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='flex align-items-center justify-content-between'>
-                <InputText placeholder={`${t('search')}...`} className='col-4' />
+                <InputText placeholder={`${t('search')}...`} className='w-20rem' />
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
@@ -133,7 +145,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
                         }}
-                        header={t('action')}
+                        header={t('common:action')}
                         body={renderActions}
                     />
                     <Column
@@ -142,7 +154,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                             color: 'var(--surface-a)',
                         }}
                         field='name'
-                        header={t('name_of', { obj: t('module:group').toLowerCase() })}
+                        header={t('common:name_of', { obj: t('module:group').toLowerCase() })}
                     />
                     <Column
                         headerStyle={{
@@ -160,7 +172,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                         value='date_decrease'
                         optionValue='code'
                         onChange={(sortCode) => {
-                            const filter = dateFilters(t).find((t) => t.code === sortCode);
+                            const filter = DATE_FILTER(t).find((t) => t.code === sortCode);
 
                             setParams((prev) => {
                                 return {
@@ -169,7 +181,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                                 };
                             });
                         }}
-                        options={dateFilters(t)}
+                        options={DATE_FILTER(t)}
                     />
 
                     <Paginator

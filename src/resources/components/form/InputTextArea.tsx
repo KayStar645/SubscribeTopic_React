@@ -18,7 +18,7 @@ const InputTextArea = ({
                 {label && (
                     <label
                         htmlFor={id}
-                        className={classNames('text-900 font-medium block', {
+                        className={classNames('text-900 font-medium block text-800', {
                             'w-10rem mr-2': row,
                             'mb-2': !row,
                         })}
@@ -30,7 +30,8 @@ const InputTextArea = ({
                 <PrimeInputTextarea
                     value={value.toString()}
                     placeholder={placeholder}
-                    className={classNames('w-full', { 'p-invalid': !!errorMessage })}
+                    rows={5}
+                    className={classNames('w-full line-height-3', { 'p-invalid': !!errorMessage })}
                     onChange={(e) => {
                         onChange?.(e);
                     }}

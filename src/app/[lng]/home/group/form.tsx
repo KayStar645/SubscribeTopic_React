@@ -35,7 +35,7 @@ const GroupForm = forwardRef<GroupFormRefType, GroupFormType>(({ title, lng }, r
         return (
             <div className='flex flex-column gap-4'>
                 <div className='flex align-items-center'>
-                    <p className='w-10rem'>{t('name_of', { obj: t('module:student').toLowerCase() })}</p>
+                    <p className='w-10rem'>{t('common:name_of', { obj: t('module:student').toLowerCase() })}</p>
                     <p className='text-900 font-semibold'>{data.name}</p>
                 </div>
 

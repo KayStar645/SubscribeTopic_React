@@ -123,7 +123,11 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='name'
                         header={t('common:name_of', { obj: t('module:role').toLowerCase() })}
                     />

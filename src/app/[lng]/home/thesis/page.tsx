@@ -3,6 +3,7 @@
 import { API, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
 import { DATE_FILTER } from '@assets/configs/general';
 import { language, request } from '@assets/helpers';
+import { HTML, renderHTML } from '@assets/helpers/string';
 import { ThesisParamType, ThesisType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
@@ -129,24 +130,40 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
                         }}
                         header={t('common:action')}
                         body={renderActions}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='internalCode'
                         header={t('common:code_of', { obj: t('module:thesis').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='name'
                         header={t('common:name_of', { obj: t('module:thesis').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='summary'
                         header={t('common:summary')}
+                        body={(data: ThesisType) => (
+                            <p dangerouslySetInnerHTML={HTML(data.summary)} className='m-0 text-justify' />
+                        )}
                     />
                 </DataTable>
 

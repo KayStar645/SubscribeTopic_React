@@ -1,12 +1,12 @@
-import { DropdownProps } from '@assets/types/form';
+import { MultiSelectProps } from '@assets/types/form';
+import { MultiSelect as PrimeMultiSelect } from 'primereact/multiselect';
 import { classNames } from 'primereact/utils';
 import { useEffect, useState } from 'react';
-import { MultiSelect as PrimeMultiSelect } from 'primereact/multiselect';
 
 const MultiSelect = ({
     id,
     label,
-    value,
+    value = [],
     options,
     placeholder = '',
     blockClassName = '',
@@ -15,13 +15,7 @@ const MultiSelect = ({
     emptyMessage = 'No results found',
     errorMessage,
     onChange = () => {},
-}: DropdownProps) => {
-    const [selected, setSelected] = useState(value);
-
-    useEffect(() => {
-        setSelected(value);
-    }, [value]);
-
+}: MultiSelectProps) => {
     return (
         <div className={classNames(blockClassName)}>
             <div className={classNames({ 'flex align-items-center': row })}>
@@ -41,14 +35,13 @@ const MultiSelect = ({
                     emptyMessage={emptyMessage}
                     inputId={id}
                     options={options}
-                    value={selected}
+                    value={value}
                     optionValue={optionValue}
                     placeholder={placeholder}
                     display='chip'
                     className={classNames('w-full', { 'p-invalid': !!errorMessage })}
                     onChange={(e) => {
-                        onChange(e.value);
-                        setSelected(e.value);
+                        onChange(e);
                     }}
                 />
             </div>

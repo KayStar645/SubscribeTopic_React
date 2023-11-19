@@ -17,8 +17,6 @@ const request = axios.create({
 
 request.interceptors.request.use(
     (config) => {
-        // console.log(config);
-
         while (true) {
             const token = cookies.get(AUTH_RAW_TOKEN);
             const auth = cookies.get<AuthType>(AUTH_TOKEN);
@@ -44,7 +42,7 @@ request.interceptors.request.use(
             }
 
             if (config.method === 'get') {
-                config.params.facultyId = auth?.customer?.Id;
+                config.params.facultyId = auth?.faculty?.Id;
             }
 
             if (config.method === 'put' || config.method === 'post' || config.method === 'delete') {

@@ -2,7 +2,7 @@ import { InputRangeProps } from '@assets/types/form';
 import { Divider } from 'primereact/divider';
 import { InputNumber } from 'primereact/inputnumber';
 import { classNames } from 'primereact/utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const InputRange = ({
     id,
@@ -17,8 +17,11 @@ const InputRange = ({
     max,
     onChange = () => {},
 }: InputRangeProps) => {
-    const [_min, setMin] = useState<number | null>(value[0] || 0);
-    const [_max, setMax] = useState<number | null>(value[1] || 0);
+    const [_value, setValue] = useState<[number?, number?]>(value || [0, 0]);
+
+    useEffect(() => {
+        setValue(value);
+    }, [value]);
 
     return (
         <div className={classNames('w-fit', blockClassName)}>
@@ -38,28 +41,32 @@ const InputRange = ({
 
                 <div className='flex align-items-center'>
                     <InputNumber
-                        inputClassName='w-5rem h-3rem text-center'
+                        inputClassName='w-6rem h-3rem text-center'
                         min={min}
                         useGrouping={false}
                         placeholder={minPlaceHolder}
-                        value={_min}
+                        value={_value[0] || 0}
                         onChange={(e) => {
-                            setMin(e.value);
-                            onChange([e.value!, _max!]);
+                            const nValue: [number, number] = [e.value || 0, _value[1] || 0];
+
+                            setValue(nValue);
+                            onChange(nValue);
                         }}
                     />
 
                     <Divider />
 
                     <InputNumber
-                        inputClassName='w-5rem h-3rem text-center'
+                        inputClassName='w-6rem h-3rem text-center'
                         max={max}
-                        value={_max}
+                        value={_value[1] || 0}
                         useGrouping={false}
                         placeholder={maxPlaceHolder}
                         onChange={(e) => {
-                            setMax(e.value);
-                            onChange([_min!, e.value!]);
+                            const nValue: [number, number] = [_value[0] || 0, e.value || 0];
+
+                            setValue(nValue);
+                            onChange(nValue);
                         }}
                     />
                 </div>

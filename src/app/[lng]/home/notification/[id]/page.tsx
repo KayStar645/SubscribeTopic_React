@@ -124,8 +124,8 @@ const NotificationForm = ({ params }: PageProps) => {
                         <InputText
                             id='form_data_describe'
                             value={field.value}
-                            label={t('describe')}
-                            placeholder={t('describe')}
+                            label={t('common:describe')}
+                            placeholder={t('common:describe')}
                             errorMessage={fieldState.error?.message}
                             onChange={field.onChange}
                         />
@@ -139,8 +139,8 @@ const NotificationForm = ({ params }: PageProps) => {
                         <InputText
                             id='form_data_image'
                             value={field.value}
-                            label={t('image')}
-                            placeholder={t('image')}
+                            label={t('common:image')}
+                            placeholder={t('common:image')}
                             errorMessage={fieldState.error?.message}
                             onChange={field.onChange}
                         />
@@ -152,7 +152,7 @@ const NotificationForm = ({ params }: PageProps) => {
                     control={control}
                     render={({ field, fieldState }) => (
                         <Editor
-                            label={t('content')}
+                            label={t('common:content')}
                             value={field.value}
                             onChange={(data) => setValue(field.name, data)}
                             errorMessage={fieldState.error?.message}

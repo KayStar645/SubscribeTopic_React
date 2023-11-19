@@ -1,6 +1,6 @@
 import { MenuItemType } from '@assets/types/menu';
 import { TFunction } from 'i18next';
-import { FaBoxesStacked, FaHouseChimney, FaGear } from 'react-icons/fa6';
+import { FaBoxesStacked, FaGear, FaHouseChimney } from 'react-icons/fa6';
 import { PERMISSION, ROUTES } from '.';
 
 const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
@@ -129,6 +129,14 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
                     permission: PERMISSION.faculty.view,
                     checkPermission: true,
                     to: `/${lng}/${ROUTES.admin.role}`,
+                },
+                {
+                    code: 'user',
+                    label: t('menu:user'),
+                    parent: 'system',
+                    permission: PERMISSION.permission.view,
+                    checkPermission: true,
+                    to: `/${lng}/${ROUTES.admin.user}`,
                 },
             ],
         },

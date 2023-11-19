@@ -71,6 +71,9 @@ const PERMISSION = {
         update: 'Role.Update',
         delete: 'Role.Delete',
     },
+    permission: {
+        view: 'Permission.View',
+    },
 };
 
 const ACTION = {

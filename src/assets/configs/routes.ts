@@ -15,6 +15,7 @@ const ROUTES = {
         group: '/home/group',
         thesis: '/home/thesis',
         role: '/home/role',
+        user: '/home/user',
     },
 
     auth: {

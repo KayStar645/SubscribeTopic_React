@@ -78,17 +78,29 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                 <p className='pb-3 text-900 font-semibold'>{t('module:field.group.members')}</p>
                 <DataTable value={data.members}>
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='student.internalCode'
                         header={t('common:code_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='student.name'
                         header={t('common:name_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
-                        headerStyle={{ background: 'var(--primary-color)', color: 'var(--surface-a)' }}
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='student.phoneNumber'
                         header={t('phone_number')}
                     />

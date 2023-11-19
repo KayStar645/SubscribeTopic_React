@@ -12,6 +12,7 @@ import { AxiosError } from 'axios';
 import { TFunction } from 'i18next';
 import { snakeCase } from 'lodash';
 import { Button } from 'primereact/button';
+import { Chip } from 'primereact/chip';
 import { Panel, PanelHeaderTemplateOptions } from 'primereact/panel';
 import { Sidebar } from 'primereact/sidebar';
 import { classNames } from 'primereact/utils';
@@ -171,7 +172,17 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
                     label={t(`module:${permission.name}`)}
                     value={permission?.actions?.every((action) => permissions.includes(action))}
                     onChange={(e) => onCheckPermission(!!e.checked, permission)}
+                    blockClassName='flex-1'
                 />
+
+                <div className='flex align-items-center gap-2'>
+                    {permission.actions.map(
+                        (action) =>
+                            permissions.includes(action) && (
+                                <Chip key={action} label={t(`common:${action?.split('.')[1].toLowerCase()}`)} />
+                            ),
+                    )}
+                </div>
 
                 <Button
                     icon={toggleIcon}

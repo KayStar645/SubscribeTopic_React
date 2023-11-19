@@ -47,5 +47,7 @@
     "update": "Sửa",
     "change": "Cập nhập trạng thái",
     "create": "Thêm",
-    "delete": "Xóa"
+    "delete": "Xóa",
+    "assign": "Cấp quyền",
+    "info_of": "Thông tin {{ obj }}"
 }

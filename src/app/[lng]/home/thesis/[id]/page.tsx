@@ -135,29 +135,33 @@ const ThesisForm = ({ params: _params }: PageProps) => {
             />
 
             <form className='flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
-                <Card title={t('common:info_of', { obj: t('module:teacher').toLowerCase() })} className='w-30rem'>
-                    <div className='flex flex-column gap-3'>
-                        <div className='flex align-items-center'>
-                            <p className='w-15rem'>{t('common:name_of', { obj: t('module:teacher').toLowerCase() })}</p>
-                            <p className='text-900 font-semibold'>{getValues('lecturerThesis.name')}</p>
-                        </div>
+                {getValues('lecturerThesis') && (
+                    <Card title={t('common:info_of', { obj: t('module:teacher').toLowerCase() })} className='w-30rem'>
+                        <div className='flex flex-column gap-3'>
+                            <div className='flex align-items-center'>
+                                <p className='w-15rem'>
+                                    {t('common:name_of', { obj: t('module:teacher').toLowerCase() })}
+                                </p>
+                                <p className='text-900 font-semibold'>{getValues('lecturerThesis.name')}</p>
+                            </div>
 
-                        <div className='flex align-items-center'>
-                            <p className='w-15rem'>{t('common:email')}</p>
-                            <p className='text-900 font-semibold'>{getValues('lecturerThesis.email')}</p>
-                        </div>
+                            <div className='flex align-items-center'>
+                                <p className='w-15rem'>{t('common:email')}</p>
+                                <p className='text-900 font-semibold'>{getValues('lecturerThesis.email')}</p>
+                            </div>
 
-                        <div className='flex align-items-center'>
-                            <p className='w-15rem'>{t('common:phone_number')}</p>
-                            <p className='text-900 font-semibold'>{getValues('lecturerThesis.phoneNumber')}</p>
-                        </div>
+                            <div className='flex align-items-center'>
+                                <p className='w-15rem'>{t('common:phone_number')}</p>
+                                <p className='text-900 font-semibold'>{getValues('lecturerThesis.phoneNumber')}</p>
+                            </div>
 
-                        <div className='flex align-items-center'>
-                            <p className='w-15rem'>{t('module:field.teacher.academic')}</p>
-                            <p className='text-900 font-semibold'>{getValues('lecturerThesis.academicTitle')}</p>
+                            <div className='flex align-items-center'>
+                                <p className='w-15rem'>{t('module:field.teacher.academic')}</p>
+                                <p className='text-900 font-semibold'>{getValues('lecturerThesis.academicTitle')}</p>
+                            </div>
                         </div>
-                    </div>
-                </Card>
+                    </Card>
+                )}
 
                 <Card title={t('common:info_of', { obj: t('module:thesis').toLowerCase() })}>
                     <div className='flex gap-3'>

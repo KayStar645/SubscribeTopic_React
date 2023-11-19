@@ -1,5 +1,5 @@
 import { ACTION, AUTH_TOKEN } from '@assets/configs';
-import useCookies from './useCookies';
+import { cookies } from '@assets/helpers';
 import { AuthType } from '@assets/interface/Auth';
 import { useEffect, useState } from 'react';
 
@@ -20,10 +20,10 @@ const initialState: PermissionType = {
 };
 
 const usePermission = (module: string): PermissionType => {
-    const [auth] = useCookies<AuthType>(AUTH_TOKEN);
     const [permission, setPermission] = useState<PermissionType>(initialState);
 
     useEffect(() => {
+        const auth = cookies.get<AuthType>(AUTH_TOKEN);
         const modulePermission = auth?.permission.filter((t) => t.startsWith(module));
         const result = initialState;
 
@@ -50,7 +50,7 @@ const usePermission = (module: string): PermissionType => {
         });
 
         setPermission(result);
-    }, [auth, module]);
+    }, [module]);
 
     return permission;
 };

@@ -1,8 +1,10 @@
 'use client';
 
-import { API, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
+import { API, MODULE, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
 import { DATE_FILTER } from '@assets/configs/general';
 import { language, request } from '@assets/helpers';
+import { addPrefixLanguage } from '@assets/helpers/language';
+import usePermission from '@assets/hooks/usePermission';
 import { TeacherType, ThesisParamType, ThesisType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
@@ -28,6 +30,8 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
     const router = useRouter();
+    const permission = usePermission(MODULE.thesis);
+
     const debounceKeyword = useDebouncedCallback((keyword) => {
         setParams((prev) => ({ ...prev, filters: request.handleFilter(prev.filters, 'name', '@=', keyword) }));
     }, 600);
@@ -88,16 +92,23 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
     const renderActions = (data: ThesisType) => {
         return (
             <div className='flex align-items-center gap-3'>
-                <i
-                    className='pi pi-pencil hover:text-primary cursor-pointer'
-                    onClick={() => router.push(language.addPrefixLanguage(lng, `${ROUTES.admin.thesis}/${data.id}`))}
-                />
-                <i
-                    className='pi pi-trash hover:text-red-600 cursor-pointer'
-                    onClick={(e) => {
-                        confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
-                    }}
-                />
+                {permission.update && (
+                    <i
+                        className='pi pi-pencil hover:text-primary cursor-pointer'
+                        onClick={() =>
+                            router.push(language.addPrefixLanguage(lng, `${ROUTES.admin.thesis}/${data.id}`))
+                        }
+                    />
+                )}
+
+                {permission.remove && (
+                    <i
+                        className='pi pi-trash hover:text-red-600 cursor-pointer'
+                        onClick={(e) => {
+                            confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
+                        }}
+                    />
+                )}
             </div>
         );
     };
@@ -125,12 +136,15 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
 
             <div className='flex align-items-center justify-content-between bg-white h-4rem px-3 border-round-lg shadow-3'>
                 <p className='text-xl font-semibold'>{t('list_of', { module: t('module:thesis').toLowerCase() })}</p>
-                <Button
-                    label={t('create_new')}
-                    icon='pi pi-plus'
-                    size='small'
-                    onClick={() => router.push(language.addPrefixLanguage(lng, `${ROUTES.admin.thesis}/0`))}
-                />
+
+                {permission.create && (
+                    <Button
+                        label={t('create_new')}
+                        icon='pi pi-plus'
+                        size='small'
+                        onClick={() => router.push(language.addPrefixLanguage(lng, `${ROUTES.admin.thesis}/0`))}
+                    />
+                )}
             </div>
 
             <div className='flex align-items-center gap-3'>

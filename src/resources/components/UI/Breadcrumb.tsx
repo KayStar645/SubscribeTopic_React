@@ -5,16 +5,24 @@ import { LanguageType } from '@assets/types/lang';
 import { useTranslation } from '@resources/i18n';
 import _ from 'lodash';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { FaHouseChimney } from 'react-icons/fa6';
+import qs from 'query-string';
+
+interface BreadcrumbItemType {
+    path: string;
+    label: string;
+    url: string;
+}
 
 const Breadcrumb = ({ lng }: LanguageType) => {
     const { t } = useTranslation(lng);
     const pathName = usePathname();
     const pathItems = _.drop(pathName.split('/'), 2);
     const dispatch = useDispatch();
+    const router = useRouter();
 
-    const items = _.map(pathItems, (path) => ({
+    const items: BreadcrumbItemType[] = _.map(pathItems, (path) => ({
         path,
         label: t(`route:${path}`),
         url: language.addPrefixLanguage(lng, language.getChildPath(pathName, path)) || '#',
@@ -26,7 +34,7 @@ const Breadcrumb = ({ lng }: LanguageType) => {
             key={items[0].label}
             className='flex align-items-center no-underline gap-2 text-primary font-semibold hover:text-blue-300 cursor-pointer'
             onClick={() => {
-                onItemClick(items[0].path);
+                onItemClick(items[0]);
             }}
         >
             <FaHouseChimney />
@@ -35,8 +43,10 @@ const Breadcrumb = ({ lng }: LanguageType) => {
         </Link>
     );
 
-    const onItemClick = (label: string) => {
-        dispatch(menuSlice.actions.onItemClick({ activeItem: label, parent: label, openMenu: true }));
+    const onItemClick = (item: BreadcrumbItemType) => {
+        router.push(item.url + '?' + qs.stringify({ activeItem: item.path, parent: item.path, openMenu: false }));
+
+        dispatch(menuSlice.actions.onItemClick({ activeItem: item.path, parent: item.path, openMenu: false }));
     };
 
     return (
@@ -46,17 +56,16 @@ const Breadcrumb = ({ lng }: LanguageType) => {
                     index === 0 ? (
                         <Home showArrow={true} key={item.label} />
                     ) : (
-                        <Link
-                            href={item.url}
+                        <div
                             key={item.label}
                             className='flex align-items-center no-underline gap-2 font-semibold text-800 hover:text-600 cursor-pointer'
                             onClick={() => {
-                                onItemClick(item.path);
+                                onItemClick(item);
                             }}
                         >
                             {item.label == '0' ? t('create_new') : item.label}
                             {index !== items.length - 1 && <i className='pi pi-angle-right' />}
-                        </Link>
+                        </div>
                     ),
                 )
             ) : (

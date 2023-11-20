@@ -3,7 +3,7 @@ import { AuthType } from '@assets/interface/Auth';
 import { OptionType } from '@assets/types/common';
 import { MetaType, ParamType, ResponseType } from '@assets/types/request';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import _, { uniq } from 'lodash';
+import _ from 'lodash';
 import { cookies } from '.';
 
 const request = axios.create({
@@ -160,4 +160,4 @@ const currentPage = (page: number | undefined) => {
     return page ? page - 1 : 0;
 };
 
-export { currentPage, defaultMeta, get, handleSort, post, remove, update, handleFilter };
+export { currentPage, defaultMeta, get, handleFilter, handleSort, post, remove, update };

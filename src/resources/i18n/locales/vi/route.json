@@ -10,6 +10,9 @@
     "student_join": "Đợt tham gia của sinh viên",
     "notification": "Thông báo",
     "group": "Nhóm",
-    "thesis": "Đề tài",
-    "role": "Vai trò"
+    "topic": "Đề tài",
+    "role": "Vai trò",
+    "master_data": "Dữ liệu nguồn",
+    "system": "Hệ thống",
+    "thesis": "Luận án"
 }

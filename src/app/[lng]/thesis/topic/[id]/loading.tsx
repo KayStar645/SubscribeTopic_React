@@ -2,7 +2,7 @@
 
 import { Loader } from '@resources/components/UI';
 
-const LoadingPage = () => {
+const TopicLoadingPage = () => {
     return (
         <div className='absolute top-0 left-0 right-0 bottom-0 bg-white'>
             <Loader show={true} />
@@ -10,4 +10,4 @@ const LoadingPage = () => {
     );
 };
 
-export default LoadingPage;
+export default TopicLoadingPage;

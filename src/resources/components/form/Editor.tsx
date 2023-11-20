@@ -1,8 +1,9 @@
 import { EditorProps } from '@assets/types/form';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
+import EditorContainer from 'ckeditor5-custom-build';
+import dynamic from 'next/dynamic';
 import { classNames } from 'primereact/utils';
 import { useEffect, useState } from 'react';
-import { default as EditorContainer } from 'ckeditor5-custom-build';
 
 const Editor = ({
     label,
@@ -14,6 +15,7 @@ const Editor = ({
     onChange = () => {},
 }: EditorProps) => {
     const [inputValue, setInputValue] = useState(value.toString());
+    // const EditorContainer = dynamic(() => import('ckeditor5-custom-build'), { ssr: false });
 
     useEffect(() => {
         setInputValue(value.toString());
@@ -39,7 +41,7 @@ const Editor = ({
                     editor={EditorContainer}
                     data={inputValue}
                     onChange={(event, editor) => {
-                        const data = editor.getData();
+                        const data = editor.data.get();
 
                         onChange(data);
                         setInputValue(data);

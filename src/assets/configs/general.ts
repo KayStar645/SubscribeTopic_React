@@ -65,7 +65,7 @@ const ACADEMIC = (t: TFunction): OptionType[] => [
     },
 ];
 
-const degrees = (t: TFunction): OptionType[] => [
+const DEGREE = (t: TFunction): OptionType[] => [
     {
         label: t('info:degree.associate_professor'),
         value: t('info:degree.associate_professor'),
@@ -87,4 +87,10 @@ const USER_TYPE = (t: TFunction): OptionType[] => [
     },
 ];
 
-export { GENDER, SEMESTER, DATE_FILTER, ACADEMIC, degrees, USER_TYPE };
+const THESIS_STATUS = (t: TFunction) => ({
+    A: t('common:approve'),
+    AR: t('common:approve_request'),
+    D: t('common:draft'),
+});
+
+export { GENDER, SEMESTER, DATE_FILTER, ACADEMIC, DEGREE, USER_TYPE, THESIS_STATUS };

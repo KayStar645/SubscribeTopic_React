@@ -161,7 +161,7 @@ const NotificationForm = ({ params }: PageProps) => {
                 />
 
                 <div
-                    className='flex align-items-center justify-content-end gap-2 absolute bottom-0 left-0 right-0 bg-white px-6 h-4rem shadow-8'
+                    className='flex align-items-center justify-content-end gap-2 absolute bottom-0 left-0 right-0 bg-white px-5 h-4rem shadow-8'
                     style={{ zIndex: 500 }}
                 >
                     <Button

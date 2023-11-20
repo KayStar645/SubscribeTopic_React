@@ -1,6 +1,7 @@
 'use client';
 
 import { API, MODULE } from '@assets/configs';
+import { THESIS_STATUS } from '@assets/configs/general';
 import { request } from '@assets/helpers';
 import usePermission from '@assets/hooks/usePermission';
 import { MajorType, TeacherType, ThesisParamType, ThesisType } from '@assets/interface';
@@ -17,6 +18,8 @@ import { TFunction } from 'i18next';
 import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
+import { Chip } from 'primereact/chip';
+import { classNames } from 'primereact/utils';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
@@ -39,6 +42,7 @@ const schema = (t: TFunction) =>
                 attribute: t('common:name_of', { obj: t('module:thesis') }).toLowerCase(),
             }),
         ),
+        status: yup.string().default('D').oneOf(['A', 'AR', 'D']),
     });
 
 const ThesisForm = ({ params: _params }: PageProps) => {
@@ -120,10 +124,42 @@ const ThesisForm = ({ params: _params }: PageProps) => {
         });
     };
 
+    const CardTitle = () => {
+        let background = 'bg-gray-400';
+
+        if (getValues('status') === 'A') {
+            background = 'bg-green-600';
+        } else {
+            background = 'bg-blue-500';
+        }
+
+        return (
+            <div className='flex align-items-center justify-content-between'>
+                <div className='flex align-items-center gap-3'>
+                    <p>{t('common:info_of', { obj: t('module:thesis').toLowerCase() })}</p>
+                    <Chip
+                        label={THESIS_STATUS(t)[getValues('status') || 'D']}
+                        className={classNames(background, 'text-white')}
+                    />
+                </div>
+
+                <div className='flex align-items-center gap-2'>
+                    <Button
+                        label={t('common:edit_request')}
+                        size='small'
+                        severity='secondary'
+                        onClick={(e) => e.preventDefault()}
+                    />
+                    <Button label={t('common:approve')} size='small' onClick={(e) => e.preventDefault()} />
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div
-            style={{ height: 'calc(100% - 2rem)', marginRight: '-1rem', marginTop: '-1rem' }}
-            className='py-3 pr-3 overflow-auto'
+            style={{ height: 'calc(100% - 2rem)', marginLeft: '-1rem', marginRight: '-1rem', marginTop: '-1rem' }}
+            className='py-3 px-3 overflow-auto relative'
         >
             <Loader
                 show={
@@ -136,7 +172,7 @@ const ThesisForm = ({ params: _params }: PageProps) => {
 
             <form className='flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 {getValues('lecturerThesis') && (
-                    <Card title={t('common:info_of', { obj: t('module:teacher').toLowerCase() })} className='w-30rem'>
+                    <Card title={t('common:info_of', { obj: t('module:teacher').toLowerCase() })}>
                         <div className='flex flex-column gap-3'>
                             <div className='flex align-items-center'>
                                 <p className='w-15rem'>
@@ -163,8 +199,8 @@ const ThesisForm = ({ params: _params }: PageProps) => {
                     </Card>
                 )}
 
-                <Card title={t('common:info_of', { obj: t('module:thesis').toLowerCase() })}>
-                    <div className='flex gap-3'>
+                <Card title={<CardTitle />}>
+                    <div className='flex gap-3 flex-wrap'>
                         <div className='col-7 flex-1 flex flex-column gap-3 '>
                             <Controller
                                 name='internalCode'
@@ -192,19 +228,6 @@ const ThesisForm = ({ params: _params }: PageProps) => {
                                         placeholder={t('common:name_of', { obj: t('module:thesis').toLowerCase() })}
                                         errorMessage={fieldState.error?.message}
                                         onChange={field.onChange}
-                                    />
-                                )}
-                            />
-
-                            <Controller
-                                name='summary'
-                                control={control}
-                                render={({ field, fieldState }) => (
-                                    <Editor
-                                        label={t('common:summary')}
-                                        value={field.value}
-                                        onChange={(data) => setValue(field.name, data)}
-                                        errorMessage={fieldState.error?.message}
                                     />
                                 )}
                             />
@@ -266,10 +289,25 @@ const ThesisForm = ({ params: _params }: PageProps) => {
                                 />
                             )}
                         </div>
+
+                        <div className='col-12'>
+                            <Controller
+                                name='summary'
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <Editor
+                                        label={t('common:summary')}
+                                        value={field.value}
+                                        onChange={(data) => setValue(field.name, data)}
+                                        errorMessage={fieldState.error?.message}
+                                    />
+                                )}
+                            />
+                        </div>
                     </div>
 
                     <div
-                        className='flex align-items-center justify-content-end gap-2 absolute bottom-0 left-0 right-0 bg-white px-6 h-4rem shadow-8'
+                        className='flex align-items-center justify-content-end gap-2 fixed bottom-0 left-0 right-0 bg-white px-5 h-4rem shadow-8'
                         style={{ zIndex: 500 }}
                     >
                         <Button

@@ -14,6 +14,7 @@ const Dropdown = ({
     optionValue = 'value',
     emptyMessage = 'No results found',
     errorMessage,
+    showClear = false,
     onChange = () => {},
 }: DropdownProps) => {
     const [selected, setSelected] = useState(value);
@@ -34,6 +35,7 @@ const Dropdown = ({
                 )}
 
                 <PrimeDropdown
+                    showClear={showClear}
                     emptyMessage={emptyMessage}
                     inputId={id}
                     options={options}

@@ -1,5 +1,5 @@
 import { API } from '@assets/configs';
-import { ACADEMIC, degrees as _degrees, GENDER, USER_TYPE } from '@assets/configs/general';
+import { ACADEMIC, DEGREE, GENDER, USER_TYPE } from '@assets/configs/general';
 import { request } from '@assets/helpers';
 import { DepartmentType, TeacherType } from '@assets/interface';
 import { OptionType } from '@assets/types/common';
@@ -21,13 +21,13 @@ import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 interface TeacherFormRefType {
-    show?: (data?: TeacherType) => void;
+    show?: (_data?: TeacherType) => void;
     close?: () => void;
 }
 
 interface TeacherFormType extends LanguageType {
     title: string;
-    onSuccess?: (faculty: TeacherType) => void;
+    onSuccess?: (_faculty: TeacherType) => void;
 }
 
 const defaultValues: TeacherType = {
@@ -189,7 +189,7 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
                                 errorMessage={fieldState.error?.message}
                                 onChange={(value) => {
                                     if (value === t('info:academic.doctor')) {
-                                        setDegrees(_degrees(t));
+                                        setDegrees(DEGREE(t));
                                     } else {
                                         setDegrees([]);
                                     }

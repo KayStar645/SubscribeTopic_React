@@ -13,6 +13,7 @@ interface ThesisType extends GeneralType {
     thesisInstructions?: TeacherType[];
     thesisMajors?: MajorType[];
     lecturerThesis?: TeacherType;
+    status?: 'A' | 'AR' | 'D';
 }
 
 interface ThesisParamType extends ParamType {

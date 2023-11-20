@@ -49,5 +49,9 @@
     "create": "Thêm",
     "delete": "Xóa",
     "assign": "Cấp quyền",
-    "info_of": "Thông tin {{ obj }}"
+    "info_of": "Thông tin {{ obj }}",
+    "approve": "Duyệt",
+    "edit_request": "Yêu cầu chỉnh sửa",
+    "approve_request": "Yêu cầu duyệt",
+    "draft": "Nháp"
 }

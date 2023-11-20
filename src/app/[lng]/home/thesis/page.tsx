@@ -33,7 +33,10 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
     const permission = usePermission(MODULE.thesis);
 
     const debounceKeyword = useDebouncedCallback((keyword) => {
-        setParams((prev) => ({ ...prev, filters: request.handleFilter(prev.filters, 'name', '@=', keyword) }));
+        setParams((prev) => ({
+            ...prev,
+            filters: request.handleFilter(prev.filters, '(internalCode|name)', '@=', keyword),
+        }));
     }, 600);
 
     const [params, setParams] = useState<ThesisParamType>({
@@ -156,13 +159,14 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
 
                 <Dropdown
                     id='thesis_lecturer'
+                    showClear={true}
                     placeholder={t('module:field.thesis.lecturer')}
                     options={teacherQuery?.data?.map((t) => ({ label: t.name, value: t.id }))}
                     onChange={(teacherId) => {
                         setParams((prev) => {
                             return {
                                 ...prev,
-                                filters: request.handleFilter(prev.filters || '', 'lecturerThesisId', '@=', teacherId),
+                                filters: request.handleFilter(prev.filters || '', 'lecturerThesisId', '==', teacherId),
                             };
                         });
                     }}

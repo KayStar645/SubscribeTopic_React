@@ -134,7 +134,12 @@ const handleSort = (sorts: OptionType | undefined, params: ParamType): string =>
     return result;
 };
 
-const handleFilter = (original: string | undefined, field: string, operator: '>' | '@=', value: string | number) => {
+const handleFilter = (
+    original: string | undefined,
+    field: string,
+    operator: '>' | '@=' | '==',
+    value: string | number | undefined,
+) => {
     let filters = original?.split(', ') || [];
 
     filters = filters.filter((t) => t != '');
@@ -144,7 +149,9 @@ const handleFilter = (original: string | undefined, field: string, operator: '>'
         filters.splice(index, 1);
     }
 
-    filters.push(field + operator + value);
+    if (value) {
+        filters.push(field + operator + value);
+    }
 
     return filters.join(', ') || '';
 };

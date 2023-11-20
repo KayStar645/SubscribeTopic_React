@@ -13,7 +13,10 @@ const Menu = ({ lng }: LanguageType) => {
     const [auth] = useCookies<AuthType>(AUTH_TOKEN);
 
     return (
-        <div className='flex flex-column gap-2 bg-white w-19rem h-screen relative shadow-2' style={{ zIndex: 1000 }}>
+        <div
+            className='flex flex-column gap-2 bg-white h-screen relative shadow-2'
+            style={{ zIndex: 1000, minWidth: '19rem' }}
+        >
             <div className='w-full flex flex-column gap-2 align-items-center justify-content-center absolute bg-white z-1 shadow-1 h-11rem'>
                 <Image src={LogoImage} alt='' width={100} height={100} priority={true} />
                 <p className='font-semibold text-blue-900 text-2xl'>{t('info:product_name')}</p>

@@ -5,7 +5,7 @@ import { OptionType } from './common';
 import { MultiSelectChangeEvent } from 'primereact/multiselect';
 
 interface InputProps {
-    id?: string;
+    id: string;
     value?: string | number;
     label?: string;
     placeholder?: string;

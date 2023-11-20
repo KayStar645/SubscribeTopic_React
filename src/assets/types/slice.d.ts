@@ -1,21 +1,19 @@
-import { OptionType } from './common';
-
 interface signInSliceType {
-	account: string;
-	password: string;
-	rememberPassword: boolean;
-	token?: string;
-	userName: string;
+    account: string;
+    password: string;
+    rememberPassword: boolean;
+    token?: string;
+    userName: string;
 }
 
 interface MenuSliceType {
-	activeItem?: string;
-	openMenu?: boolean;
-	parent?: string;
+    activeItem?: string;
+    openMenu?: boolean;
+    parent?: string;
 }
 
 interface LanguageSliceType {
-	currLanguage: string;
+    currLanguage: string;
 }
 
-export type { signInSliceType, MenuSliceType, LanguageSliceType };
+export type { LanguageSliceType, MenuSliceType, signInSliceType };

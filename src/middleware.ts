@@ -37,7 +37,12 @@ export function middleware(req: NextRequest) {
         let response = NextResponse.redirect(new URL(`/${lng}${ROUTES.auth.sign_in}${req.nextUrl.pathname}`, req.url));
 
         if (req.cookies.has(AUTH_RAW_TOKEN)) {
-            response = NextResponse.redirect(new URL(`/${lng}${ROUTES.admin.home}${req.nextUrl.pathname}`, req.url));
+            response = NextResponse.redirect(
+                new URL(
+                    `/${lng}${ROUTES.home.index}${req.nextUrl.pathname}?activeItem=home&openMenu=false&parent=home`,
+                    req.url,
+                ),
+            );
         }
 
         return response;

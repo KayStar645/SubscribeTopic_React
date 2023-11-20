@@ -9,5 +9,5 @@ export * from './RegistrationPeriod';
 export * from './StudentJoin';
 export * from './Notification';
 export * from './Group';
-export * from './Thesis';
+export * from './Topic';
 export * from './Role';

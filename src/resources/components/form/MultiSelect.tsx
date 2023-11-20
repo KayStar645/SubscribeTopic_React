@@ -1,7 +1,6 @@
 import { MultiSelectProps } from '@assets/types/form';
 import { MultiSelect as PrimeMultiSelect } from 'primereact/multiselect';
 import { classNames } from 'primereact/utils';
-import { useEffect, useState } from 'react';
 
 const MultiSelect = ({
     id,
@@ -32,6 +31,7 @@ const MultiSelect = ({
                 )}
 
                 <PrimeMultiSelect
+                    dataKey={id}
                     emptyMessage={emptyMessage}
                     inputId={id}
                     options={options}

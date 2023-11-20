@@ -59,7 +59,7 @@ const PERMISSION = {
         update: 'Group.Update',
         delete: 'Group.Delete',
     },
-    thesis: {
+    topic: {
         view: 'Thesis.View',
         create: 'Thesis.Create',
         update: 'Thesis.Update',

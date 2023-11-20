@@ -1,13 +1,14 @@
 'use client';
 
 import { cookies } from '@assets/helpers';
-import { useDispatch, useSelector } from '@assets/redux';
-import { selectMenu } from '@assets/redux/slices/menu';
+import { useDispatch } from '@assets/redux';
 import menuSlice from '@assets/redux/slices/menu/slice';
 import { MenuItemType } from '@assets/types/menu';
+import { MenuSliceType } from '@assets/types/slice';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { classNames } from 'primereact/utils';
+import qs from 'query-string';
 import { useState } from 'react';
 
 interface MenuItemProps {
@@ -32,50 +33,51 @@ const MenuItem = ({ item, permissions }: MenuItemProps) => {
 
     const Icon = () => icon;
     const dispatch = useDispatch();
-    const menu = useSelector(selectMenu);
-    const active = code === menu.activeItem || code === menu.parent;
+    const params = useSearchParams();
+    const active = code === params.get('activeItem') || code === params.get('parent');
     const [isOpenMenu, setIsOpenMenu] = useState(false);
     const router = useRouter();
     const checkChildPermission = cookies.checkChildPermission(item, permissions);
 
     const onClick = (currItem: MenuItemType) => {
+        let activeMenu: MenuSliceType = { activeItem: code, parent, openMenu: false };
+
         if (items && items.length > 0) {
             if (active) {
-                dispatch(
-                    menuSlice.actions.onItemClick({
-                        activeItem: '',
-                        parent: '',
-                        openMenu: isOpenMenu && menu.openMenu,
-                    }),
-                );
+                activeMenu = {
+                    activeItem: '',
+                    parent: '',
+                    openMenu: isOpenMenu && JSON.parse(params.get('openMenu') || 'false'),
+                };
+
                 setIsOpenMenu(false);
             } else {
-                dispatch(
-                    menuSlice.actions.onItemClick({
-                        activeItem: code,
-                        parent,
-                        openMenu: isOpenMenu && menu.openMenu,
-                    }),
-                );
+                activeMenu = {
+                    activeItem: code,
+                    parent,
+                    openMenu: isOpenMenu && JSON.parse(params.get('openMenu') || 'false'),
+                };
+
                 setIsOpenMenu(true);
             }
         } else if (parent) {
-            dispatch(
-                menuSlice.actions.onItemClick({
-                    activeItem: code,
-                    parent,
-                    openMenu: false,
-                }),
-            );
+            activeMenu = {
+                activeItem: code,
+                parent,
+                openMenu: false,
+            };
         } else {
-            dispatch(menuSlice.actions.onItemClick({ activeItem: code, parent, openMenu: false }));
             setIsOpenMenu(false);
         }
 
         onItemClick?.(currItem);
 
+        dispatch(menuSlice.actions.onItemClick(activeMenu));
+
         if (currItem.to) {
-            router.push(currItem.to);
+            router.push(currItem.to + '?' + qs.stringify(activeMenu));
+        } else {
+            router.push('?' + qs.stringify(activeMenu));
         }
     };
 
@@ -118,7 +120,9 @@ const MenuItem = ({ item, permissions }: MenuItemProps) => {
             {items && items.length > 0 && (
                 <motion.div
                     animate={
-                        (isOpenMenu && active) || (isOpenMenu && menu.openMenu) || parent === menu.parent
+                        (isOpenMenu && active) ||
+                        (isOpenMenu && JSON.parse(params.get('openMenu') || 'false')) ||
+                        parent === params.get('parent')
                             ? { height: 'auto' }
                             : { height: 0 }
                     }

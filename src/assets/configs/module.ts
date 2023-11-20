@@ -7,7 +7,7 @@ const MODULE = {
     student: 'Student',
     registrationPeriod: 'RegistrationPeriod',
     group: 'Group',
-    thesis: 'Thesis',
+    topic: 'Thesis',
     role: 'Role',
 };
 

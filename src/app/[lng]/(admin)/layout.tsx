@@ -2,6 +2,7 @@
 
 import { PageProps } from '@assets/types/UI';
 import { Header, Sidebar } from '@resources/components/layout';
+import { ToastContainer } from 'react-toastify';
 
 const Layout = ({ children, params: { lng } }: PageProps) => {
     return (
@@ -17,6 +18,7 @@ const Layout = ({ children, params: { lng } }: PageProps) => {
                     </div>
                 </div>
             </div>
+            <ToastContainer />
 
             {/* <SelectFacultyModal
                                 ref={selectFacultyRef}

@@ -68,10 +68,7 @@ const RootLayout = ({ children, params: { lng } }: PageProps) => {
         <html lang={lng} dir={dir(lng)}>
             <ReduxProvider>
                 <QueryClientProvider client={queryClient}>
-                    <PrimeReactProvider value={primeReactValue}>
-                        {children}
-                        <ToastContainer />
-                    </PrimeReactProvider>
+                    <PrimeReactProvider value={primeReactValue}>{children}</PrimeReactProvider>
                 </QueryClientProvider>
             </ReduxProvider>
         </html>

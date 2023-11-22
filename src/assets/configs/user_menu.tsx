@@ -13,7 +13,7 @@ const USER_MENU = (t: TFunction, lng: string, pathName: string): MenuItemType[] 
             parent: 'info',
             label: t('menu:info'),
             icon: <FaUser />,
-            to: `/${lng}${pathName || '/home'}`,
+            to: `/${lng}${pathName}`,
         },
         {
             code: lng || 'language',
@@ -23,7 +23,7 @@ const USER_MENU = (t: TFunction, lng: string, pathName: string): MenuItemType[] 
             items: LANGUAGES.map((t) => ({
                 ...t,
                 parent: 'language',
-                to: `/${t.code}${pathName || '/home'}`,
+                to: `/${t.code}${pathName}`,
             })),
         },
         {

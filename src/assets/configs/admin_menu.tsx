@@ -1,6 +1,6 @@
 import { MenuItemType } from '@assets/types/menu';
 import { TFunction } from 'i18next';
-import { FaBookJournalWhills, FaBoxesStacked, FaGear, FaHouseChimney } from 'react-icons/fa6';
+import { FaBookJournalWhills, FaBoxesStacked, FaGear, FaHouseChimney, FaRegNewspaper } from 'react-icons/fa6';
 import { PERMISSION, ROUTES } from '.';
 
 const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
@@ -79,14 +79,6 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
                     permission: PERMISSION.registrationPeriod.view,
                     checkPermission: true,
                 },
-                {
-                    code: 'notification',
-                    parent: 'master_data',
-                    label: t('menu:notification'),
-                    to: `/${lng}/${ROUTES.master_data.notification}`,
-                    permission: PERMISSION.notification.view,
-                    checkPermission: true,
-                },
             ],
         },
         {
@@ -121,6 +113,25 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
                     to: `/${lng}/${ROUTES.thesis.student_join}`,
                     permission: PERMISSION.studentJoin.view,
                     checkPermission: true,
+                },
+            ],
+        },
+        {
+            code: 'information',
+            label: t('menu:information'),
+            parent: 'information',
+            icon: <FaRegNewspaper />,
+            permission: '',
+            checkPermission: true,
+            to: '',
+            items: [
+                {
+                    code: 'notification',
+                    label: t('menu:notification'),
+                    parent: 'information',
+                    permission: PERMISSION.faculty.view,
+                    checkPermission: true,
+                    to: `/${lng}/${ROUTES.information.notification}`,
                 },
             ],
         },

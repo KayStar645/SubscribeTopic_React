@@ -31,7 +31,7 @@ const MultiSelect = ({
                 )}
 
                 <PrimeMultiSelect
-                    dataKey={id}
+                    dataKey={Math.random().toString()}
                     emptyMessage={emptyMessage}
                     inputId={id}
                     options={options}

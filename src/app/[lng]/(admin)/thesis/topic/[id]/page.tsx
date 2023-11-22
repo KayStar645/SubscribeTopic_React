@@ -172,7 +172,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
 
             <form className='flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 {getValues('lecturerThesis') && (
-                    <Card title={t('common:info_of', { obj: t('module:teacher').toLowerCase() })}>
+                    <Card title={t('module:field.thesis.lecturer')}>
                         <div className='flex flex-column gap-3'>
                             <div className='flex align-items-center'>
                                 <p className='w-15rem'>
@@ -233,6 +233,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
                             />
 
                             <InputRange
+                                id='form_data_min_max'
                                 max={10}
                                 label={t('module:field.thesis.quantity')}
                                 minPlaceHolder={t('common:min')}
@@ -299,6 +300,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Editor
+                                        id='form_data_summary'
                                         label={t('common:summary')}
                                         value={field.value}
                                         onChange={(data) => setValue(field.name, data)}

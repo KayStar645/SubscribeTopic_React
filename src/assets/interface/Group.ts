@@ -5,7 +5,9 @@ interface GroupType extends GeneralType {
     countMember?: string | number;
     leaderId?: string | number;
     leader?: any;
-    members?: StudentType[];
+    members?: {
+        student?: StudentType;
+    }[];
 }
 
 interface GroupParamType extends ParamType {

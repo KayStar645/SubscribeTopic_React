@@ -65,7 +65,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
             <i
                 className='pi pi-pencil hover:text-primary cursor-pointer'
                 onClick={() => {
-                    formRef.current?.show?.(data);
+                    formRef.current?.show?.(data.id);
                     setSelected(data);
                 }}
             />

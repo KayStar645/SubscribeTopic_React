@@ -8,7 +8,6 @@ import { PageProps } from '@assets/types/UI';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dir } from 'i18next';
 import { APIOptions, PrimeReactProvider, addLocale, locale } from 'primereact/api';
-import { Header, Sidebar } from '@resources/components/layout';
 import { ToastContainer } from 'react-toastify';
 
 const queryClient = new QueryClient();
@@ -70,29 +69,8 @@ const RootLayout = ({ children, params: { lng } }: PageProps) => {
             <ReduxProvider>
                 <QueryClientProvider client={queryClient}>
                     <PrimeReactProvider value={primeReactValue}>
-                        <body className='min-h-screen surface-200 overflow-hidden m-0'>
-                            <div className='flex'>
-                                <Sidebar lng={lng} />
-
-                                <div style={{ width: 'calc(100vw - 19rem)' }}>
-                                    <Header lng={lng} />
-
-                                    <div className='p-3' style={{ height: 'calc(100vh - 4rem)', marginTop: '4rem' }}>
-                                        {children}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <ToastContainer />
-
-                            {/* <SelectFacultyModal
-                                ref={selectFacultyRef}
-                                lng={lng}
-                                onConfirm={(item) => {
-                                    setCookie(FACULTY_TOKEN, item);
-                                }}
-                            /> */}
-                        </body>
+                        {children}
+                        <ToastContainer />
                     </PrimeReactProvider>
                 </QueryClientProvider>
             </ReduxProvider>

@@ -63,7 +63,7 @@ const Page = ({ params: { lng } }: PageProps) => {
                         expires: new Date(tokenData.exp * 1000),
                     });
 
-                    router.push(language.addPrefixLanguage(lng, ROUTES.admin.home));
+                    router.push(language.addPrefixLanguage(lng, ROUTES.home.index));
                 } catch (error) {}
             },
         });

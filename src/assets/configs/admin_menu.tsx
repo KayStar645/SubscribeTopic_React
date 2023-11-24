@@ -133,6 +133,14 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
                     checkPermission: true,
                     to: `/${lng}/${ROUTES.information.notification}`,
                 },
+                {
+                    code: 'faculty_duty',
+                    label: t('menu:faculty_duty'),
+                    parent: 'information',
+                    permission: PERMISSION.faculty.view,
+                    checkPermission: true,
+                    to: `/${lng}/${ROUTES.information.faculty_duty}`,
+                },
             ],
         },
         {

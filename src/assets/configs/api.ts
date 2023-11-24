@@ -17,9 +17,11 @@ const API = {
         topic: '/thesis',
         role: '/role',
         permission: '/permission',
+        faculty_duty: '/facultyDuty',
 
         detail: {
             notification: '/notification/detail',
+            faculty_duty: '/facultyDuty/detail',
             group: '/group/detail',
             topic: '/thesis/detail',
             role: '/role/detail',

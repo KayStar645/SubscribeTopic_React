@@ -1,6 +1,7 @@
 const API = {
     auth: {
         sign_in: '/account/login',
+        register: 'account/register',
     },
 
     admin: {
@@ -17,6 +18,8 @@ const API = {
         topic: '/thesis',
         role: '/role',
         permission: '/permission',
+        account: '/account',
+        google_drive: 'googledrive',
 
         detail: {
             notification: '/notification/detail',

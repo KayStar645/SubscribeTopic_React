@@ -136,6 +136,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -145,6 +146,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -154,6 +156,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:code_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -163,6 +166,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:name_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -172,6 +176,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                         header={t('email')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -181,6 +186,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
                         header={t('phone_number')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

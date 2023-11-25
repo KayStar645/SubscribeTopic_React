@@ -74,6 +74,10 @@ const PERMISSION = {
     permission: {
         view: 'Permission.View',
     },
+    account: {
+        view: 'Account.View',
+        create: 'Account.Create',
+    },
 };
 
 const ACTION = {

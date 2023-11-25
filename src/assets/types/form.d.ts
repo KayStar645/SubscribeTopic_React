@@ -3,6 +3,7 @@ import { RadioButtonChangeEvent } from 'primereact/radiobutton';
 import { ChangeEvent, ChangeEventHandler, FocusEventHandler } from 'react';
 import { OptionType } from './common';
 import { MultiSelectChangeEvent } from 'primereact/multiselect';
+import { FileUploadErrorEvent, FileUploadSelectEvent, FileUploadUploadEvent } from 'primereact/fileupload';
 
 interface InputProps {
     id: string;
@@ -76,6 +77,23 @@ interface InputRangeProps extends InputProps {
     onChange?: (_e: [number, number]) => void;
 }
 
+interface InputFileProps extends InputProps {
+    multiple?: boolean;
+    value?: string[];
+    emptyList?: string;
+    successMessage?: string;
+    folderName: string;
+    accept?: string;
+}
+
+interface InputImageProps extends InputProps {
+    multiple?: boolean;
+    value?: string[];
+    emptyList?: string;
+    successMessage?: string;
+    folderName: string;
+}
+
 export type {
     CheckboxProps,
     DropdownProps,
@@ -87,4 +105,6 @@ export type {
     MultiSelectProps,
     RadioListProps,
     TextAreaProps,
+    InputImageProps,
+    InputFileProps,
 };

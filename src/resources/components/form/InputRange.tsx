@@ -1,3 +1,5 @@
+'use client';
+
 import { InputRangeProps } from '@assets/types/form';
 import { Divider } from 'primereact/divider';
 import { InputNumber } from 'primereact/inputnumber';

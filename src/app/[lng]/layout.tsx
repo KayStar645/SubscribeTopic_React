@@ -8,7 +8,6 @@ import { PageProps } from '@assets/types/UI';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dir } from 'i18next';
 import { APIOptions, PrimeReactProvider, addLocale, locale } from 'primereact/api';
-import { ToastContainer } from 'react-toastify';
 
 const queryClient = new QueryClient();
 

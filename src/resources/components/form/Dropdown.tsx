@@ -1,3 +1,5 @@
+'use client';
+
 import { DropdownProps } from '@assets/types/form';
 import { Dropdown as PrimeDropdown } from 'primereact/dropdown';
 import { classNames } from 'primereact/utils';

@@ -78,6 +78,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                 <p className='pb-3 text-900 font-semibold'>{t('module:field.group.members')}</p>
                 <DataTable value={data.members}>
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -87,6 +88,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:code_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -96,6 +98,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:name_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -133,6 +136,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                     onRowToggle={(e) => setExpandedRows(e.data)}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -141,6 +145,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                         expander={allowExpansion}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -149,6 +154,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -157,6 +163,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:name_of', { obj: t('module:group').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

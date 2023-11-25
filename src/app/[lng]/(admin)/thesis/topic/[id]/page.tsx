@@ -79,9 +79,6 @@ const TopicForm = ({ params: _params }: PageProps) => {
                 reset(data);
             }
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const majorQuery = useQuery<MajorType[], AxiosError<ResponseType>>({
@@ -163,7 +160,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
         >
             <Loader
                 show={
-                    thesisMutation.isLoading ||
+                    thesisMutation.isPending ||
                     thesisDetailQuery.isFetching ||
                     majorQuery.isFetching ||
                     teacherQuery.isFetching

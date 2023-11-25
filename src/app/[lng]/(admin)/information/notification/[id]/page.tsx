@@ -14,7 +14,6 @@ import { AxiosError } from 'axios';
 import { TFunction } from 'i18next';
 import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
-import { useEffect } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
@@ -65,9 +64,6 @@ const NotificationForm = ({ params }: PageProps) => {
                 reset(data);
             }
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const notificationMutation = useMutation<any, AxiosError<ResponseType>, NotificationType | null>({
@@ -92,7 +88,7 @@ const NotificationForm = ({ params }: PageProps) => {
 
     return (
         <div className='overflow-auto pb-8'>
-            <Loader show={notificationMutation.isLoading || notificationDetailQuery.isFetching} />
+            <Loader show={notificationMutation.isPending || notificationDetailQuery.isFetching} />
 
             <form className='p-3 flex flex-column gap-3 bg-white border-round-xl ' onSubmit={handleSubmit(onSubmit)}>
                 <Controller

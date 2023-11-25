@@ -51,9 +51,6 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const onPageChange = (e: PaginatorPageChangeEvent) => {

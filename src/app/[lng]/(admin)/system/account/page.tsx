@@ -36,9 +36,6 @@ const AccountPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const accountMutation = useMutation<any, AxiosError<ResponseType>, AccountType>({
@@ -136,7 +133,7 @@ const AccountPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={accountQuery.isLoading || accountMutation.isLoading} />
+                <Loader show={accountQuery.isLoading || accountMutation.isPending} />
 
                 <DataTable
                     value={accountQuery.data}

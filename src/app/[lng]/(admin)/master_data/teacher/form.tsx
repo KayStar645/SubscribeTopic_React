@@ -84,9 +84,6 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const teacherMutation = useMutation<any, AxiosError<ResponseType>, TeacherType>({
@@ -141,7 +138,7 @@ const TeacherForm = forwardRef<TeacherFormRefType, TeacherFormType>(({ title, ln
             contentClassName='mb-8'
             onHide={close}
         >
-            <Loader show={teacherMutation.isLoading || departmentQuery.isLoading} />
+            <Loader show={teacherMutation.isPending || departmentQuery.isLoading} />
 
             <form className='mt-2 flex gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <div className='col-6 flex flex-column gap-3'>

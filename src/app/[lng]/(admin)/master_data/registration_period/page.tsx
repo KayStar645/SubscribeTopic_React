@@ -56,9 +56,6 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const registrationPeriodMutation = useMutation<any, AxiosError<ResponseType>, RegistrationPeriodType>({
@@ -133,7 +130,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={registrationPeriodQuery.isLoading || registrationPeriodMutation.isLoading} />
+                <Loader show={registrationPeriodQuery.isLoading || registrationPeriodMutation.isPending} />
 
                 <DataTable
                     value={registrationPeriodQuery.data || []}

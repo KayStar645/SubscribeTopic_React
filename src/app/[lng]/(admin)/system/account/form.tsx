@@ -100,7 +100,7 @@ const AccountForm = forwardRef<AccountFormRefType, AccountFormType>(({ title, ln
             contentClassName='mb-8'
             onHide={close}
         >
-            <Loader show={accountMutation.isLoading} />
+            <Loader show={accountMutation.isPending} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller

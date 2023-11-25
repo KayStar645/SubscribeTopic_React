@@ -8,7 +8,6 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { Badge } from 'primereact/badge';
 import { Button } from 'primereact/button';
-import { Image } from 'primereact/file';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Loader } from '../UI';
@@ -23,7 +22,7 @@ const InputFile = ({
 }: InputFileProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [files, setFiles] = useState<string[]>(value || []);
-    const { isLoading, mutate } = useMutation<any, AxiosError<ResponseType>, any>({
+    const { isPending, mutate } = useMutation<any, AxiosError<ResponseType>, any>({
         mutationFn: (data) => {
             return request.post(API.admin.google_drive, data);
         },
@@ -57,7 +56,7 @@ const InputFile = ({
 
     return (
         <div className='border-round-xl bg-white border-round relative'>
-            <Loader show={isLoading} />
+            <Loader show={isPending} />
             <input
                 type='file'
                 accept={accept}

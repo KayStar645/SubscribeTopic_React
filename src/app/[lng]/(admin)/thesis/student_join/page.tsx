@@ -55,9 +55,6 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const studentJoinMutation = useMutation<any, AxiosError<ResponseType>, StudentJoinType>({
@@ -132,7 +129,7 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={studentJoinQuery.isLoading || studentJoinMutation.isLoading} />
+                <Loader show={studentJoinQuery.isLoading || studentJoinMutation.isPending} />
 
                 <DataTable
                     value={studentJoinQuery.data || []}

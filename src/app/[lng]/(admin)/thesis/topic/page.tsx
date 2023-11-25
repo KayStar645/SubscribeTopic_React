@@ -173,7 +173,7 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={thesisQuery.isFetching || thesisMutation.isLoading || teacherQuery.isFetching} />
+                <Loader show={thesisQuery.isFetching || thesisMutation.isPending || teacherQuery.isFetching} />
 
                 <DataTable
                     value={thesisQuery.data}

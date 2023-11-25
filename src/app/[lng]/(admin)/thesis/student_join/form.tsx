@@ -73,9 +73,6 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const registrationPeriodQuery = useQuery<RegistrationPeriodType[], AxiosError<ResponseType>>({
@@ -86,9 +83,6 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
             const response = await request.get(API.admin.registration_period);
 
             return response.data.data || [];
-        },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
         },
     });
 
@@ -136,7 +130,7 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
             onHide={close}
         >
             <Loader
-                show={studentJoinMutation.isLoading || studentQuery.isLoading || registrationPeriodQuery.isLoading}
+                show={studentJoinMutation.isPending || studentQuery.isLoading || registrationPeriodQuery.isLoading}
             />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>

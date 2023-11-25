@@ -66,9 +66,6 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const majorMutation = useMutation<any, AxiosError<ResponseType>, MajorType>({
@@ -123,7 +120,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
                 close();
             }}
         >
-            <Loader show={majorMutation.isLoading || industryQuery.isLoading} />
+            <Loader show={majorMutation.isPending || industryQuery.isLoading} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller

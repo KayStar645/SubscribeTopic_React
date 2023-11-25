@@ -104,7 +104,7 @@ const RegistrationPeriodForm = forwardRef<RegistrationPeriodFormRefType, Registr
                     close();
                 }}
             >
-                <Loader show={registrationPeriodMutation.isLoading} />
+                <Loader show={registrationPeriodMutation.isPending} />
 
                 <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                     <Controller

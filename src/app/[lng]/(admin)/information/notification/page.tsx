@@ -52,9 +52,6 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const notificationMutation = useMutation<any, AxiosError<ResponseType>, NotificationType>({
@@ -126,7 +123,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={notificationQuery.isLoading || notificationMutation.isLoading} />
+                <Loader show={notificationQuery.isLoading || notificationMutation.isPending} />
 
                 <DataTable
                     value={notificationQuery.data || []}

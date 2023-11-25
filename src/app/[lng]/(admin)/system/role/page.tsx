@@ -35,9 +35,6 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const roleMutation = useMutation<any, AxiosError<ResponseType>, RoleType>({
@@ -111,7 +108,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5 w-30rem'>
-                <Loader show={roleQuery.isLoading || roleMutation.isLoading} />
+                <Loader show={roleQuery.isLoading || roleMutation.isPending} />
 
                 <DataTable
                     value={roleQuery.data}

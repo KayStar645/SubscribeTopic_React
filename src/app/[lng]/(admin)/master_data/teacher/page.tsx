@@ -52,9 +52,6 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
     const teacherMutation = useMutation<any, AxiosError<ResponseType>, TeacherType>({
         mutationFn: (data) => {
@@ -126,7 +123,7 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={teacherQuery.isLoading || teacherMutation.isLoading} />
+                <Loader show={teacherQuery.isLoading || teacherMutation.isPending} />
 
                 <DataTable
                     value={teacherQuery.data || []}

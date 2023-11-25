@@ -59,7 +59,7 @@ const Page = ({ params: { lng } }: PageProps) => {
                 className='flex flex-wrap shadow-2 border-round-2xl overflow-hidden bg-white p-5'
                 style={{ width: '40vw' }}
             >
-                <Loader show={signInMutation.isLoading} />
+                <Loader show={signInMutation.isPending} />
 
                 <div className='flex-1'>
                     <div className='flex align-items-center justify-content-between mb-5'>

@@ -225,7 +225,7 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
             onHide={close}
             position='right'
         >
-            <Loader show={roleMutation.isLoading || permissionQuery.isFetching || permissionDetailQuery.isFetching} />
+            <Loader show={roleMutation.isPending || permissionQuery.isFetching || permissionDetailQuery.isFetching} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller

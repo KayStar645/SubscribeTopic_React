@@ -105,7 +105,7 @@ const IndustryForm = forwardRef<IndustryFormRefType, IndustryFormType>(({ title,
             contentClassName='mb-8'
             onHide={close}
         >
-            <Loader show={industryMutation.isLoading} />
+            <Loader show={industryMutation.isPending} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller

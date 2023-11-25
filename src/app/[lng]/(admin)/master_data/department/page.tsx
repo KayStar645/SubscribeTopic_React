@@ -53,9 +53,6 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const departmentMutation = useMutation<any, AxiosError<ResponseType>, DepartmentType>({
@@ -127,7 +124,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 <InputText placeholder={`${t('search')}...`} className='w-20rem' />
             </div>
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={departmentQuery.isLoading || departmentMutation.isLoading} />
+                <Loader show={departmentQuery.isLoading || departmentMutation.isPending} />
 
                 <DataTable
                     value={departmentQuery.data}

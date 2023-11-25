@@ -117,7 +117,7 @@ const DepartmentForm = forwardRef<DepartmentFormRefType, DepartmentFormType>(({ 
             contentClassName='mb-8'
             onHide={close}
         >
-            <Loader show={departmentMutation.isLoading} />
+            <Loader show={departmentMutation.isPending} />
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller
                     name='internalCode'

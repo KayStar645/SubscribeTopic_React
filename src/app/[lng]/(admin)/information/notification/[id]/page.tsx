@@ -152,6 +152,7 @@ const NotificationForm = ({ params }: PageProps) => {
                     control={control}
                     render={({ field, fieldState }) => (
                         <Editor
+                            id='form_data_content'
                             label={t('common:content')}
                             value={field.value}
                             onChange={(data) => setValue(field.name, data)}

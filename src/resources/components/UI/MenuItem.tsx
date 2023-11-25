@@ -7,6 +7,7 @@ import { MenuItemType } from '@assets/types/menu';
 import { MenuSliceType } from '@assets/types/slice';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Ripple } from 'primereact/ripple';
 import { classNames } from 'primereact/utils';
 import qs from 'query-string';
 import { useState } from 'react';
@@ -99,7 +100,7 @@ const MenuItem = ({ item, permissions }: MenuItemProps) => {
                 (items && items.length > 0 && checkChildPermission && typeof permission !== 'undefined')) && (
                 <div
                     className={classNames(
-                        'flex align-items-center gap-2 h-3rem px-3 no-underline cursor-pointer transition-linear transition-duration-200 border-round-lg',
+                        'flex align-items-center gap-2 h-3rem px-3 no-underline cursor-pointer transition-linear transition-duration-200 border-round-lg p-ripple',
                         itemClassName,
                         {
                             'hover:bg-blue-100': !active,
@@ -118,6 +119,8 @@ const MenuItem = ({ item, permissions }: MenuItemProps) => {
                     <p className={classNames('flex-1 text-sm font-semibold itemLabel m-0', labelClassName)}>{label}</p>
 
                     {items && items.length > 0 && checkChildPermission && <i className='pi pi-chevron-down text-sm' />}
+
+                    <Ripple />
                 </div>
             )}
 

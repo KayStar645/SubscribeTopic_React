@@ -73,7 +73,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
                     onClick={() => {
-                        router.push(language.addPrefixLanguage(lng, `${ROUTES.master_data.notification}/${data.id}`));
+                        router.push(language.addPrefixLanguage(lng, `${ROUTES.information.notification}/${data.id}`));
                     }}
                 />
                 <i
@@ -116,7 +116,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                     icon='pi pi-plus'
                     size='small'
                     onClick={() => {
-                        router.push(language.addPrefixLanguage(lng, `${ROUTES.master_data.notification}/0`));
+                        router.push(language.addPrefixLanguage(lng, `${ROUTES.information.notification}/0`));
                     }}
                 />
             </div>

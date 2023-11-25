@@ -32,7 +32,7 @@ const ROUTES = {
 
     system: {
         role: '/system/role',
-        user: '/system/user',
+        account: '/system/account',
     },
 };
 

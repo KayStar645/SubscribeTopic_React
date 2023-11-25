@@ -1,3 +1,5 @@
+'use client';
+
 import { OptionType } from '@assets/types/common';
 import { RadioListProps } from '@assets/types/form';
 import { RadioButton as PrimeRadioButton } from 'primereact/radiobutton';

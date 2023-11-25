@@ -9,6 +9,7 @@ const MODULE = {
     group: 'Group',
     topic: 'Thesis',
     role: 'Role',
+    account: 'Account',
 };
 
 export { MODULE };

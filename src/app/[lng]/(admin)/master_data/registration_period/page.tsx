@@ -143,6 +143,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -152,6 +153,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -161,6 +163,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         header={t('module:field.registration_period.school_year')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -170,6 +173,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         header={t('module:field.registration_period.semester')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -179,6 +183,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         header={t('module:field.registration_period.phase')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -190,6 +195,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         )}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

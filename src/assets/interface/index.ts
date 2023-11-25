@@ -11,3 +11,5 @@ export * from './Notification';
 export * from './Group';
 export * from './Topic';
 export * from './Role';
+export * from './Auth';
+export * from './Account';

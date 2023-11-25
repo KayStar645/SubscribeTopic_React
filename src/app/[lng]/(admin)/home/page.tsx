@@ -1,5 +1,11 @@
+import { InputFile } from '@resources/components/form';
+
 const HomePage = () => {
-    return <div>This is home page</div>;
+    return (
+        <div>
+            <InputFile multiple={true} folderName='test' id='form_image' />
+        </div>
+    );
 };
 
 export default HomePage;

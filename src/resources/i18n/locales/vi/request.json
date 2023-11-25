@@ -1,5 +1,6 @@
 {
     "update_success": "Cập nhập thành công",
     "filter_date_created_down": "Giảm dần theo ngày thêm",
-    "filter_date_created_up": "Tăng dần theo ngày thêm"
+    "filter_date_created_up": "Tăng dần theo ngày thêm",
+    "upload_success": "Tải file thành công"
 }

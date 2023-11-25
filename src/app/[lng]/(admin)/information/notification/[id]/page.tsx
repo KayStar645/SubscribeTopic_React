@@ -54,7 +54,7 @@ const NotificationForm = ({ params }: PageProps) => {
     const notificationDetailQuery = useQuery<NotificationType | null, AxiosError<ResponseType>>({
         queryKey: ['notification_detail'],
         refetchOnWindowFocus: false,
-        enabled: false,
+        enabled: id != 0,
         queryFn: async () => {
             const response = await request.get<NotificationType>(`${API.admin.detail.notification}?id=${id}`);
 
@@ -89,13 +89,6 @@ const NotificationForm = ({ params }: PageProps) => {
             },
         });
     };
-
-    useEffect(() => {
-        if (id != '0') {
-            notificationDetailQuery.refetch();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
 
     return (
         <div className='overflow-auto pb-8'>

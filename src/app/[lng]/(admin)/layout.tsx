@@ -21,12 +21,12 @@ const Layout = ({ children, params: { lng } }: PageProps) => {
             <ToastContainer />
 
             {/* <SelectFacultyModal
-                                ref={selectFacultyRef}
-                                lng={lng}
-                                onConfirm={(item) => {
-                                    setCookie(FACULTY_TOKEN, item);
-                                }}
-                            /> */}
+                ref={selectFacultyRef}
+                lng={lng}
+                onConfirm={(item) => {
+                    setCookie(FACULTY_TOKEN, item);
+                }}
+            /> */}
         </body>
     );
 };

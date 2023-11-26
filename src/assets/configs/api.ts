@@ -20,12 +20,17 @@ const API = {
         permission: '/permission',
         account: '/account',
         google_drive: 'googledrive',
+        feedback: 'feedback',
 
         detail: {
             notification: '/notification/detail',
             group: '/group/detail',
             topic: '/thesis/detail',
             role: '/role/detail',
+        },
+
+        approve: {
+            topic: 'thesis/changeStatus',
         },
     },
 };

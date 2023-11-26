@@ -63,7 +63,8 @@
             "instruction": "Giảng viên hướng dẫn",
             "review": "Giảng viên phản biện",
             "major": "Chuyên ngành phù hợp",
-            "lecturer": "Giảng viên ra đề"
+            "lecturer": "Giảng viên ra đề",
+            "add_feedback": "Góp ý về đề tài"
         },
         "role": {}
     }

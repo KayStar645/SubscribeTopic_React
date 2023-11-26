@@ -11,6 +11,7 @@ const MultiSelect = ({
     blockClassName = '',
     row = false,
     optionValue = 'value',
+    disabled = false,
     emptyMessage = 'No results found',
     errorMessage,
     onChange = () => {},
@@ -31,6 +32,7 @@ const MultiSelect = ({
                 )}
 
                 <PrimeMultiSelect
+                    disabled={disabled}
                     dataKey={Math.random().toString()}
                     emptyMessage={emptyMessage}
                     inputId={id}

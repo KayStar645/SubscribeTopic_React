@@ -13,3 +13,4 @@ export * from './Topic';
 export * from './Role';
 export * from './Auth';
 export * from './Account';
+export * from './Feedback';

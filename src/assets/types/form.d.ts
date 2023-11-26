@@ -1,9 +1,8 @@
 import { CheckboxChangeEvent } from 'primereact/checkbox';
+import { MultiSelectChangeEvent } from 'primereact/multiselect';
 import { RadioButtonChangeEvent } from 'primereact/radiobutton';
 import { ChangeEvent, ChangeEventHandler, FocusEventHandler } from 'react';
 import { OptionType } from './common';
-import { MultiSelectChangeEvent } from 'primereact/multiselect';
-import { FileUploadErrorEvent, FileUploadSelectEvent, FileUploadUploadEvent } from 'primereact/fileupload';
 
 interface InputProps {
     id: string;
@@ -14,6 +13,7 @@ interface InputProps {
     errorMessage?: string;
     row?: boolean;
     required?: boolean;
+    disabled?: boolean;
     onChange?: ChangeEventHandler<HTMLInputElement>;
     onBlur?: FocusEventHandler<HTMLInputElement>;
 }
@@ -99,12 +99,12 @@ export type {
     DropdownProps,
     EditorProps,
     InputDateProps,
+    InputFileProps,
+    InputImageProps,
     InputPasswordProps,
     InputRangeProps,
     InputTextProps,
     MultiSelectProps,
     RadioListProps,
     TextAreaProps,
-    InputImageProps,
-    InputFileProps,
 };

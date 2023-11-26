@@ -12,6 +12,7 @@ const Editor = ({
     blockClassName = '',
     row = false,
     required = false,
+    disabled = false,
     errorMessage,
     onChange = () => {},
 }: EditorProps) => {
@@ -40,6 +41,7 @@ const Editor = ({
                 <CKEditor
                     editor={EditorContainer}
                     data={inputValue}
+                    disabled={disabled}
                     onChange={(event, editor) => {
                         const data = editor.data.get();
 

@@ -14,6 +14,7 @@ const InputRange = ({
     minPlaceHolder = 'min',
     maxPlaceHolder = 'max',
     row = false,
+    disabled = false,
     required = false,
     min,
     max,
@@ -43,6 +44,7 @@ const InputRange = ({
 
                 <div className='flex align-items-center'>
                     <InputNumber
+                        disabled={disabled}
                         inputClassName='w-6rem h-3rem text-center'
                         min={min}
                         useGrouping={false}
@@ -59,6 +61,7 @@ const InputRange = ({
                     <Divider />
 
                     <InputNumber
+                        disabled={disabled}
                         inputClassName='w-6rem h-3rem text-center'
                         max={max}
                         value={_value[1] || 0}

@@ -44,6 +44,7 @@ const defaultValues: TopicType = {
     thesisReviewsId: [],
     thesisInstructionsId: [],
     thesisMajorsId: [],
+    status: 'D',
 };
 
 const schema = (t: TFunction) =>
@@ -69,7 +70,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
     });
 
     const thesisDetailQuery = useQuery<TopicType | null, AxiosError<ResponseType>>({
-        queryKey: ['thesis_detail'],
+        queryKey: ['thesis_detail', id],
         refetchOnWindowFocus: false,
         enabled: id !== '0',
         queryFn: async () => {
@@ -97,6 +98,8 @@ const TopicForm = ({ params: _params }: PageProps) => {
             );
 
             reset(thesisDetailQuery.data);
+        } else {
+            reset(defaultValues);
         }
     }, [reset, thesisDetailQuery.data]);
 
@@ -130,7 +133,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
 
     const thesisUpdateStatusMutation = useMutation({
         mutationFn: async (status: 'AR' | 'A') => {
-            return request.post<TopicType>(API.admin.approve.topic, {
+            return request.update<TopicType>(API.admin.approve.topic, {
                 id,
                 status,
             });
@@ -169,14 +172,18 @@ const TopicForm = ({ params: _params }: PageProps) => {
                 </div>
 
                 <div className='flex align-items-center gap-2'>
-                    {getValues('status') == 'D' && (
+                    {getValues('status') == 'D' && id != '0' && (
                         <Button
                             label={t('common:approve_request')}
                             size='small'
                             severity='secondary'
                             onClick={(e) => {
                                 e.preventDefault();
-                                thesisUpdateStatusMutation.mutate('AR');
+                                thesisUpdateStatusMutation.mutate('AR', {
+                                    onSuccess() {
+                                        thesisDetailQuery.refetch();
+                                    },
+                                });
                             }}
                         />
                     )}
@@ -187,7 +194,11 @@ const TopicForm = ({ params: _params }: PageProps) => {
                             size='small'
                             onClick={(e) => {
                                 e.preventDefault();
-                                thesisUpdateStatusMutation.mutate('A');
+                                thesisUpdateStatusMutation.mutate('A', {
+                                    onSuccess() {
+                                        thesisDetailQuery.refetch();
+                                    },
+                                });
                             }}
                         />
                     )}
@@ -217,7 +228,8 @@ const TopicForm = ({ params: _params }: PageProps) => {
                         thesisMutation.isPending ||
                         thesisDetailQuery.isFetching ||
                         majorQuery.isFetching ||
-                        teacherQuery.isFetching
+                        teacherQuery.isFetching ||
+                        thesisUpdateStatusMutation.isPending
                     }
                 />
 

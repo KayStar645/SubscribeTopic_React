@@ -14,6 +14,7 @@ import { AxiosError } from 'axios';
 import { TFunction } from 'i18next';
 import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
+import { useEffect } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
@@ -59,12 +60,13 @@ const NotificationForm = ({ params }: PageProps) => {
 
             return response.data.data;
         },
-        onSuccess(data) {
-            if (data) {
-                reset(data);
-            }
-        },
     });
+
+    useEffect(() => {
+        if (notificationDetailQuery.data) {
+            reset(notificationDetailQuery.data);
+        }
+    }, [notificationDetailQuery.data, reset]);
 
     const notificationMutation = useMutation<any, AxiosError<ResponseType>, NotificationType | null>({
         mutationFn: async (data) => {

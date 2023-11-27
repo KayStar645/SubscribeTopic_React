@@ -52,9 +52,6 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
     const teacherMutation = useMutation<any, AxiosError<ResponseType>, TeacherType>({
         mutationFn: (data) => {
@@ -126,7 +123,7 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={teacherQuery.isLoading || teacherMutation.isLoading} />
+                <Loader show={teacherQuery.isLoading || teacherMutation.isPending} />
 
                 <DataTable
                     value={teacherQuery.data || []}
@@ -136,6 +133,7 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -145,6 +143,7 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -154,6 +153,7 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:code_of', { obj: t('module:teacher').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -163,6 +163,7 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:name_of', { obj: t('module:teacher').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -172,6 +173,7 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
                         header={t('email')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -181,6 +183,7 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
                         header={t('phone_number')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

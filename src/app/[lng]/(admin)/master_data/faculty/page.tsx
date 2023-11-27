@@ -55,9 +55,6 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const facultyMutation = useMutation<any, AxiosError<ResponseType>, FacultyType>({
@@ -135,7 +132,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={facultyQuery.isLoading || facultyMutation.isLoading} />
+                <Loader show={facultyQuery.isLoading || facultyMutation.isPending} />
 
                 <DataTable
                     value={facultyQuery.data}
@@ -145,6 +142,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -154,6 +152,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -163,6 +162,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:code_of', { obj: t('module:faculty').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -172,6 +172,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:name_of', { obj: t('module:faculty').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -181,6 +182,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                         header={t('address')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -190,6 +192,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                         header={t('phone_number')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -237,7 +240,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
                         : t('create_new_at', { obj: t('module:faculty').toLowerCase() })
                 }
                 ref={formRef}
-                onSuccess={(data) => facultyQuery.refetch()}
+                onSuccess={(_data) => facultyQuery.refetch()}
             />
         </div>
     );

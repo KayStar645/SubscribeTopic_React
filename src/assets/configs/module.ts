@@ -10,6 +10,7 @@ const MODULE = {
     topic: 'Thesis',
     role: 'Role',
     faculty_duty: 'FacultyDuty',
+    account: 'Account',
 };
 
 export { MODULE };

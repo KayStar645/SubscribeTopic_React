@@ -54,21 +54,19 @@ const NotificationForm = ({ params }: PageProps) => {
     const notificationDetailQuery = useQuery<NotificationType | null, AxiosError<ResponseType>>({
         queryKey: ['notification_detail'],
         refetchOnWindowFocus: false,
-        enabled: false,
+        enabled: id != 0,
         queryFn: async () => {
             const response = await request.get<NotificationType>(`${API.admin.detail.notification}?id=${id}`);
 
             return response.data.data;
         },
-        onSuccess(data) {
-            if (data) {
-                reset(data);
-            }
-        },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
+
+    useEffect(() => {
+        if (notificationDetailQuery.data) {
+            reset(notificationDetailQuery.data);
+        }
+    }, [notificationDetailQuery.data, reset]);
 
     const notificationMutation = useMutation<any, AxiosError<ResponseType>, NotificationType | null>({
         mutationFn: async (data) => {
@@ -90,16 +88,9 @@ const NotificationForm = ({ params }: PageProps) => {
         });
     };
 
-    useEffect(() => {
-        if (id != '0') {
-            notificationDetailQuery.refetch();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
-
     return (
         <div className='overflow-auto pb-8'>
-            <Loader show={notificationMutation.isLoading || notificationDetailQuery.isFetching} />
+            <Loader show={notificationMutation.isPending || notificationDetailQuery.isFetching} />
 
             <form className='p-3 flex flex-column gap-3 bg-white border-round-xl ' onSubmit={handleSubmit(onSubmit)}>
                 <Controller
@@ -152,6 +143,7 @@ const NotificationForm = ({ params }: PageProps) => {
                     control={control}
                     render={({ field, fieldState }) => (
                         <Editor
+                            id='form_data_content'
                             label={t('common:content')}
                             value={field.value}
                             onChange={(data) => setValue(field.name, data)}

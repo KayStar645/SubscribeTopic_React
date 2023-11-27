@@ -52,9 +52,6 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const notificationMutation = useMutation<any, AxiosError<ResponseType>, NotificationType>({
@@ -73,7 +70,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
                     onClick={() => {
-                        router.push(language.addPrefixLanguage(lng, `${ROUTES.master_data.notification}/${data.id}`));
+                        router.push(language.addPrefixLanguage(lng, `${ROUTES.information.notification}/${data.id}`));
                     }}
                 />
                 <i
@@ -116,7 +113,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                     icon='pi pi-plus'
                     size='small'
                     onClick={() => {
-                        router.push(language.addPrefixLanguage(lng, `${ROUTES.master_data.notification}/0`));
+                        router.push(language.addPrefixLanguage(lng, `${ROUTES.information.notification}/0`));
                     }}
                 />
             </div>
@@ -126,7 +123,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={notificationQuery.isLoading || notificationMutation.isLoading} />
+                <Loader show={notificationQuery.isLoading || notificationMutation.isPending} />
 
                 <DataTable
                     value={notificationQuery.data || []}
@@ -136,6 +133,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -145,6 +143,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

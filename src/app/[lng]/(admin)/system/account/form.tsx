@@ -1,11 +1,11 @@
 import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
-import { IndustryType, MajorType } from '@assets/interface';
+import { TeacherType, AccountType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Loader } from '@resources/components/UI';
-import { Dropdown, InputText } from '@resources/components/form';
+import { InputText, Password } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -17,64 +17,48 @@ import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
-interface MajorFormRefType {
-    show?: (data?: MajorType) => void;
+interface AccountFormRefType {
+    show?: (_data?: AccountType) => void;
     close?: () => void;
 }
 
-interface MajorFormType extends LanguageType {
+interface AccountFormType extends LanguageType {
     title: string;
-    onSuccess?: (data: MajorType) => void;
+    onSuccess?: (_data: AccountType) => void;
 }
 
-const defaultValues: MajorType = {
-    id: '0',
-    internalCode: '',
-    name: '',
-    industryId: '',
+const defaultValues = {
+    userName: '',
+    password: '',
+    confirm: '',
 };
 
 const schema = (t: TFunction) =>
     yup.object({
-        internalCode: yup.string().required(
-            t('validation:required', {
-                attribute: t('common:code_of', { obj: t('module:major') }).toLowerCase(),
-            }),
-        ),
-        name: yup.string().required(
-            t('validation:required', {
-                attribute: t('common:name_of', { obj: t('module:major') }).toLowerCase(),
-            }),
-        ),
+        userName: yup.string().required(),
+        password: yup.string().required(),
+        confirm: yup
+            .string()
+            .required()
+            .oneOf([yup.ref('password')], 'Passwords must match'),
     });
 
-const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onSuccess }, ref) => {
+const AccountForm = forwardRef<AccountFormRefType, AccountFormType>(({ title, lng, onSuccess }, ref) => {
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
 
     const { control, handleSubmit, reset } = useForm({
-        resolver: yupResolver(schema(t)) as Resolver<MajorType>,
+        resolver: yupResolver(schema(t)),
         defaultValues,
     });
 
-    const industryQuery = useQuery<IndustryType[], AxiosError<ResponseType>>({
-        enabled: false,
-        refetchOnWindowFocus: false,
-        queryKey: ['major_industries'],
-        queryFn: async () => {
-            const response = await request.get<IndustryType[]>(API.admin.industry);
-
-            return response.data.data || [];
-        },
-    });
-
-    const majorMutation = useMutation<any, AxiosError<ResponseType>, MajorType>({
+    const accountMutation = useMutation<any, AxiosError<ResponseType>, AccountType>({
         mutationFn: (data) => {
-            return data.id == '0' ? request.post(API.admin.major, data) : request.update(API.admin.major, data);
+            return request.post(API.auth.register, data);
         },
     });
 
-    const show = (data?: MajorType) => {
+    const show = (data?: AccountType) => {
         setVisible(true);
 
         if (data) {
@@ -82,8 +66,6 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
         } else {
             reset(defaultValues);
         }
-
-        industryQuery.refetch();
     };
 
     const close = () => {
@@ -91,8 +73,8 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
         reset(defaultValues);
     };
 
-    const onSubmit = (data: MajorType) => {
-        majorMutation.mutate(data, {
+    const onSubmit = (data: AccountType) => {
+        accountMutation.mutate(data, {
             onSuccess: (response) => {
                 close();
                 onSuccess?.(response.data);
@@ -116,37 +98,37 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
             style={{ width: '50vw' }}
             className='overflow-hidden'
             contentClassName='mb-8'
-            onHide={() => {
-                close();
-            }}
+            onHide={close}
         >
-            <Loader show={majorMutation.isPending || industryQuery.isLoading} />
+            <Loader show={accountMutation.isPending} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller
-                    name='internalCode'
+                    name='userName'
                     control={control}
                     render={({ field, fieldState }) => (
                         <InputText
-                            id='form_data_internal_code'
+                            id='form_data_account'
                             value={field.value}
-                            label={t('common:code_of', { obj: t('module:major').toLowerCase() })}
-                            placeholder={t('common:code_of', { obj: t('module:major').toLowerCase() })}
+                            label={t('module:account')}
+                            placeholder={t('module:account')}
                             errorMessage={fieldState.error?.message}
-                            onChange={(e) => field.onChange(e.target.value)}
+                            required={true}
+                            onChange={field.onChange}
                         />
                     )}
                 />
 
                 <Controller
-                    name='name'
+                    name='password'
                     control={control}
                     render={({ field, fieldState }) => (
-                        <InputText
-                            id='form_data_name'
+                        <Password
+                            id='form_data_password'
                             value={field.value}
-                            label={t('common:name_of', { obj: t('module:major').toLowerCase() })}
-                            placeholder={t('common:name_of', { obj: t('module:major').toLowerCase() })}
+                            required={true}
+                            label={t('common:password')}
+                            placeholder={t('common:password')}
                             errorMessage={fieldState.error?.message}
                             onChange={field.onChange}
                         />
@@ -154,15 +136,15 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
                 />
 
                 <Controller
-                    name='industryId'
+                    name='confirm'
                     control={control}
                     render={({ field, fieldState }) => (
-                        <Dropdown
-                            id='form_data_industry_id'
-                            options={industryQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
+                        <Password
+                            id='form_data_confirm'
                             value={field.value}
-                            label={t('module:field.major.industry')}
-                            placeholder={t('module:field.major.industry')}
+                            required={true}
+                            label={t('common:confirm_password')}
+                            placeholder={t('common:confirm_password')}
                             errorMessage={fieldState.error?.message}
                             onChange={field.onChange}
                         />
@@ -186,7 +168,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
     );
 });
 
-MajorForm.displayName = 'Major Form';
+AccountForm.displayName = 'Account Form';
 
-export default MajorForm;
-export type { MajorFormRefType };
+export default AccountForm;
+export type { AccountFormRefType };

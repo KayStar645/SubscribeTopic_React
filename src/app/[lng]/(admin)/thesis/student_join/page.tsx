@@ -55,9 +55,6 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const studentJoinMutation = useMutation<any, AxiosError<ResponseType>, StudentJoinType>({
@@ -132,7 +129,7 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={studentJoinQuery.isLoading || studentJoinMutation.isLoading} />
+                <Loader show={studentJoinQuery.isLoading || studentJoinMutation.isPending} />
 
                 <DataTable
                     value={studentJoinQuery.data || []}
@@ -142,6 +139,7 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -150,6 +148,7 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -159,6 +158,7 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:name_of', { obj: t('module:student').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -168,6 +168,7 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
                         header={t('module:field.registration_period.school_year')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -177,6 +178,7 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
                         header={t('module:field.registration_period.semester')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

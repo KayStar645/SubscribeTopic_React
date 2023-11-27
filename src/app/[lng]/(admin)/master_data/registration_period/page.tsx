@@ -56,9 +56,6 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const registrationPeriodMutation = useMutation<any, AxiosError<ResponseType>, RegistrationPeriodType>({
@@ -133,7 +130,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={registrationPeriodQuery.isLoading || registrationPeriodMutation.isLoading} />
+                <Loader show={registrationPeriodQuery.isLoading || registrationPeriodMutation.isPending} />
 
                 <DataTable
                     value={registrationPeriodQuery.data || []}
@@ -143,6 +140,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -152,6 +150,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -161,6 +160,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         header={t('module:field.registration_period.school_year')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -170,6 +170,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         header={t('module:field.registration_period.semester')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -179,6 +180,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         header={t('module:field.registration_period.phase')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -190,6 +192,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         )}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

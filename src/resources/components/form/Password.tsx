@@ -10,6 +10,7 @@ const Password = ({
     blockClassName = '',
     row = false,
     errorMessage,
+    required = false,
     onChange = () => {},
     onBlur = () => {},
 }: InputPasswordProps) => {
@@ -25,6 +26,7 @@ const Password = ({
                         })}
                     >
                         {label}
+                        {required && <span className='p-error'> ⁎</span>}
                     </label>
                 )}
                 <PrimePassword

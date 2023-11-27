@@ -53,9 +53,6 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const majorMutation = useMutation<any, AxiosError<ResponseType>, MajorType>({
@@ -128,7 +125,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={majorQuery.isLoading || majorMutation.isLoading} />
+                <Loader show={majorQuery.isLoading || majorMutation.isPending} />
 
                 <DataTable
                     value={majorQuery.data || []}
@@ -138,6 +135,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -147,6 +145,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -156,6 +155,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:code_of', { obj: t('module:major').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

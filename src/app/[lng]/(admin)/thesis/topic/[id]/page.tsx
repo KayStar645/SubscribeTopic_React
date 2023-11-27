@@ -20,9 +20,21 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Chip } from 'primereact/chip';
 import { classNames } from 'primereact/utils';
+import { createContext, useEffect } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
+import TopicFeedback from './Feedback';
+
+interface TopicPageContextType {
+    t: TFunction | null;
+    id: string;
+}
+
+const TopicPageContext = createContext<TopicPageContextType>({
+    t: null,
+    id: '',
+});
 
 const defaultValues: TopicType = {
     id: '0',
@@ -32,6 +44,7 @@ const defaultValues: TopicType = {
     thesisReviewsId: [],
     thesisInstructionsId: [],
     thesisMajorsId: [],
+    status: 'D',
 };
 
 const schema = (t: TFunction) =>
@@ -57,7 +70,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
     });
 
     const thesisDetailQuery = useQuery<TopicType | null, AxiosError<ResponseType>>({
-        queryKey: ['thesis_detail'],
+        queryKey: ['thesis_detail', id],
         refetchOnWindowFocus: false,
         enabled: id !== '0',
         queryFn: async () => {
@@ -70,19 +83,25 @@ const TopicForm = ({ params: _params }: PageProps) => {
 
             return response.data.data;
         },
-        onSuccess(data) {
-            if (data) {
-                data.thesisInstructionsId = (data.thesisInstructions || [])?.map((t) => parseInt(t.id?.toString()!));
-                data.thesisMajorsId = (data.thesisMajors || [])?.map((t) => parseInt(t.id?.toString()!));
-                data.thesisReviewsId = (data.thesisReviews || [])?.map((t) => parseInt(t.id?.toString()!));
-
-                reset(data);
-            }
-        },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
+
+    useEffect(() => {
+        if (thesisDetailQuery.data) {
+            thesisDetailQuery.data.thesisInstructionsId = (thesisDetailQuery.data.thesisInstructions || [])?.map((t) =>
+                parseInt(t.id?.toString()!),
+            );
+            thesisDetailQuery.data.thesisMajorsId = (thesisDetailQuery.data.thesisMajors || [])?.map((t) =>
+                parseInt(t.id?.toString()!),
+            );
+            thesisDetailQuery.data.thesisReviewsId = (thesisDetailQuery.data.thesisReviews || [])?.map((t) =>
+                parseInt(t.id?.toString()!),
+            );
+
+            reset(thesisDetailQuery.data);
+        } else {
+            reset(defaultValues);
+        }
+    }, [reset, thesisDetailQuery.data]);
 
     const majorQuery = useQuery<MajorType[], AxiosError<ResponseType>>({
         queryKey: ['thesis_majors', 'list'],
@@ -109,6 +128,15 @@ const TopicForm = ({ params: _params }: PageProps) => {
             return id == '0'
                 ? request.post<TopicType>(API.admin.topic, data)
                 : request.update<TopicType>(API.admin.topic, data);
+        },
+    });
+
+    const thesisUpdateStatusMutation = useMutation({
+        mutationFn: async (status: 'AR' | 'A') => {
+            return request.update<TopicType>(API.admin.approve.topic, {
+                id,
+                status,
+            });
         },
     });
 
@@ -144,192 +172,256 @@ const TopicForm = ({ params: _params }: PageProps) => {
                 </div>
 
                 <div className='flex align-items-center gap-2'>
-                    <Button
-                        label={t('common:edit_request')}
-                        size='small'
-                        severity='secondary'
-                        onClick={(e) => e.preventDefault()}
-                    />
-                    <Button label={t('common:approve')} size='small' onClick={(e) => e.preventDefault()} />
+                    {getValues('status') == 'D' && id != '0' && (
+                        <Button
+                            label={t('common:approve_request')}
+                            size='small'
+                            severity='secondary'
+                            onClick={(e) => {
+                                e.preventDefault();
+                                thesisUpdateStatusMutation.mutate('AR', {
+                                    onSuccess() {
+                                        thesisDetailQuery.refetch();
+                                    },
+                                });
+                            }}
+                        />
+                    )}
+
+                    {getValues('status') == 'AR' && (
+                        <Button
+                            label={t('common:approve')}
+                            size='small'
+                            onClick={(e) => {
+                                e.preventDefault();
+                                thesisUpdateStatusMutation.mutate('A', {
+                                    onSuccess() {
+                                        thesisDetailQuery.refetch();
+                                    },
+                                });
+                            }}
+                        />
+                    )}
                 </div>
             </div>
         );
     };
 
+    const value: TopicPageContextType = {
+        t,
+        id,
+    };
+
     return (
-        <div
-            style={{ height: 'calc(100% - 2rem)', marginLeft: '-1rem', marginRight: '-1rem', marginTop: '-1rem' }}
-            className='py-3 px-3 overflow-auto relative'
-        >
-            <Loader
-                show={
-                    thesisMutation.isLoading ||
-                    thesisDetailQuery.isFetching ||
-                    majorQuery.isFetching ||
-                    teacherQuery.isFetching
-                }
-            />
+        <TopicPageContext.Provider value={value}>
+            <div
+                style={{
+                    height: getValues('status') == 'D' ? 'calc(100% - 2rem)' : 'auto',
+                    marginLeft: '-1rem',
+                    marginRight: '-1rem',
+                    marginTop: '-1rem',
+                }}
+                className='py-3 px-3 overflow-auto relative'
+            >
+                <Loader
+                    show={
+                        thesisMutation.isPending ||
+                        thesisDetailQuery.isFetching ||
+                        majorQuery.isFetching ||
+                        teacherQuery.isFetching ||
+                        thesisUpdateStatusMutation.isPending
+                    }
+                />
 
-            <form className='flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
-                {getValues('lecturerThesis') && (
-                    <Card title={t('module:field.thesis.lecturer')}>
-                        <div className='flex flex-column gap-3'>
-                            <div className='flex align-items-center'>
-                                <p className='w-15rem'>
-                                    {t('common:name_of', { obj: t('module:teacher').toLowerCase() })}
-                                </p>
-                                <p className='text-900 font-semibold'>{getValues('lecturerThesis.name')}</p>
+                <div className='flex flex-column gap-3'>
+                    {getValues('lecturerThesis') && (
+                        <Card title={t('module:field.thesis.lecturer')}>
+                            <div className='flex flex-column gap-3'>
+                                <div className='flex align-items-center'>
+                                    <p className='w-15rem'>
+                                        {t('common:name_of', { obj: t('module:teacher').toLowerCase() })}
+                                    </p>
+                                    <p className='text-900 font-semibold'>{getValues('lecturerThesis.name')}</p>
+                                </div>
+
+                                <div className='flex align-items-center'>
+                                    <p className='w-15rem'>{t('common:email')}</p>
+                                    <p className='text-900 font-semibold'>{getValues('lecturerThesis.email')}</p>
+                                </div>
+
+                                <div className='flex align-items-center'>
+                                    <p className='w-15rem'>{t('common:phone_number')}</p>
+                                    <p className='text-900 font-semibold'>{getValues('lecturerThesis.phoneNumber')}</p>
+                                </div>
+
+                                <div className='flex align-items-center'>
+                                    <p className='w-15rem'>{t('module:field.teacher.academic')}</p>
+                                    <p className='text-900 font-semibold'>
+                                        {getValues('lecturerThesis.academicTitle')}
+                                    </p>
+                                </div>
                             </div>
+                        </Card>
+                    )}
 
-                            <div className='flex align-items-center'>
-                                <p className='w-15rem'>{t('common:email')}</p>
-                                <p className='text-900 font-semibold'>{getValues('lecturerThesis.email')}</p>
-                            </div>
-
-                            <div className='flex align-items-center'>
-                                <p className='w-15rem'>{t('common:phone_number')}</p>
-                                <p className='text-900 font-semibold'>{getValues('lecturerThesis.phoneNumber')}</p>
-                            </div>
-
-                            <div className='flex align-items-center'>
-                                <p className='w-15rem'>{t('module:field.teacher.academic')}</p>
-                                <p className='text-900 font-semibold'>{getValues('lecturerThesis.academicTitle')}</p>
-                            </div>
-                        </div>
-                    </Card>
-                )}
-
-                <Card title={<CardTitle />}>
-                    <div className='flex gap-3 flex-wrap'>
-                        <div className='col-7 flex-1 flex flex-column gap-3 '>
-                            <Controller
-                                name='internalCode'
-                                control={control}
-                                render={({ field, fieldState }) => (
-                                    <InputText
-                                        id='form_data_internal_code'
-                                        value={field.value}
-                                        label={t('common:code_of', { obj: t('module:thesis').toLowerCase() })}
-                                        placeholder={t('common:code_of', { obj: t('module:thesis').toLowerCase() })}
-                                        errorMessage={fieldState.error?.message}
-                                        onChange={field.onChange}
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <Card title={<CardTitle />}>
+                            <div className='flex gap-3 flex-wrap'>
+                                <div className='col-7 flex-1 flex flex-column gap-3 '>
+                                    <Controller
+                                        name='internalCode'
+                                        control={control}
+                                        render={({ field, fieldState }) => (
+                                            <InputText
+                                                disabled={getValues('status') != 'D'}
+                                                id='form_data_internal_code'
+                                                value={field.value}
+                                                label={t('common:code_of', { obj: t('module:thesis').toLowerCase() })}
+                                                placeholder={t('common:code_of', {
+                                                    obj: t('module:thesis').toLowerCase(),
+                                                })}
+                                                errorMessage={fieldState.error?.message}
+                                                onChange={field.onChange}
+                                            />
+                                        )}
                                     />
-                                )}
-                            />
 
-                            <Controller
-                                name='name'
-                                control={control}
-                                render={({ field, fieldState }) => (
-                                    <InputText
-                                        id='form_data_name'
-                                        value={field.value}
-                                        label={t('common:name_of', { obj: t('module:thesis').toLowerCase() })}
-                                        placeholder={t('common:name_of', { obj: t('module:thesis').toLowerCase() })}
-                                        errorMessage={fieldState.error?.message}
-                                        onChange={field.onChange}
+                                    <Controller
+                                        name='name'
+                                        control={control}
+                                        render={({ field, fieldState }) => (
+                                            <InputText
+                                                disabled={getValues('status') != 'D'}
+                                                id='form_data_name'
+                                                value={field.value}
+                                                label={t('common:name_of', { obj: t('module:thesis').toLowerCase() })}
+                                                placeholder={t('common:name_of', {
+                                                    obj: t('module:thesis').toLowerCase(),
+                                                })}
+                                                errorMessage={fieldState.error?.message}
+                                                onChange={field.onChange}
+                                            />
+                                        )}
                                     />
-                                )}
-                            />
 
-                            <InputRange
-                                id='form_data_min_max'
-                                max={10}
-                                label={t('module:field.thesis.quantity')}
-                                minPlaceHolder={t('common:min')}
-                                maxPlaceHolder={t('common:max')}
-                                value={[getValues('minQuantity'), getValues('maxQuantity')]}
-                                onChange={([min, max]) => {
-                                    setValue('minQuantity', min);
-                                    setValue('maxQuantity', max);
-                                }}
-                            />
-                        </div>
-
-                        <div className='col-5 flex flex-column gap-3'>
-                            <Controller
-                                control={control}
-                                name='thesisMajorsId'
-                                render={({ field }) => (
-                                    <MultiSelect
-                                        id={`thesisMajorsId_${field.value}`}
-                                        label={t('module:field.thesis.major')}
-                                        emptyMessage={t('common:list_empty')}
-                                        value={field.value}
-                                        options={majorQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
-                                        onChange={(e) => field.onChange(e.value)}
+                                    <InputRange
+                                        disabled={getValues('status') != 'D'}
+                                        id='form_data_min_max'
+                                        max={10}
+                                        label={t('module:field.thesis.quantity')}
+                                        minPlaceHolder={t('common:min')}
+                                        maxPlaceHolder={t('common:max')}
+                                        value={[getValues('minQuantity'), getValues('maxQuantity')]}
+                                        onChange={([min, max]) => {
+                                            setValue('minQuantity', min);
+                                            setValue('maxQuantity', max);
+                                        }}
                                     />
-                                )}
-                            />
-                            <Controller
-                                control={control}
-                                name='thesisInstructionsId'
-                                render={({ field }) => (
-                                    <MultiSelect
-                                        id={`thesisInstructionsId_${field.value}`}
-                                        label={t('module:field.thesis.instruction')}
-                                        emptyMessage={t('common:list_empty')}
-                                        value={field.value}
-                                        options={teacherQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
-                                        onChange={(e) => field.onChange(e.value)}
-                                    />
-                                )}
-                            />
+                                </div>
 
-                            {id != '0' && (
-                                <Controller
-                                    control={control}
-                                    name='thesisReviewsId'
-                                    render={({ field }) => (
-                                        <MultiSelect
-                                            id={`thesisReviewsId_${field.value}`}
-                                            label={t('module:field.thesis.review')}
-                                            emptyMessage={t('common:list_empty')}
-                                            value={field.value}
-                                            options={teacherQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
-                                            onChange={(e) => field.onChange(e.value)}
+                                <div className='col-5 flex flex-column gap-3'>
+                                    <Controller
+                                        control={control}
+                                        name='thesisMajorsId'
+                                        render={({ field }) => (
+                                            <MultiSelect
+                                                disabled={getValues('status') != 'D'}
+                                                id={`thesisMajorsId_${field.value}`}
+                                                label={t('module:field.thesis.major')}
+                                                emptyMessage={t('common:list_empty')}
+                                                value={field.value}
+                                                options={majorQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
+                                                onChange={(e) => field.onChange(e.value)}
+                                            />
+                                        )}
+                                    />
+                                    <Controller
+                                        control={control}
+                                        name='thesisInstructionsId'
+                                        render={({ field }) => (
+                                            <MultiSelect
+                                                disabled={getValues('status') != 'D'}
+                                                id={`thesisInstructionsId_${field.value}`}
+                                                label={t('module:field.thesis.instruction')}
+                                                emptyMessage={t('common:list_empty')}
+                                                value={field.value}
+                                                options={teacherQuery.data?.map((t) => ({
+                                                    label: t.name,
+                                                    value: t.id,
+                                                }))}
+                                                onChange={(e) => field.onChange(e.value)}
+                                            />
+                                        )}
+                                    />
+
+                                    {id != '0' && (
+                                        <Controller
+                                            control={control}
+                                            name='thesisReviewsId'
+                                            render={({ field }) => (
+                                                <MultiSelect
+                                                    disabled={getValues('status') != 'D'}
+                                                    id={`thesisReviewsId_${field.value}`}
+                                                    label={t('module:field.thesis.review')}
+                                                    emptyMessage={t('common:list_empty')}
+                                                    value={field.value}
+                                                    options={teacherQuery.data?.map((t) => ({
+                                                        label: t.name,
+                                                        value: t.id,
+                                                    }))}
+                                                    onChange={(e) => field.onChange(e.value)}
+                                                />
+                                            )}
                                         />
                                     )}
-                                />
-                            )}
-                        </div>
+                                </div>
 
-                        <div className='col-12'>
-                            <Controller
-                                name='summary'
-                                control={control}
-                                render={({ field, fieldState }) => (
-                                    <Editor
-                                        id='form_data_summary'
-                                        label={t('common:summary')}
-                                        value={field.value}
-                                        onChange={(data) => setValue(field.name, data)}
-                                        errorMessage={fieldState.error?.message}
+                                <div className='col-12'>
+                                    <Controller
+                                        name='summary'
+                                        control={control}
+                                        render={({ field, fieldState }) => (
+                                            <Editor
+                                                disabled={getValues('status') != 'D'}
+                                                id='form_data_summary'
+                                                label={t('common:summary')}
+                                                value={field.value}
+                                                onChange={(data) => setValue(field.name, data)}
+                                                errorMessage={fieldState.error?.message}
+                                            />
+                                        )}
                                     />
-                                )}
-                            />
-                        </div>
-                    </div>
+                                </div>
+                            </div>
 
-                    <div
-                        className='flex align-items-center justify-content-end gap-2 fixed bottom-0 left-0 right-0 bg-white px-5 h-4rem shadow-8'
-                        style={{ zIndex: 500 }}
-                    >
-                        <Button
-                            size='small'
-                            label={t('cancel')}
-                            icon='pi pi-undo'
-                            severity='secondary'
-                            onClick={() => {
-                                router.back();
-                            }}
-                        />
-                        {permission.update && <Button size='small' label={t('save')} icon='pi pi-save' />}
-                    </div>
-                </Card>
-            </form>
-        </div>
+                            {getValues('status') == 'D' && (
+                                <div
+                                    className='flex align-items-center justify-content-end gap-2 fixed bottom-0 left-0 right-0 bg-white px-5 h-4rem shadow-8'
+                                    style={{ zIndex: 500 }}
+                                >
+                                    <Button
+                                        size='small'
+                                        label={t('cancel')}
+                                        icon='pi pi-undo'
+                                        severity='secondary'
+                                        onClick={() => {
+                                            router.back();
+                                        }}
+                                    />
+                                    {permission.update && <Button size='small' label={t('save')} icon='pi pi-save' />}
+                                </div>
+                            )}
+                        </Card>
+                    </form>
+
+                    {id != '0' && (
+                        <TopicFeedback showInput={getValues('status') == 'D' || getValues('status') == 'AR'} />
+                    )}
+                </div>
+            </div>
+        </TopicPageContext.Provider>
     );
 };
 
 export default TopicForm;
+export { TopicPageContext };

@@ -173,7 +173,7 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={thesisQuery.isFetching || thesisMutation.isLoading || teacherQuery.isFetching} />
+                <Loader show={thesisQuery.isFetching || thesisMutation.isPending || teacherQuery.isFetching} />
 
                 <DataTable
                     value={thesisQuery.data}
@@ -183,6 +183,7 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -192,6 +193,7 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -201,6 +203,7 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:code_of', { obj: t('module:thesis').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -210,6 +213,7 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:name_of', { obj: t('module:thesis').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -219,6 +223,7 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                         header={t('module:field.thesis.lecturer')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -228,6 +233,7 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                         body={(data: TopicType) => <p>{data.thesisInstructions?.map((t) => t.name).join(', ')}</p>}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

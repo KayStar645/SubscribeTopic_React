@@ -1,6 +1,7 @@
 const API = {
     auth: {
         sign_in: '/account/login',
+        register: 'account/register',
     },
 
     admin: {
@@ -18,6 +19,9 @@ const API = {
         role: '/role',
         permission: '/permission',
         faculty_duty: '/facultyDuty',
+        account: '/account',
+        google_drive: 'googledrive',
+        feedback: 'feedback',
 
         detail: {
             notification: '/notification/detail',
@@ -25,6 +29,10 @@ const API = {
             group: '/group/detail',
             topic: '/thesis/detail',
             role: '/role/detail',
+        },
+
+        approve: {
+            topic: 'thesis/changeStatus',
         },
     },
 };

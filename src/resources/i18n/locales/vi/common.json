@@ -53,5 +53,8 @@
     "approve": "Duyệt",
     "edit_request": "Yêu cầu chỉnh sửa",
     "approve_request": "Yêu cầu duyệt",
-    "draft": "Nháp"
+    "draft": "Nháp",
+    "upload": "Tải lên",
+    "confirm_password": "Xác nhận mật khẩu",
+    "send": "Gửi"
 }

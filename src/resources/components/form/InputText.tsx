@@ -1,3 +1,5 @@
+'use client';
+
 import { InputTextProps } from '@assets/types/form';
 import { InputText as PrimeInputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
@@ -11,6 +13,7 @@ const InputText = ({
     blockClassName = '',
     row = false,
     required = false,
+    disabled = false,
     errorMessage,
     onChange = () => {},
     onBlur = () => {},
@@ -42,7 +45,9 @@ const InputText = ({
                     value={inputValue}
                     placeholder={placeholder}
                     spellCheck={false}
+                    disabled={disabled}
                     style={{ height: '47px' }}
+                    autoComplete='false'
                     className={classNames('w-full flex-1 px-3', { 'p-invalid': !!errorMessage })}
                     onChange={(e) => {
                         setInputValue(e.target.value);

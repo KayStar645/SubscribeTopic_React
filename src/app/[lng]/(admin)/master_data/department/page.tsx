@@ -53,9 +53,6 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const departmentMutation = useMutation<any, AxiosError<ResponseType>, DepartmentType>({
@@ -127,7 +124,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 <InputText placeholder={`${t('search')}...`} className='w-20rem' />
             </div>
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={departmentQuery.isLoading || departmentMutation.isLoading} />
+                <Loader show={departmentQuery.isLoading || departmentMutation.isPending} />
 
                 <DataTable
                     value={departmentQuery.data}
@@ -137,6 +134,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -146,6 +144,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -155,6 +154,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:code_of', { obj: t('module:department').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -164,6 +164,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:name_of', { obj: t('module:department').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -173,6 +174,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                         header={t('address')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -182,6 +184,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                         header={t('phone_number')}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

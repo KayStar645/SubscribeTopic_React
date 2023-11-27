@@ -10,16 +10,17 @@ import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { TFunction } from 'i18next';
-import { snakeCase } from 'lodash';
 import { Button } from 'primereact/button';
 import { Chip } from 'primereact/chip';
 import { Panel, PanelHeaderTemplateOptions } from 'primereact/panel';
 import { Sidebar } from 'primereact/sidebar';
 import { classNames } from 'primereact/utils';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
+import useGetGroupPermission from './useGroupPermission';
+import useGetPermissionDetail from './useGetPermissionDetail';
 
 interface RoleFormRefType {
     show?: (_data?: RoleType) => void;
@@ -53,15 +54,14 @@ const schema = (t: TFunction) =>
     });
 
 const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSuccess }, ref) => {
-    const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
-    const [groupPermissions, setGroupPermissions] = useState<PermissionType[]>([]);
-    const [permissions, setPermissions] = useState<string[]>([]);
-
     const { control, handleSubmit, reset, setValue, getValues } = useForm({
         resolver: yupResolver(schema(t)) as Resolver<RoleType>,
         defaultValues,
     });
+    const [visible, setVisible] = useState(false);
+    const groupPermissions = useGetGroupPermission();
+    const permissions = useGetPermissionDetail(getValues('id'));
 
     const permissionQuery = useQuery<string[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
@@ -72,21 +72,11 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
 
             return response.data.data || [];
         },
-        onSuccess(data) {
-            setGroupPermissions(
-                data.reduce<PermissionType[]>((acc, permission) => {
-                    const [name] = permission.split('.');
-                    const existingObject = acc.find((obj) => obj.name === snakeCase(name));
+    });
 
-                    if (existingObject) {
-                        existingObject.actions.push(permission);
-                    } else {
-                        acc.push({ name: snakeCase(name), actions: [permission] });
-                    }
-
-                    return acc;
-                }, []),
-            );
+    const roleMutation = useMutation<any, AxiosError<ResponseType>, RoleType>({
+        mutationFn: (data) => {
+            return data.id == '0' ? request.post(API.admin.role, data) : request.update(API.admin.role, data);
         },
     });
 
@@ -98,19 +88,6 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
             const response = await request.get<RoleType>(`${API.admin.detail.role}?pId=${getValues('id')}`);
 
             return response.data.data || {};
-        },
-        onSuccess(data) {
-            setPermissions(data.permissionsName || []);
-            setValue('permissionsName', data.permissionsName || []);
-        },
-        onError() {
-            setPermissions([]);
-        },
-    });
-
-    const roleMutation = useMutation<any, AxiosError<ResponseType>, RoleType>({
-        mutationFn: (data) => {
-            return data.id == '0' ? request.post(API.admin.role, data) : request.update(API.admin.role, data);
         },
     });
 
@@ -133,8 +110,6 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
     const close = () => {
         setVisible(false);
         reset(defaultValues);
-        setPermissions([]);
-        setGroupPermissions([]);
     };
 
     const onSubmit = (data: RoleType) => {
@@ -225,7 +200,7 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
             onHide={close}
             position='right'
         >
-            <Loader show={roleMutation.isLoading || permissionQuery.isFetching || permissionDetailQuery.isFetching} />
+            <Loader show={roleMutation.isPending || permissionQuery.isFetching || permissionDetailQuery.isFetching} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller

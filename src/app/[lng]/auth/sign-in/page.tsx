@@ -72,7 +72,7 @@ const Page = ({ params: { lng } }: PageProps) => {
     return (
         <div className='flex align-items-center justify-content-center h-full w-full p-0'>
             <div className='flex flex-wrap shadow-2 w-full border-round-2xl overflow-hidden'>
-                <Loader show={signInMutation.isLoading} />
+                <Loader show={signInMutation.isPending} />
 
                 <div className='w-full lg:w-6 p-4 lg:p-7 bg-blue-50'>
                     <div className='pb-3'>

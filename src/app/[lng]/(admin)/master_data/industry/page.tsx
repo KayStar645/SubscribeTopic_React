@@ -53,9 +53,6 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const industryMutation = useMutation<any, AxiosError<ResponseType>, IndustryType>({
@@ -128,7 +125,7 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={industryQuery.isLoading || industryMutation.isLoading} />
+                <Loader show={industryQuery.isLoading || industryMutation.isPending} />
 
                 <DataTable
                     value={industryQuery.data}
@@ -138,6 +135,7 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                     emptyMessage={t('list_empty')}
                 >
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -147,6 +145,7 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                         body={renderActions}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
@@ -156,6 +155,7 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:code_of', { obj: t('module:industry').toLowerCase() })}
                     />
                     <Column
+                        alignHeader='center'
                         headerStyle={{
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',

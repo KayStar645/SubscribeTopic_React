@@ -1,8 +1,8 @@
 'use client';
 
-import { API, ROWS_PER_PAGE } from '@assets/configs';
-import { request } from '@assets/helpers';
-import { RegistrationPeriodParamType, RegistrationPeriodType } from '@assets/interface';
+import { API, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
+import { language, request } from '@assets/helpers';
+import { RegistrationPeriodType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
@@ -20,16 +20,16 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import FacultyDutyForm, { FacultyDutyFormRefType } from './form';
+import FacultyDutyForm from './form';
 import { DATE_FILTER } from '@assets/configs/general';
 import { FacultyDutyParamType, FacultyDutyType } from '@assets/interface/FacultyDuty';
+import { useRouter } from 'next/navigation';
 
 const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
-    const formRef = useRef<FacultyDutyFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-    const [selected, setSelected] = useState<FacultyDutyType>();
+    const router = useRouter();
 
     const [params, setParams] = useState<FacultyDutyParamType>({
         page: meta.currentPage,
@@ -57,9 +57,6 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            toast.error(err.response?.data.messages?.[0] || err.message);
-        },
     });
 
     const facultyDutyMutation = useMutation<any, AxiosError<ResponseType>, FacultyDutyType>({
@@ -78,8 +75,7 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
                     onClick={() => {
-                        formRef.current?.show?.(data);
-                        setSelected(data);
+                        router.push(language.addPrefixLanguage(lng, `${ROUTES.information.faculty_duty}/${data.id}`));
                     }}
                 />
                 <i
@@ -123,8 +119,7 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
                     icon='pi pi-plus'
                     size='small'
                     onClick={() => {
-                        formRef.current?.show?.();
-                        setSelected(undefined);
+                        router.push(language.addPrefixLanguage(lng, `${ROUTES.information.faculty_duty}/0`));
                     }}
                 />
             </div>
@@ -134,7 +129,7 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={facultyDutyQuery.isLoading || facultyDutyMutation.isLoading} />
+                <Loader show={facultyDutyQuery.isLoading || facultyDutyMutation.isPending} />
 
                 <DataTable
                     value={facultyDutyQuery.data || []}
@@ -231,17 +226,6 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
                     />
                 </div>
             </div>
-
-            <FacultyDutyForm
-                lng={lng}
-                title={
-                    selected?.id
-                        ? t('update_at', { obj: selected.name })
-                        : t('create_new_at', { obj: t('module:faculty_duty').toLowerCase() })
-                }
-                ref={formRef}
-                onSuccess={(faculty_duty) => facultyDutyQuery.refetch()}
-            />
         </div>
     );
 };

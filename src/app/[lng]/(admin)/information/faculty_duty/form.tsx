@@ -61,7 +61,7 @@ const FacultyDutyForm = forwardRef<FacultyDutyFormRefType, FacultyDutyFormType>(
     });
 
     const facultyDutyMutation = useMutation<any, AxiosError<ResponseType>, FacultyDutyType>({
-        mutationFn: (data) => {
+        mutationFn: (data: FacultyDutyType) => {
             return data.id == '0'
                 ? request.post(API.admin.faculty_duty, data)
                 : request.update(API.admin.faculty_duty, data);
@@ -122,7 +122,7 @@ const FacultyDutyForm = forwardRef<FacultyDutyFormRefType, FacultyDutyFormType>(
                 close();
             }}
         >
-            <Loader show={facultyDutyMutation.isLoading} />
+            <Loader show={facultyDutyMutation.isPending} />
 
             <form className='mt-2 flex gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <div className='col-6 flex flex-column gap-3'>

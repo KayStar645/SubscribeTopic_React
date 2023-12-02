@@ -19,14 +19,17 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import AccountForm, { AccountFormRefType } from './form';
+import PasswordForm, { PasswordFormRefType } from './passwordForm';
+import AssignForm, { AssignFormRefType } from './assignForm';
 
 const AccountPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
-    const formRef = useRef<AccountFormRefType>(null);
+    const passwordFormRef = useRef<PasswordFormRefType>(null);
+    const assignFormRef = useRef<AssignFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [selected, setSelected] = useState<AccountType>();
-    const permission = usePermission(MODULE.account);
+    const accountPermission = usePermission(MODULE.account);
+    const rolePermission = usePermission(MODULE.role);
 
     const accountQuery = useQuery<AccountType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
@@ -104,6 +107,22 @@ const AccountPage = ({ params: { lng } }: PageProps) => {
         return <p className='text-center'>{phoneNumber}</p>;
     };
 
+    const renderActions = (data: AccountType) => {
+        return (
+            <div className='flex align-items-center justify-content-center gap-3'>
+                {rolePermission.assign && (
+                    <i
+                        className='pi pi-cog hover:text-indigo-800 cursor-pointer'
+                        onClick={() => {
+                            assignFormRef.current?.show?.(data);
+                            setSelected(data);
+                        }}
+                    />
+                )}
+            </div>
+        );
+    };
+
     return (
         <div className='flex flex-column gap-4'>
             <ConfirmModal
@@ -120,9 +139,9 @@ const AccountPage = ({ params: { lng } }: PageProps) => {
                     label={t('create_new')}
                     icon='pi pi-plus'
                     size='small'
-                    visible={permission.create}
+                    visible={accountPermission.create}
                     onClick={() => {
-                        formRef.current?.show?.();
+                        passwordFormRef.current?.show?.();
                         setSelected(undefined);
                     }}
                 />
@@ -142,6 +161,16 @@ const AccountPage = ({ params: { lng } }: PageProps) => {
                     showGridlines={true}
                     emptyMessage={t('list_empty')}
                 >
+                    <Column
+                        alignHeader='center'
+                        align='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                        }}
+                        header={t('common:action')}
+                        body={renderActions}
+                    />
                     <Column
                         alignHeader='center'
                         headerStyle={{
@@ -182,17 +211,38 @@ const AccountPage = ({ params: { lng } }: PageProps) => {
                         header={t('date_of_birth')}
                         body={AccountDateBirth}
                     />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header={t('common:role')}
+                        field='roles'
+                    />
                 </DataTable>
             </div>
 
-            <AccountForm
+            <PasswordForm
                 lng={lng}
                 title={
                     selected?.id
                         ? t('update_at', { obj: selected.userName })
                         : t('create_new_at', { obj: t('module:account').toLowerCase() })
                 }
-                ref={formRef}
+                ref={passwordFormRef}
+                onSuccess={(_data) => accountQuery.refetch()}
+            />
+
+            <AssignForm
+                lng={lng}
+                title={
+                    selected?.id
+                        ? t('update_at', { obj: selected.userName })
+                        : t('create_new_at', { obj: t('module:account').toLowerCase() })
+                }
+                ref={assignFormRef}
                 onSuccess={(_data) => accountQuery.refetch()}
             />
         </div>

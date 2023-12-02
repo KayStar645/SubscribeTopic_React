@@ -148,7 +148,7 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
                     code: 'role',
                     label: t('menu:role'),
                     parent: 'system',
-                    permission: PERMISSION.faculty.view,
+                    permission: PERMISSION.role.view,
                     checkPermission: true,
                     to: `/${lng}/${ROUTES.system.role}`,
                 },

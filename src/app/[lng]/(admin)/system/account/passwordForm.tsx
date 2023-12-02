@@ -1,6 +1,6 @@
 import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
-import { TeacherType, AccountType } from '@assets/interface';
+import { AccountType, RoleType } from '@assets/interface';
 import { LanguageType } from '@assets/types/lang';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,16 +13,16 @@ import { TFunction } from 'i18next';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { forwardRef, useImperativeHandle, useState } from 'react';
-import { Controller, Resolver, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
-interface AccountFormRefType {
+interface PasswordFormRefType {
     show?: (_data?: AccountType) => void;
     close?: () => void;
 }
 
-interface AccountFormType extends LanguageType {
+interface PasswordFormType extends LanguageType {
     title: string;
     onSuccess?: (_data: AccountType) => void;
 }
@@ -43,7 +43,7 @@ const schema = (t: TFunction) =>
             .oneOf([yup.ref('password')], 'Passwords must match'),
     });
 
-const AccountForm = forwardRef<AccountFormRefType, AccountFormType>(({ title, lng, onSuccess }, ref) => {
+const AccountForm = forwardRef<PasswordFormRefType, PasswordFormType>(({ title, lng, onSuccess }, ref) => {
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
 
@@ -55,6 +55,17 @@ const AccountForm = forwardRef<AccountFormRefType, AccountFormType>(({ title, ln
     const accountMutation = useMutation<any, AxiosError<ResponseType>, AccountType>({
         mutationFn: (data) => {
             return request.post(API.auth.register, data);
+        },
+    });
+
+    const roleQuery = useQuery<RoleType[], AxiosError<ResponseType>>({
+        enabled: false,
+        queryKey: ['roles', 'list'],
+        refetchOnWindowFocus: false,
+        queryFn: async () => {
+            const response = await request.get<RoleType[]>(`${API.admin.role}`);
+
+            return response.data.data || [];
         },
     });
 
@@ -171,4 +182,4 @@ const AccountForm = forwardRef<AccountFormRefType, AccountFormType>(({ title, ln
 AccountForm.displayName = 'Account Form';
 
 export default AccountForm;
-export type { AccountFormRefType };
+export type { PasswordFormRefType };

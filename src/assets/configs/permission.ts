@@ -86,6 +86,7 @@ const ACTION = {
     create: 'Create',
     remove: 'Delete',
     change: 'Change',
+    assign: 'Assign',
 };
 
 export { PERMISSION, ACTION };

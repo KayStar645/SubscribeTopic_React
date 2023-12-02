@@ -20,7 +20,7 @@ import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import RoleFormType, { RoleFormRefType } from './form';
 
-const FacultyPage = ({ params: { lng } }: PageProps) => {
+const RolePage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
     const formRef = useRef<RoleFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
@@ -153,4 +153,4 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
     );
 };
 
-export default FacultyPage;
+export default RolePage;

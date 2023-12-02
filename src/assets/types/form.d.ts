@@ -77,21 +77,19 @@ interface InputRangeProps extends InputProps {
     onChange?: (_e: [number, number]) => void;
 }
 
+type FileType = {
+    name: string;
+    size: number;
+    link: string;
+    type: string;
+};
+
 interface InputFileProps extends InputProps {
     multiple?: boolean;
-    value?: string[];
-    emptyList?: string;
+    value?: FileType[];
     successMessage?: string;
     folderName: string;
     accept?: string;
-}
-
-interface InputImageProps extends InputProps {
-    multiple?: boolean;
-    value?: string[];
-    emptyList?: string;
-    successMessage?: string;
-    folderName: string;
 }
 
 export type {
@@ -100,11 +98,11 @@ export type {
     EditorProps,
     InputDateProps,
     InputFileProps,
-    InputImageProps,
     InputPasswordProps,
     InputRangeProps,
     InputTextProps,
     MultiSelectProps,
     RadioListProps,
     TextAreaProps,
+    FileType,
 };

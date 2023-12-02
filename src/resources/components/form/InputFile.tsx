@@ -1,66 +1,62 @@
 'use client';
 
-import { API } from '@assets/configs';
-import { request } from '@assets/helpers';
-import { InputFileProps } from '@assets/types/form';
-import { ResponseType } from '@assets/types/request';
-import { useMutation } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import { Badge } from 'primereact/badge';
+import { IMAGE_MIME_TYPE, MIME_TYPES } from '@assets/configs/mime_type';
+import { FileType, InputFileProps } from '@assets/types/form';
+import { forEach } from 'lodash';
+import Link from 'next/link';
 import { Button } from 'primereact/button';
+import { Image } from 'primereact/image';
+import { Tag } from 'primereact/tag';
 import { useRef, useState } from 'react';
-import { toast } from 'react-toastify';
-import { Loader } from '../UI';
 
-const InputFile = ({
-    value,
-    multiple,
-    folderName,
-    accept = '*',
-    emptyList = 'List is empty',
-    successMessage = 'Tải file thành công',
-}: InputFileProps) => {
+const InputFile = ({ value, multiple, accept = '*', label, placeholder = 'Danh sách file' }: InputFileProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
-    const [files, setFiles] = useState<string[]>(value || []);
-    const { isPending, mutate } = useMutation<any, AxiosError<ResponseType>, any>({
-        mutationFn: (data) => {
-            return request.post(API.admin.google_drive, data);
-        },
-        onSuccess() {
-            toast.success(successMessage);
-        },
-        onError(error) {
-            toast.error(error.response?.data?.messages || error?.message);
-        },
-    });
+    const [files, setFiles] = useState<FileType[]>(value || []);
 
-    const onUpload = () => {
-        if (files.length === 0) {
-            return;
-        }
+    const File = ({ file }: { file: FileType }) => {
+        const size = Math.ceil(file.size / 1024);
 
-        files.forEach((file) => {
-            mutate({
-                FilePath: file,
-                FileName: 'test' + Math.floor(Math.random() * 1000),
-                FolderName: folderName,
-            });
-        });
-    };
+        return (
+            <div className='flex align-items-center flex-1 gap-3'>
+                {IMAGE_MIME_TYPE['.' + file.type] && (
+                    <Link href={file.link} target='_blank'>
+                        <Image src={file.link} alt={file.name} width='100' imageClassName='border-round' />
+                    </Link>
+                )}
 
-    const Type = ({ file }: { file: string }) => {
-        console.log(file);
+                <div className='flex flex-column align-items-start justify-content-between flex-1 gap-2'>
+                    <Link href={file.link} target='_blank' className='text-primary' style={{ wordBreak: 'break-all' }}>
+                        {file.name}
+                    </Link>
 
-        return <div></div>;
+                    <div className='flex align-items-center gap-2'>
+                        <Tag
+                            value={
+                                <div className='flex align-items-center gap-1 w-fit'>
+                                    {MIME_TYPES['.' + file.type]}
+                                    <p>{file.type}</p>
+                                </div>
+                            }
+                            severity={'info'}
+                        />
+
+                        <Tag
+                            value={size >= 1024 ? Math.ceil(size / 1024) + ' MB' : size + ' KB'}
+                            severity={'warning'}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
     };
 
     return (
-        <div className='border-round-xl bg-white border-round relative'>
-            <Loader show={isPending} />
+        <div className='border-round-xl bg-white border-1 border-solid border-300 relative'>
             <input
                 type='file'
                 accept={accept}
                 ref={inputRef}
+                value=''
                 multiple={multiple}
                 hidden={true}
                 onChange={(e) => {
@@ -68,58 +64,63 @@ const InputFile = ({
                         return;
                     }
 
-                    let result: string[] = [];
+                    let result: FileType[] = [];
 
-                    for (let i = 0; i < e.target.files.length; i++) {
-                        const file = e.target.files[i];
-
-                        result.push(file);
-                    }
+                    forEach(e.target.files, (file) => {
+                        result.push({
+                            link: URL.createObjectURL(file),
+                            name: file.name.split('.')[0],
+                            size: file.size,
+                            type: file.name.split('.').pop()!,
+                        });
+                    });
 
                     setFiles((prev) => [...prev, ...result]);
                 }}
             />
 
-            <div className='flex align-items-center gap-3 p-3 border-bottom-2 border-200'>
+            <div className='flex align-items-center gap-3 p-3 border-bottom-1 border-300'>
+                <p>{label}</p>
+
                 <Button
                     rounded={true}
                     outlined={true}
                     icon='pi pi-fw pi-file'
-                    onClick={() => inputRef.current?.click()}
+                    className='w-2rem h-2rem'
+                    onClick={(e) => {
+                        e.preventDefault();
+
+                        inputRef.current?.click();
+                    }}
                 />
 
                 <Button
                     rounded={true}
                     outlined={true}
-                    icon='pi pi-fw pi-cloud-upload'
-                    severity='success'
-                    onClick={onUpload}
-                />
-
-                <Button
-                    rounded={true}
-                    outlined={true}
-                    icon='pi pi-fw pi-times'
+                    icon='pi pi-fw pi-trash'
                     severity='danger'
-                    onClick={() => setFiles([])}
+                    className='w-2rem h-2rem'
+                    onClick={(e) => {
+                        e.preventDefault();
+
+                        setFiles([]);
+                    }}
                 />
             </div>
 
-            <div className='p-3 flex align-items-center gap-5'>
+            <div className='p-3 flex flex-wrap'>
                 {files.length > 0 ? (
                     files?.map((file, index) => (
-                        <div className='p-overlay-badge' key={file}>
-                            <Type file={file} />
-                            <Badge
-                                value='X'
-                                severity='danger'
-                                className='cursor-pointer'
+                        <div className='flex align-items-center gap-3 col-3 py-3' key={file.name + file.type}>
+                            <i
+                                className='pi pi-trash cursor-pointer hover:text-red-600'
                                 onClick={() => setFiles(files.filter((t, i) => i !== index))}
                             />
+                            <File file={file} />
                         </div>
                     ))
                 ) : (
-                    <div>{emptyList}</div>
+                    <div>{placeholder}</div>
                 )}
             </div>
         </div>

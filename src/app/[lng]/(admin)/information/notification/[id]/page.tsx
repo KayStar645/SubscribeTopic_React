@@ -7,7 +7,7 @@ import { PageProps } from '@assets/types/UI';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Loader } from '@resources/components/UI';
-import { Editor, InputText } from '@resources/components/form';
+import { Editor, InputFile, InputText } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -127,14 +127,7 @@ const NotificationForm = ({ params }: PageProps) => {
                     name='image'
                     control={control}
                     render={({ field, fieldState }) => (
-                        <InputText
-                            id='form_data_image'
-                            value={field.value}
-                            label={t('common:image')}
-                            placeholder={t('common:image')}
-                            errorMessage={fieldState.error?.message}
-                            onChange={field.onChange}
-                        />
+                        <InputFile multiple={true} accept='*' folderName='test' id='form_image' />
                     )}
                 />
 

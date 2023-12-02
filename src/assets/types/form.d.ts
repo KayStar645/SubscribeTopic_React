@@ -90,6 +90,7 @@ interface InputFileProps extends InputProps {
     successMessage?: string;
     folderName: string;
     accept?: string;
+    onChange?: (_files: FileType[]) => void;
 }
 
 export type {

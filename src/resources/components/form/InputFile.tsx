@@ -9,12 +9,21 @@ import { Image } from 'primereact/image';
 import { Tag } from 'primereact/tag';
 import { useRef, useState } from 'react';
 
-const InputFile = ({ value, multiple, accept = '*', label, placeholder = 'Danh sách file' }: InputFileProps) => {
+const InputFile = ({
+    value,
+    multiple,
+    accept = '*',
+    label,
+    placeholder = 'Danh sách file',
+    onChange = () => {},
+}: InputFileProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [files, setFiles] = useState<FileType[]>(value || []);
 
     const File = ({ file }: { file: FileType }) => {
         const size = Math.ceil(file.size / 1024);
+
+        console.log(file);
 
         return (
             <div className='flex align-items-center flex-1 gap-3'>
@@ -75,12 +84,16 @@ const InputFile = ({ value, multiple, accept = '*', label, placeholder = 'Danh s
                         });
                     });
 
-                    setFiles((prev) => [...prev, ...result]);
+                    setFiles((prev) => {
+                        onChange([...prev, ...result]);
+
+                        return [...prev, ...result];
+                    });
                 }}
             />
 
             <div className='flex align-items-center gap-3 p-3 border-bottom-1 border-300'>
-                <p>{label}</p>
+                {label && <p>{label}</p>}
 
                 <Button
                     rounded={true}

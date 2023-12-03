@@ -12,7 +12,7 @@ const Loader = ({ label = 'Loading...', show = true }: LoaderProps) => {
         >
             <ProgressSpinner strokeWidth='8' animationDuration='0.8s' className='m-0 w-2rem h-2rem' />
 
-            <p className='font-semibold text-xl'>{label}</p>
+            <p className='font-semibold text-xl text-900'>{label}</p>
         </div>
     ) : null;
 };

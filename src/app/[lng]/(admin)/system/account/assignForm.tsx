@@ -20,7 +20,7 @@ import * as yup from 'yup';
 
 interface MutateData {
     userId: number;
-    roleId: number;
+    roleId: number[];
 }
 
 interface AssignFormRefType {
@@ -41,15 +41,19 @@ const defaultValues: AccountType = {
 const schema = (t: TFunction) =>
     yup.object({
         userName: yup.string().required(),
-        roles: yup.array(yup.string()),
+        roles: yup.array().of(
+            yup.object({
+                id: yup.number(),
+                name: yup.string(),
+            }),
+        ),
     });
 
 const AssignForm = forwardRef<AssignFormRefType, AssignFormType>(({ title, lng, onSuccess }, ref) => {
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
-    let role: string[] = [];
 
-    const { control, handleSubmit, reset, setValue } = useForm({
+    const { control, handleSubmit, reset, setValue, getValues } = useForm({
         resolver: yupResolver(schema(t)) as Resolver<AccountType>,
         defaultValues,
     });
@@ -71,8 +75,6 @@ const AssignForm = forwardRef<AssignFormRefType, AssignFormType>(({ title, lng, 
         },
     });
 
-    role = roleQuery.data?.map((t) => t.name!) || [];
-
     const show = (data?: AccountType) => {
         setVisible(true);
 
@@ -90,21 +92,26 @@ const AssignForm = forwardRef<AssignFormRefType, AssignFormType>(({ title, lng, 
         reset(defaultValues);
     };
 
-    const onSubmit = (data: RoleType) => {
-        assignMutation.mutate(data, {
-            onSuccess: (response) => {
-                close();
-                onSuccess?.(response.data);
-                toast.success(t('request:update_success'));
+    const onSubmit = () => {
+        assignMutation.mutate(
+            {
+                userId: parseInt(getValues('id')?.toString()!),
+                rolesId: getValues('roles')?.map((t) => parseInt(t.id.toString()!)) || [],
             },
-            onError: (err) => {
-                toast.error(err.response?.data.messages?.[0] || err.message);
+            {
+                onSuccess: (response) => {
+                    close();
+                    onSuccess?.(response.data);
+                    toast.success(t('request:update_success'));
+                },
+                onError: (err) => {
+                    toast.error(err.response?.data.messages?.[0] || err.message);
+                },
             },
-        });
+        );
     };
 
     const onChange = (event: PickListChangeEvent) => {
-        role = event.source;
         setValue('roles', event.target);
     };
 
@@ -122,7 +129,7 @@ const AssignForm = forwardRef<AssignFormRefType, AssignFormType>(({ title, lng, 
             contentClassName='mb-8'
             onHide={close}
         >
-            <Loader show={assignMutation.isPending || roleQuery.isLoading} />
+            <Loader show={assignMutation.isPending || roleQuery.isFetching} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller
@@ -147,10 +154,12 @@ const AssignForm = forwardRef<AssignFormRefType, AssignFormType>(({ title, lng, 
                     control={control}
                     render={({ field }) => (
                         <PickList
-                            source={role?.filter((t) => !field.value?.includes(t))}
+                            source={roleQuery.data?.filter(
+                                (role) => field.value?.findIndex((t) => role.id === t.id)! === -1,
+                            )}
                             target={field.value}
                             onChange={onChange}
-                            itemTemplate={(role: string) => <p className='text-900'>{role}</p>}
+                            itemTemplate={(role: RoleType) => <p className='text-900'>{role.name}</p>}
                             filter={true}
                             filterBy='name'
                             sourceHeader={t('common:list_of', { module: t('module:role').toLowerCase() })}

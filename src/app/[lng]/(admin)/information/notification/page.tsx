@@ -123,7 +123,7 @@ const NotificationPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={notificationQuery.isLoading || notificationMutation.isPending} />
+                <Loader show={notificationQuery.isFetching || notificationMutation.isPending} />
 
                 <DataTable
                     value={notificationQuery.data || []}

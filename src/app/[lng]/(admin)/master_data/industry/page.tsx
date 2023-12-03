@@ -125,7 +125,7 @@ const IndustryPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={industryQuery.isLoading || industryMutation.isPending} />
+                <Loader show={industryQuery.isFetching || industryMutation.isPending} />
 
                 <DataTable
                     value={industryQuery.data}

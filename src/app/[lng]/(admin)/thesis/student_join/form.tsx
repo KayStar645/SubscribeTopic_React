@@ -130,7 +130,7 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
             onHide={close}
         >
             <Loader
-                show={studentJoinMutation.isPending || studentQuery.isLoading || registrationPeriodQuery.isLoading}
+                show={studentJoinMutation.isPending || studentQuery.isFetching || registrationPeriodQuery.isFetching}
             />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>

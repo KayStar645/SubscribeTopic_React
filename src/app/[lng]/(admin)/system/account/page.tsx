@@ -152,7 +152,7 @@ const AccountPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={accountQuery.isLoading || accountMutation.isPending} />
+                <Loader show={accountQuery.isFetching || accountMutation.isPending} />
 
                 <DataTable
                     value={accountQuery.data}
@@ -219,7 +219,7 @@ const AccountPage = ({ params: { lng } }: PageProps) => {
                             whiteSpace: 'nowrap',
                         }}
                         header={t('common:role')}
-                        field='roles'
+                        body={(account: AccountType) => <p>{account.roles?.map((t) => t.name).join(', ')}</p>}
                     />
                 </DataTable>
             </div>

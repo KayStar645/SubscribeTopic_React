@@ -124,7 +124,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
                 <InputText placeholder={`${t('search')}...`} className='w-20rem' />
             </div>
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={departmentQuery.isLoading || departmentMutation.isPending} />
+                <Loader show={departmentQuery.isFetching || departmentMutation.isPending} />
 
                 <DataTable
                     value={departmentQuery.data}

@@ -108,7 +108,7 @@ const RolePage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5 w-30rem'>
-                <Loader show={roleQuery.isLoading || roleMutation.isPending} />
+                <Loader show={roleQuery.isFetching || roleMutation.isPending} />
 
                 <DataTable
                     value={roleQuery.data}

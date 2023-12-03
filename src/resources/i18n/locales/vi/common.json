@@ -57,5 +57,6 @@
     "upload": "Tải lên",
     "confirm_password": "Xác nhận mật khẩu",
     "send": "Gửi",
-    "now_available": "Hiện có"
+    "now_available": "Hiện có",
+    "status": "Trạng thái"
 }

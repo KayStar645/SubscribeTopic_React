@@ -88,7 +88,7 @@ interface InputFileProps extends InputProps {
     multiple?: boolean;
     value?: FileType[];
     successMessage?: string;
-    folderName: string;
+    folder: string;
     accept?: string;
     onChange?: (_files: FileType[]) => void;
 }

@@ -123,7 +123,7 @@ const StudentPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={studentQuery.isLoading || studentMutation.isPending} />
+                <Loader show={studentQuery.isFetching || studentMutation.isPending} />
 
                 <DataTable
                     value={studentQuery.data || []}

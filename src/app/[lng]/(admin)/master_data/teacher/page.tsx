@@ -123,7 +123,7 @@ const TeacherPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={teacherQuery.isLoading || teacherMutation.isPending} />
+                <Loader show={teacherQuery.isFetching || teacherMutation.isPending} />
 
                 <DataTable
                     value={teacherQuery.data || []}

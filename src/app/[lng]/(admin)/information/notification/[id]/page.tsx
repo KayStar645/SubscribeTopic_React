@@ -127,7 +127,13 @@ const NotificationForm = ({ params }: PageProps) => {
                     name='image'
                     control={control}
                     render={({ field, fieldState }) => (
-                        <InputFile multiple={true} accept='*' folderName='test' id='form_image' />
+                        <InputFile
+                            multiple={true}
+                            label={t('common:image')}
+                            accept='*'
+                            folder={`notification/${id}`}
+                            id='form_image'
+                        />
                     )}
                 />
 

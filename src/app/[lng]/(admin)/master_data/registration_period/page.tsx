@@ -22,6 +22,7 @@ import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import RegistrationForm, { RegistrationPeriodFormRefType } from './form';
 import { DATE_FILTER } from '@assets/configs/general';
+import { Checkbox } from 'primereact/checkbox';
 
 const MajorPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
@@ -130,7 +131,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={registrationPeriodQuery.isLoading || registrationPeriodMutation.isPending} />
+                <Loader show={registrationPeriodQuery.isFetching || registrationPeriodMutation.isPending} />
 
                 <DataTable
                     value={registrationPeriodQuery.data || []}
@@ -201,6 +202,20 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         header={t('time_end')}
                         body={(data: RegistrationPeriodType) => (
                             <p>{moment(data.timeEnd).format('DD-MM-YYYY HH:MM')}</p>
+                        )}
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header={t('common:status')}
+                        body={(data: RegistrationPeriodType) => (
+                            <div className='text-center'>
+                                <Checkbox checked={!!data.isActive} />
+                            </div>
                         )}
                     />
                 </DataTable>

@@ -1,13 +1,17 @@
 'use client';
 
+import { API } from '@assets/configs';
 import { IMAGE_MIME_TYPE, MIME_TYPES } from '@assets/configs/mime_type';
+import { request } from '@assets/helpers';
 import { FileType, InputFileProps } from '@assets/types/form';
+import { useMutation } from '@tanstack/react-query';
 import { forEach } from 'lodash';
 import Link from 'next/link';
 import { Button } from 'primereact/button';
 import { Image } from 'primereact/image';
 import { Tag } from 'primereact/tag';
 import { useRef, useState } from 'react';
+import { Loader } from '../UI';
 
 const InputFile = ({
     value,
@@ -15,15 +19,22 @@ const InputFile = ({
     accept = '*',
     label,
     placeholder = 'Danh sách file',
+    folder,
     onChange = () => {},
 }: InputFileProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [files, setFiles] = useState<FileType[]>(value || []);
 
+    const fileMutation = useMutation<any, ResponseType, { fileName: string; file: File }>({
+        mutationFn: (data) => {
+            console.log(data);
+
+            return request.post(`${API.admin.google_drive}?fileName=${data.fileName}`, { File: data.file });
+        },
+    });
+
     const File = ({ file }: { file: FileType }) => {
         const size = Math.ceil(file.size / 1024);
-
-        console.log(file);
 
         return (
             <div className='flex align-items-center flex-1 gap-3'>
@@ -59,13 +70,16 @@ const InputFile = ({
         );
     };
 
+    console.log(fileMutation.isSuccess);
+
     return (
         <div className='border-round-xl bg-white border-1 border-solid border-300 relative'>
+            <Loader show={fileMutation.isPending} />
+
             <input
                 type='file'
                 accept={accept}
                 ref={inputRef}
-                value=''
                 multiple={multiple}
                 hidden={true}
                 onChange={(e) => {
@@ -76,6 +90,11 @@ const InputFile = ({
                     let result: FileType[] = [];
 
                     forEach(e.target.files, (file) => {
+                        fileMutation.mutate({
+                            fileName: folder || 'test_image',
+                            file,
+                        });
+
                         result.push({
                             link: URL.createObjectURL(file),
                             name: file.name.split('.')[0],
@@ -124,7 +143,7 @@ const InputFile = ({
             <div className='p-3 flex flex-wrap'>
                 {files.length > 0 ? (
                     files?.map((file, index) => (
-                        <div className='flex align-items-center gap-3 col-3 py-3' key={file.name + file.type}>
+                        <div className='flex align-items-center gap-3 col-3 py-3' key={file.name + '_' + file.type}>
                             <i
                                 className='pi pi-trash cursor-pointer hover:text-red-600'
                                 onClick={() => setFiles(files.filter((t, i) => i !== index))}

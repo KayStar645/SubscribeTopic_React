@@ -135,7 +135,7 @@ const StudentForm = forwardRef<StudentFormRefType, StudentFormType>(({ title, ln
             contentClassName='mb-8'
             onHide={close}
         >
-            <Loader show={studentMutation.isPending || majorQuery.isLoading} />
+            <Loader show={studentMutation.isPending || majorQuery.isFetching} />
 
             <form className='mt-2 flex gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <div className='col-6 flex flex-column gap-3'>

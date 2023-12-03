@@ -129,7 +129,7 @@ const StudentJoinPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={studentJoinQuery.isLoading || studentJoinMutation.isPending} />
+                <Loader show={studentJoinQuery.isFetching || studentJoinMutation.isPending} />
 
                 <DataTable
                     value={studentJoinQuery.data || []}

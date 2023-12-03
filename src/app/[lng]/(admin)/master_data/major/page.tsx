@@ -125,7 +125,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={majorQuery.isLoading || majorMutation.isPending} />
+                <Loader show={majorQuery.isFetching || majorMutation.isPending} />
 
                 <DataTable
                     value={majorQuery.data || []}

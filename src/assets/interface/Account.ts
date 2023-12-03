@@ -6,7 +6,10 @@ interface AccountType {
     type?: '';
     teacher?: TeacherType;
     student?: StudentType;
-    roles?: string[];
+    roles?: {
+        id: number;
+        name: string;
+    }[];
 }
 
 export type { AccountType };

@@ -120,7 +120,7 @@ const MajorForm = forwardRef<MajorFormRefType, MajorFormType>(({ title, lng, onS
                 close();
             }}
         >
-            <Loader show={majorMutation.isPending || industryQuery.isLoading} />
+            <Loader show={majorMutation.isPending || industryQuery.isFetching} />
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller

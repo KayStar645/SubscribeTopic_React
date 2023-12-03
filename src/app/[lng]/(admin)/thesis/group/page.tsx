@@ -124,7 +124,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={groupQuery.isLoading} />
+                <Loader show={groupQuery.isFetching} />
 
                 <DataTable
                     value={groupQuery.data}

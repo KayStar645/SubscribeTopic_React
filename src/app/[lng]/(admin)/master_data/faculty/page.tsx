@@ -132,7 +132,7 @@ const FacultyPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={facultyQuery.isLoading || facultyMutation.isPending} />
+                <Loader show={facultyQuery.isFetching || facultyMutation.isPending} />
 
                 <DataTable
                     value={facultyQuery.data}

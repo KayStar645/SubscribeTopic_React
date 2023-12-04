@@ -16,6 +16,7 @@ import { classNames } from 'primereact/utils';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Loader } from '../UI';
+import { AxiosResponse } from 'axios';
 
 const InputFile = ({
     value,
@@ -31,7 +32,11 @@ const InputFile = ({
     const [files, setFiles] = useState<FileType[]>(value || []);
     const [defaultFile, setDefaultFile] = useState<number>(0);
 
-    const fileMutation = useMutation<any, ResponseType<FileType>, { fileName: string; file: File }>({
+    const fileMutation = useMutation<
+        AxiosResponse<ResponseType<FileType>>,
+        ResponseType<FileType>,
+        { fileName: string; file: File }
+    >({
         mutationFn: async (data) => {
             const formData = new FormData();
 
@@ -98,26 +103,45 @@ const InputFile = ({
                         return;
                     }
 
-                    forEach(e.target.files, async (file) => {
-                        try {
-                            const response = await fileMutation.mutateAsync({
-                                fileName: folder + file.name.split('.')[0],
-                                file,
-                            });
-
-                            if (response.data.data) {
-                                setFiles((prev) => {
-                                    onChange({
-                                        files: [...prev, response.data.data!],
-                                    });
-
-                                    return [...prev, response.data.data!];
+                    if (multiple) {
+                        forEach(e.target.files, async (file) => {
+                            try {
+                                const response = await fileMutation.mutateAsync({
+                                    fileName: folder + file.name.split('.')[0],
+                                    file,
                                 });
+
+                                if (response.data.data) {
+                                    setFiles((prev) => {
+                                        onChange({
+                                            files: [...prev, response.data.data!],
+                                        });
+
+                                        return [...prev, response.data.data!];
+                                    });
+                                }
+                            } catch (error: any) {
+                                toast.error(error.message);
                             }
-                        } catch (error: any) {
-                            toast.error(error.message);
-                        }
-                    });
+                        });
+                    } else {
+                        fileMutation.mutate(
+                            {
+                                fileName: folder + e.target.files[0].name.split('.')[0],
+                                file: e.target.files[0],
+                            },
+                            {
+                                onSuccess(response) {
+                                    if (response.data.data) {
+                                        onChange({
+                                            file: response.data.data!,
+                                            files: [response.data.data!],
+                                        });
+                                    }
+                                },
+                            },
+                        );
+                    }
                 }}
             />
 
@@ -158,20 +182,22 @@ const InputFile = ({
                             key={file.name + '_' + file.sizeInBytes}
                         >
                             <div className='flex flex-column gap-3 align-items-center'>
-                                <RadioButton
-                                    tooltip={defaultFileText}
-                                    tooltipOptions={{ position: 'left' }}
-                                    className={classNames(`.${file.name + '_' + file.sizeInBytes}`)}
-                                    checked={defaultFile === index}
-                                    onChange={() => {
-                                        setDefaultFile(index);
+                                {multiple && (
+                                    <RadioButton
+                                        tooltip={defaultFileText}
+                                        tooltipOptions={{ position: 'left' }}
+                                        className={classNames(`.${file.name + '_' + file.sizeInBytes}`)}
+                                        checked={defaultFile === index}
+                                        onChange={() => {
+                                            setDefaultFile(index);
 
-                                        onChange({
-                                            file,
-                                            files,
-                                        });
-                                    }}
-                                />
+                                            onChange({
+                                                file,
+                                                files,
+                                            });
+                                        }}
+                                    />
+                                )}
                                 <i
                                     className='pi pi-trash cursor-pointer hover:text-red-600'
                                     onClick={() => setFiles(files.filter((t, i) => i !== index))}

@@ -26,12 +26,22 @@ const InputFile = ({
     const [files, setFiles] = useState<FileType[]>(value || []);
 
     const fileMutation = useMutation<any, ResponseType, { fileName: string; file: File }>({
-        mutationFn: (data) => {
-            console.log(data);
+        mutationFn: async (data) => {
+            const formData = new FormData();
+            formData.append('file', data.file);
+            console.log(formData)
 
-            return request.post(`${API.admin.google_drive}?fileName=${data.fileName}`, { File: data.file });
+            const response = await request.post(`${API.admin.google_drive}?fileName=${data.fileName}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            console.log(response.data);
+            return response.data;
         },
     });
+
 
     const File = ({ file }: { file: FileType }) => {
         const size = Math.ceil(file.size / 1024);

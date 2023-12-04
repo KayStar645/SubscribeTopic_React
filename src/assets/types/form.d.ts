@@ -79,9 +79,14 @@ interface InputRangeProps extends InputProps {
 
 type FileType = {
     name: string;
-    size: number;
-    link: string;
+    sizeInBytes: number;
+    path: string;
     type: string;
+};
+
+type InputFileOnChange = {
+    files?: FileType[];
+    file?: FileType;
 };
 
 interface InputFileProps extends InputProps {
@@ -90,7 +95,8 @@ interface InputFileProps extends InputProps {
     successMessage?: string;
     folder: string;
     accept?: string;
-    onChange?: (_files: FileType[]) => void;
+    defaultFileText?: string;
+    onChange?: (_e: InputFileOnChange) => void;
 }
 
 export type {

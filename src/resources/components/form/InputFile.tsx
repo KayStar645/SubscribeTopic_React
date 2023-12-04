@@ -4,13 +4,17 @@ import { API } from '@assets/configs';
 import { IMAGE_MIME_TYPE, MIME_TYPES } from '@assets/configs/mime_type';
 import { request } from '@assets/helpers';
 import { FileType, InputFileProps } from '@assets/types/form';
+import { ResponseType } from '@assets/types/request';
 import { useMutation } from '@tanstack/react-query';
 import { forEach } from 'lodash';
 import Link from 'next/link';
 import { Button } from 'primereact/button';
 import { Image } from 'primereact/image';
+import { RadioButton } from 'primereact/radiobutton';
 import { Tag } from 'primereact/tag';
+import { classNames } from 'primereact/utils';
 import { useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 import { Loader } from '../UI';
 
 const InputFile = ({
@@ -20,34 +24,40 @@ const InputFile = ({
     label,
     placeholder = 'Danh sách file',
     folder,
+    defaultFileText = 'Mặc định',
     onChange = () => {},
 }: InputFileProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [files, setFiles] = useState<FileType[]>(value || []);
+    const [defaultFile, setDefaultFile] = useState<number>(0);
 
-    const fileMutation = useMutation<any, ResponseType, { fileName: string; file: File }>({
+    const fileMutation = useMutation<any, ResponseType<FileType>, { fileName: string; file: File }>({
         mutationFn: async (data) => {
             const formData = new FormData();
 
             formData.append('file', data.file);
 
-            return request.post(`${API.admin.google_drive}?fileName=${data.fileName}`, formData);
+            return request.post(`${API.admin.google_drive}?fileName=${data.fileName}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
         },
     });
 
     const File = ({ file }: { file: FileType }) => {
-        const size = Math.ceil(file.size / 1024);
+        const size = Math.ceil(file.sizeInBytes / 1024);
 
         return (
             <div className='flex align-items-center flex-1 gap-3'>
                 {IMAGE_MIME_TYPE['.' + file.type] && (
-                    <Link href={file.link} target='_blank'>
-                        <Image src={file.link} alt={file.name} width='100' imageClassName='border-round' />
+                    <Link href={file.path} target='_blank'>
+                        <Image src={file.path} alt={file.name} width='100' imageClassName='border-round' />
                     </Link>
                 )}
 
                 <div className='flex flex-column align-items-start justify-content-between flex-1 gap-2'>
-                    <Link href={file.link} target='_blank' className='text-primary' style={{ wordBreak: 'break-all' }}>
+                    <Link href={file.path} target='_blank' className='text-primary' style={{ wordBreak: 'break-all' }}>
                         {file.name}
                     </Link>
 
@@ -72,14 +82,13 @@ const InputFile = ({
         );
     };
 
-    console.log(fileMutation.isSuccess);
-
     return (
         <div className='border-round-xl bg-white border-1 border-solid border-300 relative'>
             <Loader show={fileMutation.isPending} />
 
             <input
                 type='file'
+                value=''
                 accept={accept}
                 ref={inputRef}
                 multiple={multiple}
@@ -89,26 +98,25 @@ const InputFile = ({
                         return;
                     }
 
-                    let result: FileType[] = [];
+                    forEach(e.target.files, async (file) => {
+                        try {
+                            const response = await fileMutation.mutateAsync({
+                                fileName: folder + file.name.split('.')[0],
+                                file,
+                            });
 
-                    forEach(e.target.files, (file) => {
-                        fileMutation.mutate({
-                            fileName: folder || 'test_image',
-                            file,
-                        });
+                            if (response.data.data) {
+                                setFiles((prev) => {
+                                    onChange({
+                                        files: [...prev, response.data.data!],
+                                    });
 
-                        result.push({
-                            link: URL.createObjectURL(file),
-                            name: file.name.split('.')[0],
-                            size: file.size,
-                            type: file.name.split('.').pop()!,
-                        });
-                    });
-
-                    setFiles((prev) => {
-                        onChange([...prev, ...result]);
-
-                        return [...prev, ...result];
+                                    return [...prev, response.data.data!];
+                                });
+                            }
+                        } catch (error: any) {
+                            toast.error(error.message);
+                        }
                     });
                 }}
             />
@@ -145,11 +153,30 @@ const InputFile = ({
             <div className='p-3 flex flex-wrap'>
                 {files.length > 0 ? (
                     files?.map((file, index) => (
-                        <div className='flex align-items-center gap-3 col-3 py-3' key={file.name + '_' + file.type}>
-                            <i
-                                className='pi pi-trash cursor-pointer hover:text-red-600'
-                                onClick={() => setFiles(files.filter((t, i) => i !== index))}
-                            />
+                        <div
+                            className='flex align-items-center gap-3 col-3 py-3'
+                            key={file.name + '_' + file.sizeInBytes}
+                        >
+                            <div className='flex flex-column gap-3 align-items-center'>
+                                <RadioButton
+                                    tooltip={defaultFileText}
+                                    tooltipOptions={{ position: 'left' }}
+                                    className={classNames(`.${file.name + '_' + file.sizeInBytes}`)}
+                                    checked={defaultFile === index}
+                                    onChange={() => {
+                                        setDefaultFile(index);
+
+                                        onChange({
+                                            file,
+                                            files,
+                                        });
+                                    }}
+                                />
+                                <i
+                                    className='pi pi-trash cursor-pointer hover:text-red-600'
+                                    onClick={() => setFiles(files.filter((t, i) => i !== index))}
+                                />
+                            </div>
                             <File file={file} />
                         </div>
                     ))

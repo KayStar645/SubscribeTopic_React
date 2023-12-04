@@ -10,10 +10,10 @@ const ROUTES = {
     },
 
     admin: {
-        faculty: '/master_data/faculty',
-        department: '/master_data/department',
-        major: '/master_data/major',
-        industry: '/master_data/industry',
+        faculty: '/admin/faculty',
+        department: '/admin/department',
+        major: '/admin/major',
+        industry: '/admin/industry',
     },
 
     master_data: {

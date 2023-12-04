@@ -7,7 +7,7 @@ export async function generateMetadata({ params: { lng } }: PageProps): Promise<
     const { t } = useTranslation(lng);
 
     return {
-        title: t('info:product_name'),
+        title: t('route:role'),
     };
 }
 

@@ -56,5 +56,8 @@
     "draft": "Nháp",
     "upload": "Tải lên",
     "confirm_password": "Xác nhận mật khẩu",
-    "send": "Gửi"
+    "send": "Gửi",
+    "now_available": "Hiện có",
+    "status": "Trạng thái",
+    "change_to_draft": "Chuyển về nháp"
 }

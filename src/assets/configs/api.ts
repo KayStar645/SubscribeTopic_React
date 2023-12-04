@@ -32,6 +32,10 @@ const API = {
         approve: {
             topic: 'thesis/changeStatus',
         },
+
+        assign: {
+            role: '/role/assign',
+        },
     },
 };
 

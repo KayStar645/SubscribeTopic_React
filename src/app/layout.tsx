@@ -1,9 +1,15 @@
 import { PageProps } from '@assets/types/UI';
-import { Metadata } from 'next';
+import { useTranslation } from '@resources/i18n';
+import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-    title: 'Hệ thống xử lý tiến trình khóa luận tốt nghiệp',
-};
+export async function generateMetadata({ params: { lng } }: PageProps): Promise<Metadata> {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { t } = useTranslation(lng);
+
+    return {
+        title: t('info:product_name'),
+    };
+}
 
 const Layout = ({ children }: PageProps) => {
     return children;

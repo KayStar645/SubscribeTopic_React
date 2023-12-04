@@ -1,6 +1,13 @@
 import { MenuItemType } from '@assets/types/menu';
 import { TFunction } from 'i18next';
-import { FaBookJournalWhills, FaBoxesStacked, FaGear, FaHouseChimney, FaRegNewspaper } from 'react-icons/fa6';
+import {
+    FaBookJournalWhills,
+    FaBoxesStacked,
+    FaGear,
+    FaHouseChimney,
+    FaRegNewspaper,
+    FaUserGear,
+} from 'react-icons/fa6';
 import { PERMISSION, ROUTES } from '.';
 
 const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
@@ -15,6 +22,49 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
             checkPermission: true,
         },
         {
+            code: 'admin',
+            label: t('menu:admin'),
+            parent: 'admin',
+            icon: <FaUserGear />,
+            to: '',
+            permission: '',
+            checkPermission: true,
+            items: [
+                {
+                    code: 'faculty',
+                    parent: 'admin',
+                    label: t('menu:faculty'),
+                    to: `/${lng}/${ROUTES.admin.faculty}`,
+                    permission: PERMISSION.faculty.view,
+                    checkPermission: true,
+                },
+                {
+                    code: 'industry',
+                    parent: 'admin',
+                    label: t('menu:industry'),
+                    to: `/${lng}/${ROUTES.admin.industry}`,
+                    permission: PERMISSION.industry.view,
+                    checkPermission: true,
+                },
+                {
+                    code: 'major',
+                    parent: 'admin',
+                    label: t('menu:major'),
+                    to: `/${lng}/${ROUTES.admin.major}`,
+                    permission: PERMISSION.major.view,
+                    checkPermission: true,
+                },
+                {
+                    code: 'department',
+                    parent: 'admin',
+                    label: t('menu:department'),
+                    to: `/${lng}/${ROUTES.admin.department}`,
+                    permission: PERMISSION.department.view,
+                    checkPermission: true,
+                },
+            ],
+        },
+        {
             code: 'master_data',
             label: t('menu:master_data'),
             parent: 'master_data',
@@ -23,38 +73,6 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
             permission: '',
             checkPermission: true,
             items: [
-                {
-                    code: 'faculty',
-                    parent: 'master_data',
-                    label: t('menu:faculty'),
-                    to: `/${lng}/${ROUTES.master_data.faculty}`,
-                    permission: PERMISSION.faculty.view,
-                    checkPermission: true,
-                },
-                {
-                    code: 'industry',
-                    parent: 'master_data',
-                    label: t('menu:industry'),
-                    to: `/${lng}/${ROUTES.master_data.industry}`,
-                    permission: PERMISSION.industry.view,
-                    checkPermission: true,
-                },
-                {
-                    code: 'major',
-                    parent: 'master_data',
-                    label: t('menu:major'),
-                    to: `/${lng}/${ROUTES.master_data.major}`,
-                    permission: PERMISSION.major.view,
-                    checkPermission: true,
-                },
-                {
-                    code: 'department',
-                    parent: 'master_data',
-                    label: t('menu:department'),
-                    to: `/${lng}/${ROUTES.master_data.department}`,
-                    permission: PERMISSION.department.view,
-                    checkPermission: true,
-                },
                 {
                     code: 'teacher',
                     parent: 'master_data',

@@ -1,14 +1,14 @@
 'use client';
 
-import { API } from '@assets/configs';
+import { API, ROUTES } from '@assets/configs';
 import { PageProps } from '@assets/types/UI';
-import { request } from '@assets/helpers';
+import { language, request } from '@assets/helpers';
 import { DepartmentType } from '@assets/interface';
 import { FacultyDutyType } from '@assets/interface/FacultyDuty';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Loader } from '@resources/components/UI';
-import { Dropdown, InputDate, InputFile, InputImage } from '@resources/components/form';
+import { Dropdown, InputDate, InputFile } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -20,6 +20,7 @@ import * as yup from 'yup';
 import { InputText } from '@resources/components/form';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const defaultValues: FacultyDutyType = {
     id: '0',
@@ -28,8 +29,9 @@ const defaultValues: FacultyDutyType = {
     numberOfThesis: '0',
     timeStart: null,
     timeEnd: null,
-    image: [],
-    file: [],
+    images: [],
+    image: '',
+    file: '',
 };
 
 const schema = (t: TFunction) =>
@@ -52,20 +54,37 @@ const schema = (t: TFunction) =>
     });
 
 const FacultyDutyForm = ({ params }: PageProps) => {
-    const { lng } = params;
+    const { lng, id } = params;
     const { t } = useTranslation(lng);
     const router = useRouter();
 
-    const { control, handleSubmit } = useForm({
+    const { control, handleSubmit, setValue, reset } = useForm({
         resolver: yupResolver(schema(t)) as Resolver<FacultyDutyType>,
         defaultValues,
     });
 
-    const facultyDutyMutation = useMutation<any, AxiosError<ResponseType>, FacultyDutyType>({
-        mutationFn: (data: FacultyDutyType) => {
-            return data.id == '0'
-                ? request.post(API.admin.faculty_duty, data)
-                : request.update(API.admin.faculty_duty, data);
+    const facultyDutyDetailQuery = useQuery<FacultyDutyType | null, AxiosError<ResponseType>>({
+        queryKey: ['faculty_duty'],
+        refetchOnWindowFocus: false,
+        enabled: id != 0,
+        queryFn: async () => {
+            const response = await request.get<FacultyDutyType>(`${API.admin.detail.faculty_duty}?id=${id}`);
+
+            return response.data.data;
+        },
+    });
+
+    useEffect(() => {
+        if (facultyDutyDetailQuery.data) {
+            reset(facultyDutyDetailQuery.data);
+        }
+    }, [facultyDutyDetailQuery.data, reset]);
+
+    const facultyDutyMutation = useMutation<any, AxiosError<ResponseType>, FacultyDutyType | null>({
+        mutationFn: async (data) => {
+            return id == '0'
+                ? request.post<FacultyDutyType>(API.admin.faculty_duty, data)
+                : request.update<FacultyDutyType>(API.admin.faculty_duty, data);
         },
     });
 
@@ -81,9 +100,14 @@ const FacultyDutyForm = ({ params }: PageProps) => {
 
     const onSubmit = (data: FacultyDutyType) => {
         facultyDutyMutation.mutate(data, {
-            onSuccess: (response) => {
+            onSuccess: () => {
                 toast.success(t('request:update_success'));
-                router.back();
+                router.push(
+                    language.addPrefixLanguage(
+                        lng,
+                        ROUTES.information.faculty_duty + '?activeItem=faculty_duty&openMenu=false&parent=information',
+                    ),
+                );
             },
             onError: (err) => {
                 toast.error(err.response?.data.messages?.[0] || err.message);
@@ -93,7 +117,7 @@ const FacultyDutyForm = ({ params }: PageProps) => {
 
     return (
         <div className='overflow-auto pb-8'>
-            <Loader show={facultyDutyMutation.isPending} />
+            <Loader show={facultyDutyMutation.isPending || facultyDutyDetailQuery.isFetching} />
 
             <form className='mt-2 flex gap-3 bg-white border-round-xl row' onSubmit={handleSubmit(onSubmit)}>
                 <div className='col-6 flex flex-column gap-3'>
@@ -166,7 +190,7 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                         name='departmentId'
                         render={({ field, fieldState }) => (
                             <Dropdown
-                                id='form_data_departmentId'
+                                id='form_data_department_id'
                                 options={departmentQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
                                 value={field.value}
                                 label={t('module:field.faculty_duty.department')}
@@ -195,31 +219,25 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                     <Controller
                         name='image'
                         control={control}
-                        render={({ field, fieldState }) => (
-                            <InputImage
-                                id='form_data_image'
-                                value={['235.png']}
-                                folderName={t('module:field.faculty_duty.image')}
-                                label={t('image')}
-                                placeholder={t('image')}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                            />
-                        )}
-                    />
-
-                    <Controller
-                        name='file'
-                        control={control}
-                        render={({ field, fieldState }) => (
+                        render={() => (
                             <InputFile
-                                id='form_data_file'
-                                value={field.value}
-                                folderName={t('module:field.faculty_duty.file')}
-                                label={t('file')}
-                                placeholder={t('file')}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
+                                id='form_image'
+                                multiple={true}
+                                label={t('common:image')}
+                                accept='*'
+                                folder={`test_cua_son_2/`}
+                                onChange={({ file, files }) => {
+                                    if (file) {
+                                        setValue('image', file?.path);
+                                    }
+
+                                    if (files) {
+                                        setValue(
+                                            'images',
+                                            files.map((t) => t.path),
+                                        );
+                                    }
+                                }}
                             />
                         )}
                     />

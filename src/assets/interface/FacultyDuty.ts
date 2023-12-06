@@ -9,8 +9,9 @@ interface FacultyDutyType extends GeneralType {
     numberOfThesis?: string | number;
     timeStart?: Date | null;
     timeEnd?: Date | null;
-    image?: string[];
-    file?: string[];
+    image?: string;
+    images?: string[];
+    file?: string;
 }
 
 interface FacultyDutyParamType extends ParamType {

@@ -18,12 +18,14 @@ const API = {
         topic: '/thesis',
         role: '/role',
         permission: '/permission',
+        faculty_duty: '/facultyDuty',
         account: '/account',
         google_drive: 'googledrive',
         feedback: 'feedback',
 
         detail: {
             notification: '/notification/detail',
+            faculty_duty: '/facultyDuty/detail',
             group: '/group/detail',
             topic: '/thesis/detail',
             role: '/role/detail',

@@ -66,6 +66,12 @@
             "lecturer": "Giảng viên ra đề",
             "add_feedback": "Góp ý về đề tài"
         },
+        "faculty_duty": {
+            "numberOfThesis": "Số lượng khóa luận",
+            "department": "Bộ môn",
+            "image": "Hình nhiệm vụ khoa",
+            "file": "File nhiệm vụ khoa"
+        },
         "role": {}
     }
 }

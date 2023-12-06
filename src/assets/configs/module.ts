@@ -9,7 +9,9 @@ const MODULE = {
     group: 'Group',
     topic: 'Thesis',
     role: 'Role',
+    faculty_duty: 'FacultyDuty',
     account: 'Account',
+    notification: 'Notification',
 };
 
 export { MODULE };

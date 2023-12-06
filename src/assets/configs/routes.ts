@@ -31,6 +31,7 @@ const ROUTES = {
 
     information: {
         notification: '/information/notification',
+        faculty_duty: '/information/faculty_duty',
     },
 
     system: {

@@ -1,6 +1,6 @@
 'use client';
 
-import { API, ROUTES } from '@assets/configs';
+import { API, MODULE, ROUTES } from '@assets/configs';
 import { language, request } from '@assets/helpers';
 import { NotificationType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
@@ -24,7 +24,8 @@ const defaultValues: NotificationType = {
     name: '',
     describe: '',
     content: '',
-    image: '',
+    image: undefined,
+    images: undefined,
 };
 
 const schema = (t: TFunction) =>
@@ -46,7 +47,7 @@ const NotificationForm = ({ params }: PageProps) => {
     const { t } = useTranslation(lng);
     const router = useRouter();
 
-    const { control, handleSubmit, setValue, reset } = useForm({
+    const { control, handleSubmit, setValue, reset, getValues } = useForm({
         resolver: yupResolver(schema(t)) as Resolver<NotificationType>,
         defaultValues,
     });
@@ -71,8 +72,16 @@ const NotificationForm = ({ params }: PageProps) => {
     const notificationMutation = useMutation<any, AxiosError<ResponseType>, NotificationType | null>({
         mutationFn: async (data) => {
             return id == '0'
-                ? request.post<NotificationType>(API.admin.notification, data)
-                : request.update<NotificationType>(API.admin.notification, data);
+                ? request.post<NotificationType>(API.admin.notification, {
+                      ...data,
+                      image: data?.image?.path,
+                      images: data?.images?.map((t) => t.path),
+                  })
+                : request.update<NotificationType>(API.admin.notification, {
+                      ...data,
+                      image: data?.image?.path,
+                      images: data?.images?.map((t) => t.path),
+                  });
         },
     });
 
@@ -86,9 +95,6 @@ const NotificationForm = ({ params }: PageProps) => {
                         ROUTES.information.notification + '?activeItem=notification&openMenu=false&parent=information',
                     ),
                 );
-            },
-            onError: (err) => {
-                toast.error(err.response?.data.messages?.[0] || err.message);
             },
         });
     };
@@ -129,25 +135,24 @@ const NotificationForm = ({ params }: PageProps) => {
                 />
 
                 <Controller
-                    name='image'
+                    name='images'
                     control={control}
-                    render={() => (
+                    render={({ field }) => (
                         <InputFile
                             id='form_image'
                             multiple={true}
                             label={t('common:image')}
+                            value={field.value}
+                            defaultValue={getValues('image')}
                             accept='*'
-                            folder={`test_cua_son_2/`}
+                            folder={`${MODULE.notification}/${id}/`}
                             onChange={({ file, files }) => {
                                 if (file) {
-                                    setValue('image', file?.path);
+                                    setValue('image', file);
                                 }
 
                                 if (files) {
-                                    setValue(
-                                        'images',
-                                        files.map((t) => t.path),
-                                    );
+                                    setValue('images', files);
                                 }
                             }}
                         />

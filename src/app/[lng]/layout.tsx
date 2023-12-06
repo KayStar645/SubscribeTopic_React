@@ -5,13 +5,18 @@ import '../../resources/styles/index.css';
 
 import ReduxProvider from '@assets/providers/ReduxProvider';
 import { PageProps } from '@assets/types/UI';
-import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dir } from 'i18next';
 import { APIOptions, PrimeReactProvider, addLocale, locale } from 'primereact/api';
 import { toast } from 'react-toastify';
 
 const queryClient = new QueryClient({
     queryCache: new QueryCache({
+        onError: (error: any) => {
+            toast.error(error?.response?.data?.messages?.[0] || error?.message);
+        },
+    }),
+    mutationCache: new MutationCache({
         onError: (error: any) => {
             toast.error(error?.response?.data?.messages?.[0] || error?.message);
         },

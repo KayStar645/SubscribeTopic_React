@@ -92,6 +92,7 @@ type InputFileOnChange = {
 interface InputFileProps extends InputProps {
     multiple?: boolean;
     value?: FileType[];
+    defaultValue?: FileType;
     successMessage?: string;
     folder: string;
     accept?: string;

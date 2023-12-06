@@ -11,6 +11,7 @@ const MODULE = {
     role: 'Role',
     faculty_duty: 'FacultyDuty',
     account: 'Account',
+    notification: 'Notification',
 };
 
 export { MODULE };

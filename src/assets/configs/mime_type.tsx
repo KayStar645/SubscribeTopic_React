@@ -4,29 +4,30 @@ import { FaFileExcel } from 'react-icons/fa6';
 import { FaFilePowerpoint } from 'react-icons/fa6';
 import { FaFileArchive } from 'react-icons/fa';
 import { FaFilePdf } from 'react-icons/fa';
+import { FaFileLines } from 'react-icons/fa6';
 
 const IMAGE_MIME_TYPE: any = {
-    '.jpeg': <FaImage />,
-    '.jpg': <FaImage />,
-    '.png': <FaImage />,
-    '.gif': <FaImage />,
-    '.webp': <FaImage />,
-    '.avif': <FaImage />,
+    'image/jpeg': <FaImage />,
+    'image/png': <FaImage />,
+    'image/gif': <FaImage />,
+    'image/webp': <FaImage />,
+    'image/jpg': <FaImage />,
 };
 
 const DOCUMENT_MIME_TYPE: any = {
-    '.xlsx': <FaFileExcel />,
+    'application/vnd.ms-excel': <FaFileExcel />,
     '.xls': <FaFileExcel />,
     '.pptx': <FaFilePowerpoint />,
     '.ppt': <FaFilePowerpoint />,
-    '.docx': <FaFileWord />,
+    'application/msword': <FaFileWord />,
     '.doc': <FaFileWord />,
     '.pdf': <FaFilePdf />,
+    'text/plain': <FaFileLines />,
 };
 
 const COMPRESSED_MIME_TYPE: any = {
     '.zip': <FaFileArchive />,
-    '.rar': <FaFileArchive />,
+    'application/rar': <FaFileArchive />,
     '.tar': <FaFileArchive />,
     '.gz': <FaFileArchive />,
     '.7z': <FaFileArchive />,

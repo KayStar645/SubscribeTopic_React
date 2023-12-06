@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import acceptLanguage from 'accept-language';
-import { COOKIE_LANGUAGE_NAME, LANGUAGE, LANGUAGES, LANGUAGE_EXPIRE, AUTH_RAW_TOKEN, ROUTES } from '@assets/configs';
+import {
+    COOKIE_LANGUAGE_NAME,
+    LANGUAGE,
+    LANGUAGES,
+    LANGUAGE_EXPIRE,
+    AUTH_RAW_TOKEN,
+    ROUTES,
+    AUTH_TOKEN,
+} from '@assets/configs';
+import { AuthType } from '@assets/interface';
 
 const languages = LANGUAGES.map((t) => t.value) as string[];
 
@@ -25,6 +34,14 @@ export function middleware(req: NextRequest) {
     if (!lng) {
         lng = acceptLanguage.get(req.headers.get('Accept-Language'));
     }
+
+    try {
+        let auth: AuthType = JSON.parse(req.cookies.get(AUTH_TOKEN)?.value || '');
+
+        if (auth.type !== 'admin' && auth.type !== 'teacher') {
+            req.cookies.clear();
+        }
+    } catch (error) {}
 
     if (!req.cookies.has(AUTH_RAW_TOKEN) && !req.url.includes(ROUTES.auth.sign_in)) {
         return NextResponse.redirect(new URL(`/vi${ROUTES.auth.sign_in}`, req.url));

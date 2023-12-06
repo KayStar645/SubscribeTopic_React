@@ -5,6 +5,7 @@ interface NotificationType extends GeneralType {
     describe?: string;
     content?: string;
     image?: string;
+    images?: string[];
 }
 
 interface NotificationParamType extends ParamType {}

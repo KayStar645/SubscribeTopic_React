@@ -9,12 +9,15 @@ const ROUTES = {
         index: '/home',
     },
 
+    admin: {
+        faculty: '/admin/faculty',
+        department: '/admin/department',
+        major: '/admin/major',
+        industry: '/admin/industry',
+    },
+
     master_data: {
         teacher: '/master_data/teacher',
-        faculty: '/master_data/faculty',
-        department: '/master_data/department',
-        major: '/master_data/major',
-        industry: '/master_data/industry',
         student: '/master_data/student',
         registration_period: '/master_data/registration_period',
         student_join: '/master_data/student_join',

@@ -13,17 +13,20 @@ interface BreadcrumbItemType {
     path: string;
     label: string;
     url: string;
+    parent: string;
 }
 
 const Breadcrumb = ({ lng }: LanguageType) => {
     const { t } = useTranslation(lng);
     const pathName = usePathname();
     const pathItems = _.drop(pathName.split('/'), 2);
+    const parent = pathItems[0];
     const dispatch = useDispatch();
     const router = useRouter();
 
     const items: BreadcrumbItemType[] = _.map(pathItems, (path) => ({
         path,
+        parent,
         label: t(`route:${path}`),
         url: language.addPrefixLanguage(lng, language.getChildPath(pathName, path)) || '#',
     }));
@@ -44,9 +47,9 @@ const Breadcrumb = ({ lng }: LanguageType) => {
     );
 
     const onItemClick = (item: BreadcrumbItemType) => {
-        router.push(item.url + '?' + qs.stringify({ activeItem: item.path, parent: item.path, openMenu: false }));
+        router.push(item.url + '?' + qs.stringify({ activeItem: item.path, parent: item.parent, openMenu: false }));
 
-        dispatch(menuSlice.actions.onItemClick({ activeItem: item.path, parent: item.path, openMenu: false }));
+        dispatch(menuSlice.actions.onItemClick({ activeItem: item.path, parent: item.parent, openMenu: false }));
     };
 
     return (

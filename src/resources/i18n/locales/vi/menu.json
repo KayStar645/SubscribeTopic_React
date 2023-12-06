@@ -19,6 +19,7 @@
     "role": "Vai trò",
     "topic": "Đề tài",
     "information": "Thông tin",
-    "faculty_duty": "Nhiệm vụ khoa",
-    "account": "Tài khoản"
+    "account": "Tài khoản",
+    "admin": "Quản trị viên",
+    "faculty_duty": "Nhiệm vụ khoa"
 }

@@ -119,22 +119,22 @@ const FacultyDutyForm = ({ params }: PageProps) => {
         <div className='overflow-auto pb-8'>
             <Loader show={facultyDutyMutation.isPending || facultyDutyDetailQuery.isFetching} />
 
-            <form className='mt-2 flex gap-3 bg-white border-round-xl row' onSubmit={handleSubmit(onSubmit)}>
-                <div className='col-6 flex flex-column gap-3'>
-                    <Controller
-                        name='internalCode'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <InputText
-                                id='form_data_internal_code'
-                                value={field.value}
-                                label={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
-                                placeholder={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                            />
-                        )}
-                    />
+            <form className='p-3 flex flex-column gap-3 bg-white border-round-xl ' onSubmit={handleSubmit(onSubmit)}>
+                
+                <Controller
+                    name='internalCode'
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <InputText
+                            id='form_data_internal_code'
+                            value={field.value}
+                            label={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
+                            placeholder={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
+                            errorMessage={fieldState.error?.message}
+                            onChange={field.onChange}
+                        />
+                    )}
+                />
 
                     <Controller
                         name='name'
@@ -182,9 +182,9 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                             />
                         )}
                     />
-                </div>
+                
 
-                <div className='col-6 flex flex-column gap-3'>
+                
                     <Controller
                         control={control}
                         name='departmentId'
@@ -241,7 +241,7 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                             />
                         )}
                     />
-                </div>
+                
 
                 <div
                     className='flex align-items-center justify-content-end gap-2 absolute bottom-0 left-0 right-0 bg-white px-5 h-4rem shadow-8'

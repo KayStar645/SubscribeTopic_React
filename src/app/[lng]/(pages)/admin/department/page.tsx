@@ -67,7 +67,7 @@ const DepartmentPage = ({ params: { lng } }: PageProps) => {
 
     const renderActions = (data: DepartmentType) => {
         return (
-            <div className='flex align-items-center gap-3'>
+            <div className='flex align-items-center justify-content-center gap-3'>
                 <i
                     className='pi pi-pencil hover:text-primary cursor-pointer'
                     onClick={() => {

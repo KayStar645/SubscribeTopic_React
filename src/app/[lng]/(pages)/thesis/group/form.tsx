@@ -28,6 +28,7 @@ const GroupForm = forwardRef<GroupFormRefType, GroupFormType>(({ title, lng }, r
 
     const groupDetailQuery = useQuery<GroupType | null, AxiosError<ResponseType>>({
         enabled: id != 0,
+        queryKey: ['group', 'detail'],
         refetchOnWindowFocus: false,
         queryFn: async () => {
             const params: GroupParamType = {

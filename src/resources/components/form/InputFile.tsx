@@ -26,6 +26,7 @@ const InputFile = ({
     folder,
     defaultValue,
     defaultFileText = 'Mặc định',
+    fileClassName = 'col-3',
     onChange = () => {},
 }: InputFileProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -69,12 +70,13 @@ const InputFile = ({
                     <div className='flex align-items-center gap-2'>
                         <Tag
                             value={
-                                <div className='flex align-items-center gap-1 flex-1'>
+                                <div className='flex align-items-center gap-1'>
                                     {MIME_TYPES[file.type]}
-                                    <p>{file.type}</p>
+                                    <p style={{ wordBreak: 'break-all' }}>{file.type}</p>
                                 </div>
                             }
                             severity={'info'}
+                            className='flex-1'
                         />
 
                         <Tag
@@ -101,7 +103,7 @@ const InputFile = ({
     }, [defaultValue]);
 
     return (
-        <div className='border-round-xl bg-white border-1 border-solid border-300 relative'>
+        <div className='border-round-xl bg-white border-1 border-solid border-300 relative overflow-hidden'>
             <Loader show={fileMutation.isPending} />
 
             <input
@@ -148,6 +150,9 @@ const InputFile = ({
                                             file: response.data.data!,
                                             files: [response.data.data!],
                                         });
+
+                                        setFiles([response.data.data]);
+                                        setDefaultFile(response.data.data);
                                     }
                                 },
                             },
@@ -185,11 +190,11 @@ const InputFile = ({
                 />
             </div>
 
-            <div className='p-3 flex flex-wrap'>
+            <div className='p-3 flex flex-wrap overflow-auto'>
                 {files.length > 0 ? (
                     files?.map((file, index) => (
                         <div
-                            className='flex align-items-center gap-3 col-3 py-3'
+                            className={classNames('flex align-items-center gap-3 py-3', fileClassName)}
                             key={file.name + '_' + file.sizeInBytes}
                         >
                             <div className='flex flex-column gap-3 align-items-center'>

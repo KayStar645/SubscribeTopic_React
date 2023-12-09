@@ -27,6 +27,9 @@ const ROUTES = {
         group: '/thesis/group',
         student_join: '/thesis/student_join',
         topic: '/thesis/topic',
+        job: '/thesis/job',
+        job_detail: '/thesis/job/group',
+        job_for_topic: '/thesis/job/exercise',
     },
 
     information: {

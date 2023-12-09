@@ -18,6 +18,7 @@
     "permission": "Quyền",
     "google_drive": "Google Drive",
     "thesis_registration": "Đăng ký đề tài",
+    "job": "Công việc",
 
     "field": {
         "faculty": {
@@ -72,6 +73,15 @@
             "image": "Hình nhiệm vụ khoa",
             "file": "File nhiệm vụ khoa"
         },
-        "role": {}
+        "role": {},
+        "job": {
+            "news": "Bảng tin",
+            "exercise": "Bài tập trên lớp",
+            "member": "Thành viên",
+            "due_soon": "Sắp đến hạn",
+            "no_due_soon": "Không bài tập nào sắp đến hạn",
+            "add_content": "Thêm công việc cho đề tài",
+            "due": "Đến hạn"
+        }
     }
 }

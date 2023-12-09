@@ -16,7 +16,6 @@ import { DataTable, DataTableExpandedRows } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
-import { toast } from 'react-toastify';
 import GroupForm, { GroupFormRefType } from './form';
 
 const GroupPage = ({ params: { lng } }: PageProps) => {
@@ -59,58 +58,16 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
 
     const renderActions = (data: GroupType) => {
         return (
-            <i
-                className='pi pi-pencil hover:text-primary cursor-pointer'
-                onClick={() => {
-                    formRef.current?.show?.(data.id);
-                    setSelected(data);
-                }}
-            />
-        );
-    };
-
-    const rowExpansionTemplate = (data: GroupType) => {
-        return (
-            <div>
-                <p className='pb-3 text-900 font-semibold'>{t('module:field.group.members')}</p>
-                <DataTable value={data.members}>
-                    <Column
-                        alignHeader='center'
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
-                        field='student.internalCode'
-                        header={t('common:code_of', { obj: t('module:student').toLowerCase() })}
-                    />
-                    <Column
-                        alignHeader='center'
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
-                        field='student.name'
-                        header={t('common:name_of', { obj: t('module:student').toLowerCase() })}
-                    />
-                    <Column
-                        alignHeader='center'
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
-                        field='student.phoneNumber'
-                        header={t('phone_number')}
-                    />
-                </DataTable>
+            <div className='flex align-items-center justify-content-center'>
+                <i
+                    className='pi pi-pencil hover:text-primary cursor-pointer'
+                    onClick={() => {
+                        formRef.current?.show?.(data.id);
+                        setSelected(data);
+                    }}
+                />
             </div>
         );
-    };
-
-    const allowExpansion = (data: GroupType) => {
-        return data.members ? data.members.length > 0 : false;
     };
 
     return (
@@ -128,19 +85,9 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
 
                 <DataTable
                     value={groupQuery.data}
-                    rowExpansionTemplate={rowExpansionTemplate}
                     expandedRows={expandedRows}
                     onRowToggle={(e) => setExpandedRows(e.data)}
                 >
-                    <Column
-                        alignHeader='center'
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            width: '4rem',
-                        }}
-                        expander={allowExpansion}
-                    />
                     <Column
                         alignHeader='center'
                         headerStyle={{

@@ -1,8 +1,11 @@
 'use client';
 
-import { API, ROWS_PER_PAGE } from '@assets/configs';
-import { request } from '@assets/helpers';
-import { MajorParamType, MajorType } from '@assets/interface';
+import { API, AUTH_TOKEN, MODULE, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
+import { DATE_FILTER } from '@assets/configs/general';
+import { language, request } from '@assets/helpers';
+import useCookies from '@assets/hooks/useCookies';
+import usePermission from '@assets/hooks/usePermission';
+import { AuthType, TopicParamType, TopicType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
@@ -12,6 +15,7 @@ import { ConfirmModal } from '@resources/components/modal';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -19,27 +23,37 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import MajorForm, { MajorFormRefType } from './form';
-import { DATE_FILTER } from '@assets/configs/general';
+import { useDebouncedCallback } from 'use-debounce';
 
-const MajorPage = ({ params: { lng } }: PageProps) => {
+const GroupPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
-    const formRef = useRef<MajorFormRefType>(null);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-    const [selected, setSelected] = useState<MajorType>();
+    const router = useRouter();
+    const permission = usePermission(MODULE.job);
+    const [auth] = useCookies<AuthType>(AUTH_TOKEN);
 
-    const [params, setParams] = useState<MajorParamType>({
+    const debounceKeyword = useDebouncedCallback((keyword) => {
+        setParams((prev) => ({
+            ...prev,
+            filters: request.handleFilter(prev.filters, '(internalCode|name)', '@=', keyword),
+        }));
+    }, 600);
+
+    const [params, setParams] = useState<TopicParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
+        filters: '',
+        isAllDetail: true,
     });
 
-    const majorQuery = useQuery<MajorType[], AxiosError<ResponseType>>({
+    const thesisQuery = useQuery<TopicType[], AxiosError<ResponseType>>({
+        enabled: !!auth?.customer.Id,
         refetchOnWindowFocus: false,
-        queryKey: ['majors', 'list', params],
+        queryKey: ['thesis', 'list', params],
         queryFn: async () => {
-            const response = await request.get<MajorType[]>(`${API.admin.major}`, { params });
+            const response = await request.get<TopicType[]>(`${API.admin.topic}`, { params });
 
             setMeta({
                 currentPage: response.data.extra?.currentPage,
@@ -55,9 +69,9 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
         },
     });
 
-    const majorMutation = useMutation<any, AxiosError<ResponseType>, MajorType>({
+    const thesisMutation = useMutation<any, AxiosError<ResponseType>, TopicType>({
         mutationFn: (data) => {
-            return request.remove(`${API.admin.major}`, { params: { id: data.id } });
+            return request.remove(`${API.admin.topic}`, { params: { id: data.id } });
         },
     });
 
@@ -65,31 +79,25 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (data: MajorType) => {
+    const renderActions = (data: TopicType) => {
         return (
             <div className='flex align-items-center justify-content-center gap-3'>
-                <i
-                    className='pi pi-pencil hover:text-primary cursor-pointer'
-                    onClick={() => {
-                        formRef.current?.show?.(data);
-                        setSelected(data);
-                    }}
-                />
-                <i
-                    className='pi pi-trash hover:text-red-600 cursor-pointer'
-                    onClick={(e) => {
-                        confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
-                    }}
-                />
+                {permission.create && (
+                    <i
+                        className='pi pi-book hover:text-primary cursor-pointer'
+                        onClick={() =>
+                            router.push(language.addPrefixLanguage(lng, `${ROUTES.thesis.job_detail}/${data.id}`))
+                        }
+                    />
+                )}
             </div>
         );
     };
 
-    const onRemove = (data: MajorType) => {
-        majorMutation.mutate(data, {
+    const onRemove = (data: TopicType) => {
+        thesisMutation.mutate(data, {
             onSuccess: () => {
-                majorQuery.refetch();
-
+                thesisQuery.refetch();
                 toast.success(t('request:update_success'));
             },
             onError: (err) => {
@@ -108,27 +116,31 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
             />
 
             <div className='flex align-items-center justify-content-between bg-white h-4rem px-3 border-round-lg shadow-3'>
-                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:major').toLowerCase() })}</p>
-                <Button
-                    label={t('create_new')}
-                    icon='pi pi-plus'
-                    size='small'
-                    onClick={() => {
-                        formRef.current?.show?.();
-                        setSelected(undefined);
-                    }}
+                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:thesis').toLowerCase() })}</p>
+
+                {permission.create && (
+                    <Button
+                        label={t('create_new')}
+                        icon='pi pi-plus'
+                        size='small'
+                        onClick={() => router.push(language.addPrefixLanguage(lng, `${ROUTES.thesis.topic}/0`))}
+                    />
+                )}
+            </div>
+
+            <div className='flex align-items-center gap-3'>
+                <InputText
+                    placeholder={`${t('search')}...`}
+                    className='w-20rem'
+                    onChange={(e) => debounceKeyword(e.target.value)}
                 />
             </div>
 
-            <div className='flex align-items-center justify-content-between'>
-                <InputText placeholder={`${t('search')}...`} className='w-20rem' />
-            </div>
-
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={majorQuery.isFetching || majorMutation.isPending} />
+                <Loader show={thesisQuery.isFetching || thesisMutation.isPending} />
 
                 <DataTable
-                    value={majorQuery.data || []}
+                    value={thesisQuery.data}
                     rowHover={true}
                     stripedRows={true}
                     showGridlines={true}
@@ -152,7 +164,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                             whiteSpace: 'nowrap',
                         }}
                         field='internalCode'
-                        header={t('common:code_of', { obj: t('module:major').toLowerCase() })}
+                        header={t('common:code_of', { obj: t('module:thesis').toLowerCase() })}
                     />
                     <Column
                         alignHeader='center'
@@ -162,7 +174,27 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                             whiteSpace: 'nowrap',
                         }}
                         field='name'
-                        header={t('common:name_of', { obj: t('module:major').toLowerCase() })}
+                        header={t('common:name_of', { obj: t('module:thesis').toLowerCase() })}
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header={t('module:field.thesis.instruction')}
+                        body={(data: TopicType) => <p>{data.thesisInstructions?.map((t) => t.name).join(', ')}</p>}
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header={t('module:field.thesis.review')}
+                        body={(data: TopicType) => <p>{data.thesisReviews?.map((t) => t.name).join(', ')}</p>}
                     />
                 </DataTable>
 
@@ -194,19 +226,8 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                     />
                 </div>
             </div>
-
-            <MajorForm
-                lng={lng}
-                title={
-                    selected?.id
-                        ? t('update_at', { obj: selected.name })
-                        : t('create_new_at', { obj: t('module:major').toLowerCase() })
-                }
-                ref={formRef}
-                onSuccess={(major) => majorQuery.refetch()}
-            />
         </div>
     );
 };
 
-export default MajorPage;
+export default GroupPage;

@@ -3,6 +3,7 @@ import { MultiSelectChangeEvent } from 'primereact/multiselect';
 import { RadioButtonChangeEvent } from 'primereact/radiobutton';
 import { ChangeEvent, ChangeEventHandler, FocusEventHandler } from 'react';
 import { OptionType } from './common';
+import type { EditorConfig } from '@ckeditor/ckeditor5-core';
 
 interface InputProps {
     id: string;
@@ -62,10 +63,7 @@ interface InputDateProps extends InputProps {
 
 interface EditorProps extends InputProps {
     onChange?: (_e: string) => void;
-}
-
-interface EditorProps extends InputProps {
-    onChange?: (_e: string) => void;
+    config?: EditorConfig;
 }
 
 interface InputRangeProps extends InputProps {
@@ -97,6 +95,7 @@ interface InputFileProps extends InputProps {
     folder: string;
     accept?: string;
     defaultFileText?: string;
+    fileClassName?: string;
     onChange?: (_e: InputFileOnChange) => void;
 }
 

@@ -78,6 +78,9 @@ const PERMISSION = {
         view: 'Account.View',
         create: 'Account.Create',
     },
+    job: {
+        view: 'Job.View',
+    },
 };
 
 const ACTION = {

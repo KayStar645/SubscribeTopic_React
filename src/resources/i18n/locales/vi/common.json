@@ -59,5 +59,7 @@
     "send": "Gửi",
     "now_available": "Hiện có",
     "status": "Trạng thái",
-    "change_to_draft": "Chuyển về nháp"
+    "change_to_draft": "Chuyển về nháp",
+    "see_all": "Xem tất cả",
+    "post": "Đăng"
 }

@@ -9,6 +9,7 @@ import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@ta
 import { dir } from 'i18next';
 import { APIOptions, PrimeReactProvider, addLocale, locale } from 'primereact/api';
 import { toast } from 'react-toastify';
+import moment from 'moment';
 
 const queryClient = new QueryClient({
     queryCache: new QueryCache({
@@ -62,19 +63,28 @@ addLocale('vi', {
     clear: 'Hủy',
 });
 
+moment.locale('vi', {
+    monthsShort: [
+        'Thg 1',
+        'Thg 2',
+        'Thg 3',
+        'Thg 4',
+        'Thg 5',
+        'Thg 6',
+        'Thg 7',
+        'Thg 8',
+        'Thg 9',
+        'Thg 10',
+        'Thg 11',
+        'Thg 12',
+    ],
+});
+
 const primeReactValue: Partial<APIOptions> = {
     ripple: true,
 };
 
 const RootLayout = ({ children, params: { lng } }: PageProps) => {
-    // const selectFacultyRef = useRef<SelectFacultyModalRefType>(null);
-
-    // useEffect(() => {
-    //     if (!getCookie(FACULTY_TOKEN)) {
-    //         selectFacultyRef.current?.show();
-    //     }
-    // }, []);
-
     return (
         <html lang={lng} dir={dir(lng)}>
             <ReduxProvider>

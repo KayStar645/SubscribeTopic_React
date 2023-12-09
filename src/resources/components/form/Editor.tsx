@@ -14,6 +14,8 @@ const Editor = ({
     required = false,
     disabled = false,
     errorMessage,
+    config,
+    placeholder,
     onChange = () => {},
 }: EditorProps) => {
     const [inputValue, setInputValue] = useState(value.toString());
@@ -42,6 +44,10 @@ const Editor = ({
                     editor={EditorContainer}
                     data={inputValue}
                     disabled={disabled}
+                    config={{
+                        ...config,
+                        placeholder,
+                    }}
                     onChange={(event, editor) => {
                         const data = editor.data.get();
 

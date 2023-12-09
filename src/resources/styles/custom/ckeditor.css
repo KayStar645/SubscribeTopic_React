@@ -11,3 +11,7 @@
     border-top-left-radius: 6px !important;
     border-top-right-radius: 6px !important;
 }
+
+.ck.ck-toolbar.ck-toolbar_grouping > .ck-toolbar__items {
+    flex-wrap: wrap !important;
+}

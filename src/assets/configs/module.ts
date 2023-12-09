@@ -12,6 +12,7 @@ const MODULE = {
     faculty_duty: 'FacultyDuty',
     account: 'Account',
     notification: 'Notification',
+    job: 'Job',
 };
 
 export { MODULE };

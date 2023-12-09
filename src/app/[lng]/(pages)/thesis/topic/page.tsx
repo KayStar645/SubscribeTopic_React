@@ -64,11 +64,6 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
 
             return response.data.data || [];
         },
-        onError: (err) => {
-            if (err.response?.status === 403) {
-                toast.error('Bạn không có quyền thao tác');
-            }
-        },
     });
 
     const teacherQuery = useQuery<TeacherType[], AxiosError<ResponseType>>({
@@ -93,22 +88,13 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
 
     const renderActions = (data: TopicType) => {
         return (
-            <div className='flex align-items-center gap-3'>
-                {permission.update && (
+            <div className='flex align-items-center gap-3 justify-content-center'>
+                {permission.create && (
                     <i
                         className='pi pi-pencil hover:text-primary cursor-pointer'
                         onClick={() =>
                             router.push(language.addPrefixLanguage(lng, `${ROUTES.thesis.topic}/${data.id}`))
                         }
-                    />
-                )}
-
-                {permission.remove && (
-                    <i
-                        className='pi pi-trash hover:text-red-600 cursor-pointer'
-                        onClick={(e) => {
-                            confirmModalRef.current?.show?.(e, data, t('sure_to_delete', { obj: data.name }));
-                        }}
                     />
                 )}
             </div>

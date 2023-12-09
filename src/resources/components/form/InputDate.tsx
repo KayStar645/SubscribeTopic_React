@@ -36,6 +36,7 @@ const InputDate = ({
                     locale='vi'
                     hideOnDateTimeSelect={true}
                     value={value ? new Date(value) : null}
+                    hourFormat='24'
                     placeholder={placeholder}
                     onChange={onChange}
                     dateFormat={format}

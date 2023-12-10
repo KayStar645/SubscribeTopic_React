@@ -4,7 +4,7 @@ import { GeneralType, StudentType } from '.';
 interface GroupType extends GeneralType {
     countMember?: string | number;
     leaderId?: string | number;
-    leader?: any;
+    leader?: { student: StudentType };
     members?: {
         student?: StudentType;
     }[];

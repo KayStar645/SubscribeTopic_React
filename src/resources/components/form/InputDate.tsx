@@ -1,11 +1,12 @@
 import { InputDateProps } from '@assets/types/form';
 import { Calendar as PrimeCalendar } from 'primereact/calendar';
 import { classNames } from 'primereact/utils';
+import { useEffect, useState } from 'react';
 
 const InputDate = ({
     id,
     label,
-    value = undefined,
+    value = null,
     placeholder = '',
     blockClassName = '',
     format = 'dd/mm/yy',
@@ -15,6 +16,14 @@ const InputDate = ({
     errorMessage,
     onChange = () => {},
 }: InputDateProps) => {
+    const [date, setDate] = useState<Date | undefined | null>(value ? new Date(value) : null);
+
+    useEffect(() => {
+        if (value) {
+            setDate(new Date(value));
+        }
+    }, [value]);
+
     return (
         <div className={classNames(blockClassName)}>
             <div className={classNames('block', { 'flex align-items-center': row })}>
@@ -35,7 +44,7 @@ const InputDate = ({
                     inputId={id}
                     locale='vi'
                     hideOnDateTimeSelect={true}
-                    value={value ? new Date(value) : null}
+                    value={date}
                     hourFormat='24'
                     placeholder={placeholder}
                     onChange={onChange}

@@ -1,3 +1,4 @@
+import { ImageProps } from 'primereact/image';
 import { ReactNode } from 'react';
 
 interface PageProps {
@@ -26,4 +27,6 @@ interface DividerProps {
     py?: number;
 }
 
-export type { PageProps, BreadcrumbProps, LoaderProps, DividerProps };
+interface CustomImageProps extends ImageProps {}
+
+export type { PageProps, BreadcrumbProps, LoaderProps, DividerProps, CustomImageProps };

@@ -20,8 +20,9 @@ const API = {
         permission: '/permission',
         faculty_duty: '/facultyDuty',
         account: '/account',
-        google_drive: 'googledrive',
-        feedback: 'feedback',
+        google_drive: '/googledrive',
+        feedback: '/feedback',
+        job: '/job',
 
         detail: {
             notification: '/notification/detail',
@@ -29,6 +30,7 @@ const API = {
             group: '/group/detail',
             topic: '/thesis/detail',
             role: '/role/detail',
+            job: '/job/detail',
         },
 
         approve: {
@@ -37,6 +39,12 @@ const API = {
 
         assign: {
             role: '/role/assign',
+        },
+
+        custom: {
+            thesis: {
+                topic_by_teacher: '/thesis/listThesisInstructorOfTeacher',
+            },
         },
     },
 };

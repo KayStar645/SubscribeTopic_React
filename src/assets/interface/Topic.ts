@@ -1,6 +1,6 @@
 import { ParamType } from '@assets/types/request';
 import { GeneralType } from './Default';
-import { MajorType, TeacherType } from '.';
+import { GroupType, MajorType, TeacherType } from '.';
 
 interface TopicType extends GeneralType {
     summary?: string;
@@ -14,6 +14,7 @@ interface TopicType extends GeneralType {
     thesisMajors?: MajorType[];
     lecturerThesis?: TeacherType;
     status?: 'A' | 'AR' | 'D';
+    groupDto?: GroupType;
 }
 
 interface TopicParamType extends ParamType {

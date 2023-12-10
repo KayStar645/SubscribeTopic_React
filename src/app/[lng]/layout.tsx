@@ -11,19 +11,6 @@ import { APIOptions, PrimeReactProvider, addLocale, locale } from 'primereact/ap
 import { toast } from 'react-toastify';
 import moment from 'moment';
 
-const queryClient = new QueryClient({
-    queryCache: new QueryCache({
-        onError: (error: any) => {
-            toast.error(error?.response?.data?.messages?.[0] || error?.message);
-        },
-    }),
-    mutationCache: new MutationCache({
-        onError: (error: any) => {
-            toast.error(error?.response?.data?.messages?.[0] || error?.message);
-        },
-    }),
-});
-
 locale('vi');
 
 addLocale('vi', {
@@ -83,6 +70,19 @@ moment.locale('vi', {
 const primeReactValue: Partial<APIOptions> = {
     ripple: true,
 };
+
+const queryClient = new QueryClient({
+    queryCache: new QueryCache({
+        onError: (error: any) => {
+            toast.error(error?.response?.data?.messages?.[0] || error?.message);
+        },
+    }),
+    mutationCache: new MutationCache({
+        onError: (error: any) => {
+            toast.error(error?.response?.data?.messages?.[0] || error?.message);
+        },
+    }),
+});
 
 const RootLayout = ({ children, params: { lng } }: PageProps) => {
     return (

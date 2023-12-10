@@ -9,20 +9,63 @@ import { createContext, useMemo, useState } from 'react';
 import NewsTab from '../../tab/NewsTab';
 import ExerciseTab from '../../tab/ExerciseTab';
 import MemberTab from '../../tab/MemberTab';
+import { useQuery } from '@tanstack/react-query';
+import { API } from '@assets/configs';
+import { TopicType, TopicParamType, JobType, JobParamType } from '@assets/interface';
+import { AxiosError } from 'axios';
+import { request } from '@assets/helpers';
+import { Loader } from '@resources/components/UI';
 
 type JobPageContextType = {
     t: TFunction;
     lng: string;
+    topic?: TopicType | null;
+    jobs?: JobType[];
 };
 
 const JobPageContext = createContext<JobPageContextType>({
     t: defaultT,
     lng: 'vi',
+    topic: null,
+    jobs: [],
 });
 
-const JobPage = ({ params: { lng } }: PageProps) => {
+const JobPage = ({ params }: PageProps) => {
+    const { lng, id } = params;
     const { t } = useTranslation(lng);
     const [activeTab, setActiveTab] = useState<string>('news');
+
+    const topicDetail = useQuery<TopicType | null, AxiosError<ResponseType>>({
+        queryKey: ['thesis_detail', id],
+        refetchOnWindowFocus: false,
+        enabled: id !== '0',
+        queryFn: async () => {
+            const params: TopicParamType = {
+                id,
+                isAllDetail: true,
+            };
+
+            const response = await request.get<TopicType>(API.admin.detail.topic, { params });
+
+            return response.data.data;
+        },
+    });
+
+    const jobDetail = useQuery<JobType[], AxiosError<ResponseType>>({
+        queryKey: ['job_detail', id],
+        refetchOnWindowFocus: false,
+        enabled: id !== '0',
+        queryFn: async () => {
+            const params: JobParamType = {
+                thesisId: id,
+                isAllDetail: true,
+            };
+
+            const response = await request.get<JobType[]>(API.admin.job, { params });
+
+            return response.data.data || [];
+        },
+    });
 
     const TABS: OptionType[] = useMemo(
         () => [
@@ -45,10 +88,14 @@ const JobPage = ({ params: { lng } }: PageProps) => {
     const value: JobPageContextType = {
         t,
         lng,
+        topic: topicDetail.data,
+        jobs: jobDetail.data,
     };
 
     return (
         <JobPageContext.Provider value={value}>
+            <Loader show={topicDetail.isFetching || jobDetail.isFetching} />
+
             <div className='flex align-items-center border-bottom-2 border-200 bg-white border-round overflow-hidden'>
                 {TABS.map((tab) => (
                     <div

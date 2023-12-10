@@ -55,7 +55,7 @@ interface RadioListProps extends InputProps {
 }
 
 interface InputDateProps extends InputProps {
-    value?: Date | null;
+    value?: Date | null | string;
     format?: string;
     time?: boolean;
     onChange?: (_e: FormEvent<Date, SyntheticEvent<Element, Event>>) => void;
@@ -95,6 +95,7 @@ interface InputFileProps extends InputProps {
     folder: string;
     accept?: string;
     defaultFileText?: string;
+    hasDefault?: boolean;
     fileClassName?: string;
     onChange?: (_e: InputFileOnChange) => void;
 }

@@ -218,7 +218,7 @@ const AccountPage = ({ params: { lng } }: PageProps) => {
                             color: 'var(--surface-a)',
                             whiteSpace: 'nowrap',
                         }}
-                        header={t('common:role')}
+                        header={t('module:role')}
                         body={(account: AccountType) => <p>{account.roles?.map((t) => t.name).join(', ')}</p>}
                     />
                 </DataTable>

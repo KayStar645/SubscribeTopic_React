@@ -61,7 +61,7 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
     });
     const [visible, setVisible] = useState(false);
     const groupPermissions = useGetGroupPermission();
-    const permissions = useGetPermissionDetail(getValues('id'));
+    const [_permissions, setPermissions] = useState<string[]>([]);
 
     const permissionQuery = useQuery<string[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
@@ -80,16 +80,20 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
         },
     });
 
-    const permissionDetailQuery = useQuery<RoleType, AxiosError<ResponseType>>({
+    const permissionDetailQuery = useQuery<string[], AxiosError<ResponseType>>({
         queryKey: ['permissionsDetail'],
         refetchOnWindowFocus: false,
         enabled: false,
         queryFn: async () => {
             const response = await request.get<RoleType>(`${API.admin.detail.role}?pId=${getValues('id')}`);
 
-            return response.data.data || {};
+            return response.data.data?.permissionsName || [];
         },
     });
+
+    useEffect(() => {
+        setPermissions(permissionDetailQuery.data || []);
+    }, [permissionDetailQuery.data]);
 
     const show = (data?: RoleType) => {
         setVisible(true);
@@ -128,9 +132,9 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
     const onCheckPermission = (checked: boolean, permission: PermissionType) => {
         if (checked) {
             setPermissions((prev) => [...prev, ...permission.actions]);
-            setValue('permissionsName', [...permissions, ...permission.actions]);
+            setValue('permissionsName', [..._permissions, ...permission.actions]);
         } else {
-            const permissionsFilter = permissions.filter((t) => !permission.actions.includes(t));
+            const permissionsFilter = _permissions.filter((t) => !permission.actions.includes(t));
 
             setPermissions(permissionsFilter);
             setValue('permissionsName', permissionsFilter);
@@ -145,7 +149,7 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
                 <Checkbox
                     id={permission.name}
                     label={t(`module:${permission.name}`)}
-                    value={permission?.actions?.every((action) => permissions.includes(action))}
+                    value={permission?.actions?.every((action) => _permissions.includes(action))}
                     onChange={(e) => onCheckPermission(!!e.checked, permission)}
                     blockClassName='flex-1'
                 />
@@ -153,7 +157,7 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
                 <div className='flex align-items-center gap-2'>
                     {permission.actions.map(
                         (action) =>
-                            permissions.includes(action) && (
+                            _permissions.includes(action) && (
                                 <Chip key={action} label={t(`common:${action?.split('.')[1].toLowerCase()}`)} />
                             ),
                     )}
@@ -179,7 +183,7 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
                 <Checkbox
                     id={`permission_${permission.name}_${permission.actions[0]}`}
                     label={t(`common:${permission.actions[0]?.split('.')[1].toLowerCase()}`)}
-                    value={!!permissions.includes(permission.actions[0])}
+                    value={!!_permissions.includes(permission.actions[0])}
                     onChange={(e) => onCheckPermission(!!e.checked, permission)}
                 />
             </div>

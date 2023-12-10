@@ -81,7 +81,8 @@
             "due_soon": "Sắp đến hạn",
             "no_due_soon": "Không bài tập nào sắp đến hạn",
             "add_content": "Thêm công việc cho đề tài",
-            "due": "Đến hạn"
+            "due": "Đến hạn",
+            "instruction_topic": "Đề tài hướng dẫn"
         }
     }
 }

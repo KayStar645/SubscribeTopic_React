@@ -53,7 +53,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
         refetchOnWindowFocus: false,
         queryKey: ['thesis', 'list', params],
         queryFn: async () => {
-            const response = await request.get<TopicType[]>(`${API.admin.topic}`, { params });
+            const response = await request.get<TopicType[]>(`${API.admin.custom.thesis.topic_by_teacher}`, { params });
 
             setMeta({
                 currentPage: response.data.extra?.currentPage,
@@ -116,7 +116,9 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
             />
 
             <div className='flex align-items-center justify-content-between bg-white h-4rem px-3 border-round-lg shadow-3'>
-                <p className='text-xl font-semibold'>{t('list_of', { module: t('module:thesis').toLowerCase() })}</p>
+                <p className='text-xl font-semibold'>
+                    {t('list_of', { module: t('module:field.job.instruction_topic').toLowerCase() })}
+                </p>
 
                 {permission.create && (
                     <Button

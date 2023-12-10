@@ -2,8 +2,14 @@ import { Button } from 'primereact/button';
 import { Panel, PanelHeaderTemplateOptions } from 'primereact/panel';
 import { Ripple } from 'primereact/ripple';
 import { classNames } from 'primereact/utils';
+import { useContext } from 'react';
+import { JobPageContext } from '../group/[id]/page';
+import moment from 'moment';
+import { HTML } from '@assets/helpers/string';
 
 const ExerciseTab = () => {
+    const { jobs } = useContext(JobPageContext);
+
     const ExerciseItemHeader = (options: PanelHeaderTemplateOptions) => {
         return (
             <div
@@ -36,25 +42,30 @@ const ExerciseTab = () => {
                 collapsed={true}
                 className='shadow-1 border-1 border-300 border-round overflow-hidden'
             >
-                <div className='p-3 pb-6'>
-                    <div className='flex align-items-center justify-content-between pb-3'>
-                        <p className='text-sm text-500 font-semibold'>Đã đăng vào 4 Thg 11</p>
-                        <p className='text-sm text-500 font-semibold'>Đã nộp</p>
-                    </div>
+                {jobs &&
+                    jobs.length > 0 &&
+                    jobs.map((job) => (
+                        <>
+                            <div className='p-3 pb-6'>
+                                <div className='flex align-items-center justify-content-between pb-3'>
+                                    <p className='text-sm text-500 font-semibold'>
+                                        Đã đăng vào 4 Thg 11 {moment(job.lastModifiedDate).format('DD MMM')}
+                                    </p>
 
-                    <p>
-                        - Phân tích và thiết kế testcase cho kiểm tra các chức năng, kiểm tra đơi vị. - Xây dựng kịch
-                        bản kiểm chứng tự động black box, white box. - Sử dụng Selenium IDE, Code UI test, Unit test để
-                        thực hiện kiểm chứng các chức năng phần mềm.
-                    </p>
-                </div>
+                                    {/* <p className='text-sm text-500 font-semibold'>Đã nộp</p> */}
+                                </div>
 
-                <div className='flex align-items-center justify-content-between gap-3 p-3 cursor-pointer bg-white border-top-1 border-300'>
-                    <div className='p-ripple py-2 px-3 hover:bg-blue-50 border-round'>
-                        <p className='text-blue-600 font-semibold'>Xem hướng dẫn</p>
-                        <Ripple />
-                    </div>
-                </div>
+                                <div dangerouslySetInnerHTML={HTML(job.instructions)} />
+                            </div>
+
+                            <div className='flex align-items-center justify-content-between gap-3 cursor-pointer bg-white border-top-1 border-300'>
+                                <div className='p-ripple py-2 px-3 hover:bg-blue-50 border-round'>
+                                    <p className='text-blue-600 font-semibold'>Xem hướng dẫn</p>
+                                    <Ripple />
+                                </div>
+                            </div>
+                        </>
+                    ))}
             </Panel>
         </div>
     );

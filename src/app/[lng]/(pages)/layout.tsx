@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify';
 
 const Layout = ({ children, params: { lng } }: PageProps) => {
     return (
-        <body className='min-h-screen overflow-hidden m-0'>
+        <body className='min-h-screen surface-100 overflow-hidden m-0'>
             <div className='flex'>
                 <Sidebar lng={lng} />
 

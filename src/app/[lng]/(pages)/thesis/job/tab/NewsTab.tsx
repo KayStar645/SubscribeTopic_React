@@ -63,7 +63,7 @@ const NewsTab = () => {
                             <p className='font-semibold'>{t('module:field.job.add_content')}</p>
                         </Link>
 
-                        <div>
+                        <div className='flex flex-column gap-4'>
                             {jobs &&
                                 jobs.length > 0 &&
                                 jobs?.map((job) => (

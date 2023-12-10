@@ -15,3 +15,32 @@
 .ck.ck-toolbar.ck-toolbar_grouping > .ck-toolbar__items {
     flex-wrap: wrap !important;
 }
+
+.p-dropdown .p-dropdown-label.p-placeholder {
+    height: 3rem !important;
+}
+
+.p-divider.p-divider-vertical:before {
+    border-left: 1px #dee2e6 solid !important;
+}
+
+.p-card-title {
+    font-size: 1.3rem !important;
+    color: var(--surface-900);
+}
+
+.p-card {
+    border-radius: 12px !important;
+}
+
+.p-inplace .p-inplace-display {
+    padding: 0;
+    border-radius: 0;
+    transition: none;
+}
+
+.p-panel .p-panel-content {
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+}

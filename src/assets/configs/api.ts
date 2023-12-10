@@ -23,6 +23,7 @@ const API = {
         google_drive: '/googledrive',
         feedback: '/feedback',
         job: '/job',
+        exchange: 'exchange',
 
         detail: {
             notification: '/notification/detail',
@@ -31,6 +32,7 @@ const API = {
             topic: '/thesis/detail',
             role: '/role/detail',
             job: '/job/detail',
+            exchange: '/exchange/detail',
         },
 
         approve: {

@@ -4,7 +4,7 @@ import { API, AUTH_TOKEN, ROUTES } from '@assets/configs';
 import { language, request } from '@assets/helpers';
 import { HTML } from '@assets/helpers/string';
 import useCookies from '@assets/hooks/useCookies';
-import { AuthType, JobParamType, JobType } from '@assets/interface';
+import { AuthType, ExchangeParamType, ExchangeType, JobParamType, JobType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,8 +18,8 @@ import moment from 'moment';
 import { useRouter } from 'next/navigation';
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
+import { Chip } from 'primereact/chip';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { ToggleButton } from 'primereact/togglebutton';
 import { classNames } from 'primereact/utils';
 import { useEffect, useState } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
@@ -53,6 +53,7 @@ const ExercisePage = ({ params, searchParams }: PageProps) => {
     const [auth] = useCookies<AuthType>(AUTH_TOKEN);
     const [edit, setEdit] = useState(false);
     const router = useRouter();
+    const [content, setContent] = useState('');
 
     const jobDetail = useQuery<JobType | null, AxiosError<ResponseType>>({
         queryKey: ['job_detail', id],
@@ -88,6 +89,34 @@ const ExercisePage = ({ params, searchParams }: PageProps) => {
         },
     });
 
+    const exchangeQuery = useQuery<ExchangeType[], AxiosError<ResponseType>>({
+        refetchOnWindowFocus: false,
+        queryKey: ['exchanges', 'list'],
+        queryFn: async () => {
+            const response = await request.get<ExchangeType[]>(API.admin.exchange, {
+                params: {
+                    removeFacultyId: true,
+                    jobId: id,
+                } as ExchangeParamType,
+            });
+
+            return response.data.data || [];
+        },
+    });
+
+    const exchangeMutation = useMutation({
+        mutationFn: () => {
+            return request.post(API.admin.exchange, {
+                content,
+                jobId: id,
+            });
+        },
+        onSuccess: () => {
+            setContent('');
+            exchangeQuery.refetch();
+        },
+    });
+
     const { control, handleSubmit, reset, getValues, setValue } = useForm({
         resolver: yupResolver(schema(t)) as Resolver<JobType>,
         defaultValues,
@@ -111,10 +140,17 @@ const ExercisePage = ({ params, searchParams }: PageProps) => {
 
     return (
         <form className='flex pr-2 gap-5' onSubmit={handleSubmit(onSubmit)}>
-            <Loader show={jobDetail.isFetching || jobMutation.isPending} />
+            <Loader
+                show={
+                    jobDetail.isFetching ||
+                    jobMutation.isPending ||
+                    exchangeMutation.isPending ||
+                    exchangeQuery.isLoading
+                }
+            />
 
             <div className='flex-1'>
-                <div className='flex gap-3'>
+                <div className='flex gap-3 bg-white p-4 border-round shadow-1'>
                     <Button icon='pi pi-book' rounded={true} className='w-3rem h-3rem' />
 
                     <div className='flex-1'>
@@ -224,27 +260,62 @@ const ExercisePage = ({ params, searchParams }: PageProps) => {
                         </div>
 
                         {id > 0 && (
-                            <div className='mt-4 flex flex-column gap-3'>
-                                <div className='flex align-items-center gap-3'>
-                                    <FaUserGroup />
-                                    <p className='text-900 font-semibold'>Nhận xét về lớp học</p>
+                            <div className='mt-5'>
+                                <div className='flex flex-column gap-4 min-h-30rem overflow-auto'>
+                                    {exchangeQuery.data &&
+                                        exchangeQuery.data?.length > 0 &&
+                                        exchangeQuery.data?.map((feedback) => (
+                                            <div key={feedback.id} className='flex gap-2 align-items-start'>
+                                                <Avatar
+                                                    icon='pi pi-user'
+                                                    className='bg-primary text-white border-circle'
+                                                />
+
+                                                <div className='flex flex-column gap-2'>
+                                                    {feedback?.teacher?.name || feedback?.student?.name}
+                                                    <Chip label={feedback?.content} className='bg-gray-200' />
+                                                    <p className='text-xs'>
+                                                        {moment(feedback?.lastModifiedDate).format('DD/MM/YYYY HH:mm')}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
                                 </div>
 
-                                <div className='flex gap-3'>
-                                    <Avatar
-                                        icon='pi pi-user'
-                                        className='bg-primary text-white border-circle mt-1'
-                                        size='normal'
-                                    />
+                                <div className='mt-4 flex flex-column gap-3'>
+                                    <div className='flex align-items-center gap-3'>
+                                        <FaUserGroup />
+                                        <p className='text-900 font-semibold'>Nhận xét về công việc</p>
+                                    </div>
 
-                                    <InputTextarea
-                                        autoResize={true}
-                                        rows={1}
-                                        className='border-round-3xl flex-1 text-sm'
-                                        placeholder='Thêm nhận xét trong lớp học'
-                                    />
+                                    <div className='flex gap-3'>
+                                        <Avatar
+                                            icon='pi pi-user'
+                                            className='bg-primary text-white border-circle mt-1'
+                                            size='normal'
+                                        />
 
-                                    <Button icon='pi pi-send' className='w-2rem h-2rem mt-1' rounded={true} />
+                                        <InputTextarea
+                                            autoResize={true}
+                                            rows={2}
+                                            className='border-round-3xl flex-1 text-sm'
+                                            placeholder='Thêm nhận xét cho công việc'
+                                            onChange={(e) => setContent(e.target.value)}
+                                        />
+
+                                        {content && (
+                                            <Button
+                                                icon='pi pi-send'
+                                                className='w-2rem h-2rem mt-1'
+                                                rounded={true}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+
+                                                    exchangeMutation.mutate();
+                                                }}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         )}

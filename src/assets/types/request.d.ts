@@ -17,6 +17,7 @@ interface ParamType {
     isAllDetail?: boolean;
     facultyId?: string | number;
     IsGetFaculty?: boolean;
+    removeFacultyId?: boolean;
 }
 
 interface ResponseType<dataType = any> {

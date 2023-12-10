@@ -5,3 +5,27 @@
 .p-card .p-card-title {
     font-size: 1.2rem !important;
 }
+
+.ck.ck-toolbar.ck-toolbar_grouping > .ck-toolbar__items {
+    flex-wrap: wrap !important;
+}
+
+.p-divider.p-divider-vertical:before {
+    border-left: 1px #dee2e6 solid !important;
+}
+
+.p-card {
+    border-radius: 12px !important;
+}
+
+.p-inplace .p-inplace-display {
+    padding: 0;
+    border-radius: 0;
+    transition: none;
+}
+
+.my-panel .p-panel .p-panel-content {
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+}

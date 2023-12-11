@@ -74,23 +74,10 @@ const InputFile = memo(
                             {file.name}
                         </Link>
 
-                        <div className='flex align-items-center gap-2'>
-                            <Tag
-                                value={
-                                    <div className='flex align-items-center gap-1'>
-                                        {MIME_TYPES[file.type]}
-                                        <p style={{ wordBreak: 'break-all' }}>{file.type}</p>
-                                    </div>
-                                }
-                                severity={'info'}
-                                className='flex-1'
-                            />
-
-                            <Tag
-                                value={size >= 1024 ? Math.ceil(size / 1024) + ' MB' : size + ' KB'}
-                                severity={'warning'}
-                            />
-                        </div>
+                        <Tag
+                            value={size >= 1024 ? Math.ceil(size / 1024) + ' MB' : size + ' KB'}
+                            severity={'warning'}
+                        />
                     </div>
                 </div>
             );
@@ -110,138 +97,143 @@ const InputFile = memo(
         }, [defaultValue]);
 
         return (
-            <div className='border-round-xl bg-white border-1 border-solid border-300 relative overflow-hidden'>
-                <Loader show={fileMutation.isPending} />
+            <div>
+                {label && <p className='mb-2 font-medium text-800'>{label}</p>}
 
-                <input
-                    type='file'
-                    value=''
-                    accept={accept}
-                    ref={inputRef}
-                    multiple={multiple}
-                    hidden={true}
-                    onChange={(e) => {
-                        if (!e.target.files) {
-                            return;
-                        }
+                <div className='border-round-xl bg-white border-1 border-solid border-300 relative overflow-hidden'>
+                    <Loader show={fileMutation.isPending} />
 
-                        if (multiple) {
-                            forEach(e.target.files, async (file) => {
-                                try {
-                                    const response = await fileMutation.mutateAsync({
-                                        fileName: folder + file.name.split('.')[0],
-                                        file,
-                                    });
+                    <input
+                        type='file'
+                        value=''
+                        accept={accept}
+                        ref={inputRef}
+                        multiple={multiple}
+                        hidden={true}
+                        onChange={(e) => {
+                            if (!e.target.files) {
+                                return;
+                            }
 
-                                    if (response.data.data) {
-                                        setFiles((prev) => {
-                                            onChange({
-                                                files: [...prev, response.data.data!],
-                                            });
-
-                                            return [...prev, response.data.data!];
+                            if (multiple) {
+                                forEach(e.target.files, async (file) => {
+                                    try {
+                                        const response = await fileMutation.mutateAsync({
+                                            fileName: folder + file.name.split('.')[0],
+                                            file,
                                         });
-                                    }
-                                } catch (error: any) {}
-                            });
-                        } else {
-                            fileMutation.mutate(
-                                {
-                                    fileName: folder + e.target.files[0].name.split('.')[0],
-                                    file: e.target.files[0],
-                                },
-                                {
-                                    onSuccess(response) {
+
                                         if (response.data.data) {
-                                            onChange({
-                                                file: response.data.data!,
-                                                files: [response.data.data!],
+                                            setFiles((prev) => {
+                                                onChange({
+                                                    files: [...prev, response.data.data!],
+                                                });
+
+                                                return [...prev, response.data.data!];
                                             });
-
-                                            setFiles([response.data.data]);
-                                            setDefaultFile(response.data.data);
                                         }
+                                    } catch (error: any) {}
+                                });
+                            } else {
+                                fileMutation.mutate(
+                                    {
+                                        fileName: folder + e.target.files[0].name.split('.')[0],
+                                        file: e.target.files[0],
                                     },
-                                },
-                            );
-                        }
-                    }}
-                />
+                                    {
+                                        onSuccess(response) {
+                                            if (response.data.data) {
+                                                onChange({
+                                                    file: response.data.data!,
+                                                    files: [response.data.data!],
+                                                });
 
-                {!disabled && (
-                    <div className='flex align-items-center gap-3 p-3 border-bottom-1 border-300'>
-                        {label && <p>{label}</p>}
+                                                setFiles([response.data.data]);
+                                                setDefaultFile(response.data.data);
+                                            }
+                                        },
+                                    },
+                                );
+                            }
+                        }}
+                    />
 
-                        <Button
-                            rounded={true}
-                            outlined={true}
-                            icon='pi pi-fw pi-file'
-                            className='w-2rem h-2rem'
-                            onClick={(e) => {
-                                e.preventDefault();
+                    {!disabled && (
+                        <div
+                            className='flex align-items-center gap-3 px-3 border-bottom-1 border-300'
+                            style={{ height: 47 }}
+                        >
+                            <Button
+                                rounded={true}
+                                outlined={true}
+                                icon='pi pi-fw pi-file'
+                                className='w-2rem h-2rem'
+                                onClick={(e) => {
+                                    e.preventDefault();
 
-                                inputRef.current?.click();
-                            }}
-                        />
+                                    inputRef.current?.click();
+                                }}
+                            />
 
-                        <Button
-                            rounded={true}
-                            outlined={true}
-                            icon='pi pi-fw pi-trash'
-                            severity='danger'
-                            className='w-2rem h-2rem'
-                            onClick={(e) => {
-                                e.preventDefault();
+                            <Button
+                                rounded={true}
+                                outlined={true}
+                                icon='pi pi-fw pi-trash'
+                                severity='danger'
+                                className='w-2rem h-2rem'
+                                onClick={(e) => {
+                                    e.preventDefault();
 
-                                setFiles([]);
-                            }}
-                        />
-                    </div>
-                )}
+                                    setFiles([]);
+                                }}
+                            />
+                        </div>
+                    )}
 
-                <div className='p-3 flex flex-wrap overflow-auto'>
-                    {files.length > 0 ? (
-                        files?.map((file, index) => (
-                            <div
-                                className={classNames('flex align-items-center gap-3 py-3', fileClassName)}
-                                key={file.name + '_' + file.sizeInBytes}
-                            >
-                                {!disabled && (
-                                    <div className='flex flex-column gap-3 align-items-center'>
-                                        {multiple && hasDefault && (
-                                            <RadioButton
-                                                tooltip={defaultFileText}
-                                                tooltipOptions={{ position: 'left' }}
-                                                className={classNames(`.${file.name + '_' + file.sizeInBytes}`)}
-                                                checked={defaultFile?.name === file.name}
-                                                onChange={() => {
-                                                    setDefaultFile(file);
+                    <div className='p-3 flex flex-wrap overflow-auto'>
+                        {files.length > 0 ? (
+                            files?.map((file, index) => (
+                                <div
+                                    className={classNames('flex align-items-center gap-3 py-3', fileClassName)}
+                                    key={file.name + '_' + file.sizeInBytes}
+                                >
+                                    {!disabled && (
+                                        <div className='flex flex-column gap-3 align-items-center'>
+                                            {multiple && hasDefault && (
+                                                <RadioButton
+                                                    tooltip={defaultFileText}
+                                                    tooltipOptions={{ position: 'left' }}
+                                                    className={classNames(`.${file.name + '_' + file.sizeInBytes}`)}
+                                                    checked={defaultFile?.name === file.name}
+                                                    onChange={() => {
+                                                        setDefaultFile(file);
 
+                                                        onChange({
+                                                            file,
+                                                            files,
+                                                        });
+                                                    }}
+                                                />
+                                            )}
+                                            <i
+                                                className='pi pi-trash cursor-pointer hover:text-red-600'
+                                                onClick={() => {
                                                     onChange({
-                                                        file,
-                                                        files,
+                                                        file: defaultFile,
+                                                        files: files.filter((t, i) => i !== index),
                                                     });
+                                                    setFiles(files.filter((t, i) => i !== index));
                                                 }}
                                             />
-                                        )}
-                                        <i
-                                            className='pi pi-trash cursor-pointer hover:text-red-600'
-                                            onClick={() => {
-                                                onChange({
-                                                    file: defaultFile,
-                                                    files: files.filter((t, i) => i !== index),
-                                                });
-                                                setFiles(files.filter((t, i) => i !== index));
-                                            }}
-                                        />
-                                    </div>
-                                )}
-                                <File file={file} />
-                            </div>
-                        ))
-                    ) : (
-                        <div>{placeholder}</div>
-                    )}
+                                        </div>
+                                    )}
+                                    <File file={file} />
+                                </div>
+                            ))
+                        ) : (
+                            <div>{placeholder}</div>
+                        )}
+                    </div>
                 </div>
             </div>
         );

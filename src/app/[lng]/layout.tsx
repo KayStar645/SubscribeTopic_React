@@ -77,11 +77,13 @@ const queryClient = new QueryClient({
             toast.error(error?.response?.data?.messages?.[0] || error?.message);
         },
     }),
-    mutationCache: new MutationCache({
-        onError: (error: any) => {
-            toast.error(error?.response?.data?.messages?.[0] || error?.message);
+    defaultOptions: {
+        mutations: {
+            onError: (error: any) => {
+                toast.error(error?.response?.data?.messages?.[0] || error?.message);
+            },
         },
-    }),
+    },
 });
 
 const RootLayout = ({ children, params: { lng } }: PageProps) => {

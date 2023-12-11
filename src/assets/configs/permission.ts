@@ -81,6 +81,12 @@ const PERMISSION = {
     job: {
         view: 'Job.View',
     },
+    departmentDuty: {
+        view: 'DepartmentDuty.View',
+        create: 'DepartmentDuty.Create',
+        update: 'DepartmentDuty.Update',
+        delete: 'DepartmentDuty.Delete',
+    },
 };
 
 const ACTION = {

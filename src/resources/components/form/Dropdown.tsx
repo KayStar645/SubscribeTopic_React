@@ -27,7 +27,7 @@ const Dropdown = ({
 
     return (
         <div className={classNames(blockClassName)}>
-            <div className={classNames({ 'flex align-items-center': row })}>
+            <div className={classNames('w-full', { 'flex align-items-center': row })}>
                 {label && (
                     <label
                         htmlFor={id}

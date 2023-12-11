@@ -6,7 +6,7 @@ interface FacultyDutyType extends GeneralType {
     facultyId?: string;
     departmentId?: number;
     department?: DepartmentType;
-    numberOfThesis?: string | number;
+    numberOfThesis?: number;
     timeStart?: Date | null;
     timeEnd?: Date | null;
     image?: string;

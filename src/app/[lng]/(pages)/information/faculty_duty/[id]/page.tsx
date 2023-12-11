@@ -8,7 +8,7 @@ import { FacultyDutyType } from '@assets/interface/FacultyDuty';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Loader } from '@resources/components/UI';
-import { Dropdown, InputDate, InputFile } from '@resources/components/form';
+import { Dropdown, InputDate, InputFile, InputNumber } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -24,33 +24,26 @@ import { useEffect } from 'react';
 
 const defaultValues: FacultyDutyType = {
     id: '0',
+    name: '',
+    internalCode: '',
     facultyId: '0',
     departmentId: 0,
-    numberOfThesis: '0',
+    numberOfThesis: 1,
     timeStart: null,
     timeEnd: null,
-    images: [],
     image: '',
     file: '',
+    images: [],
+    department: undefined,
 };
 
-const schema = (t: TFunction) =>
+const schema = (_t: TFunction) =>
     yup.object({
-        name: yup.string().required(
-            t('validation:required', {
-                attribute: t('common:name_of', { obj: t('module:faculty_duty') }).toLowerCase(),
-            }),
-        ),
-        numberOfThesis: yup.number().required(
-            t('validation:required', {
-                attribute: t('numberOfThesis').toLowerCase(),
-            }),
-        ),
-        timeEnd: yup.date().required(
-            t('validation:required', {
-                attribute: t('common:name_of', { obj: t('module:faculty_duty') }).toLowerCase(),
-            }),
-        ),
+        name: yup.string().required(),
+        internalCode: yup.string().required(),
+        timeStart: yup.date(),
+        timeEnd: yup.date(),
+        images: yup.array().of(yup.string()),
     });
 
 const FacultyDutyForm = ({ params }: PageProps) => {
@@ -119,23 +112,25 @@ const FacultyDutyForm = ({ params }: PageProps) => {
         <div className='overflow-auto pb-8'>
             <Loader show={facultyDutyMutation.isPending || facultyDutyDetailQuery.isFetching} />
 
-            <form className='p-3 flex flex-column gap-3 bg-white border-round-xl ' onSubmit={handleSubmit(onSubmit)}>
-                
-                <Controller
-                    name='internalCode'
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <InputText
-                            id='form_data_internal_code'
-                            value={field.value}
-                            label={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
-                            placeholder={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
-                            errorMessage={fieldState.error?.message}
-                            onChange={field.onChange}
-                        />
-                    )}
-                />
+            <form className='p-3 flex flex-wrap bg-white border-round-xl ' onSubmit={handleSubmit(onSubmit)}>
+                <div className='col-4'>
+                    <Controller
+                        name='internalCode'
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <InputText
+                                id='form_data_internal_code'
+                                value={field.value}
+                                label={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
+                                placeholder={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
+                                errorMessage={fieldState.error?.message}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
+                </div>
 
+                <div className='col-4'>
                     <Controller
                         name='name'
                         control={control}
@@ -150,7 +145,9 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                             />
                         )}
                     />
+                </div>
 
+                <div className='col-4'>
                     <Controller
                         name='timeStart'
                         control={control}
@@ -166,7 +163,9 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                             />
                         )}
                     />
+                </div>
 
+                <div className='col-4'>
                     <Controller
                         name='timeEnd'
                         control={control}
@@ -182,9 +181,9 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                             />
                         )}
                     />
-                
+                </div>
 
-                
+                <div className='col-4'>
                     <Controller
                         control={control}
                         name='departmentId'
@@ -200,12 +199,14 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                             />
                         )}
                     />
+                </div>
 
+                <div className='col-4'>
                     <Controller
                         name='numberOfThesis'
                         control={control}
                         render={({ field, fieldState }) => (
-                            <InputText
+                            <InputNumber
                                 id='form_data_numberOfThesis'
                                 value={field.value}
                                 label={t('module:field.faculty_duty.numberOfThesis')}
@@ -215,7 +216,9 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                             />
                         )}
                     />
+                </div>
 
+                <div className='col-4'>
                     <Controller
                         name='image'
                         control={control}
@@ -241,7 +244,7 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                             />
                         )}
                     />
-                
+                </div>
 
                 <div
                     className='flex align-items-center justify-content-end gap-2 absolute bottom-0 left-0 right-0 bg-white px-5 h-4rem shadow-8'

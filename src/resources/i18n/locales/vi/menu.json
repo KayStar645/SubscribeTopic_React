@@ -22,5 +22,6 @@
     "account": "Tài khoản",
     "admin": "Quản trị viên",
     "faculty_duty": "Nhiệm vụ khoa",
-    "job": "Công việc"
+    "job": "Công việc",
+    "department_duty": "Nhiệm vụ bộ môn"
 }

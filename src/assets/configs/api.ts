@@ -24,6 +24,7 @@ const API = {
         feedback: '/feedback',
         job: '/job',
         exchange: 'exchange',
+        department_duty: '/departmentDuty',
 
         detail: {
             notification: '/notification/detail',
@@ -33,6 +34,7 @@ const API = {
             role: '/role/detail',
             job: '/job/detail',
             exchange: '/exchange/detail',
+            department_duy: '/departmentDuty/detail',
         },
 
         approve: {

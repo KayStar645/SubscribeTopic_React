@@ -61,5 +61,6 @@
     "status": "Trạng thái",
     "change_to_draft": "Chuyển về nháp",
     "see_all": "Xem tất cả",
-    "post": "Đăng"
+    "post": "Đăng",
+    "number_of": "Số lượng {{ obj }}"
 }

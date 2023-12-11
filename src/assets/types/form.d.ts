@@ -1,9 +1,9 @@
+import type { EditorConfig } from '@ckeditor/ckeditor5-core';
 import { CheckboxChangeEvent } from 'primereact/checkbox';
 import { MultiSelectChangeEvent } from 'primereact/multiselect';
 import { RadioButtonChangeEvent } from 'primereact/radiobutton';
 import { ChangeEvent, ChangeEventHandler, FocusEventHandler } from 'react';
 import { OptionType } from './common';
-import type { EditorConfig } from '@ckeditor/ckeditor5-core';
 
 interface InputProps {
     id: string;
@@ -19,7 +19,16 @@ interface InputProps {
     onBlur?: FocusEventHandler<HTMLInputElement>;
 }
 
-interface InputTextProps extends InputProps {}
+interface InputTextProps extends InputProps {
+    value?: string;
+}
+
+interface InputNumberProps extends InputProps {
+    value?: number;
+    min?: number;
+    max?: number;
+    onChange?: (_e: number) => void;
+}
 
 interface InputPasswordProps extends InputProps {}
 
@@ -104,6 +113,7 @@ export type {
     CheckboxProps,
     DropdownProps,
     EditorProps,
+    FileType,
     InputDateProps,
     InputFileProps,
     InputPasswordProps,
@@ -112,5 +122,5 @@ export type {
     MultiSelectProps,
     RadioListProps,
     TextAreaProps,
-    FileType,
+    InputNumberProps,
 };

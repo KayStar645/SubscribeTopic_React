@@ -2,7 +2,7 @@
 
 import { API, MODULE, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
 import { language, request } from '@assets/helpers';
-import { DepartmentDutyParamType, DepartmentDutyType, DepartmentType } from '@assets/interface';
+import { DutyParamType, DutyType, DepartmentType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
@@ -26,21 +26,20 @@ const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
-    const permission = usePermission(MODULE.departmentDuty);
+    const permission = usePermission(MODULE.duty);
 
-    const [params, setParams] = useState<DepartmentDutyParamType>({
+    const [params, setParams] = useState<DutyParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
-        departmentId: 0,
+        type: 'D',
     });
 
-    const departmentDutyQuery = useQuery<DepartmentDutyType[], AxiosError<ResponseType>>({
+    const departmentDutyQuery = useQuery<DutyType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
-        enabled: params.departmentId > 0,
         queryKey: ['faculties', 'list', params],
         queryFn: async () => {
-            const response = await request.get<DepartmentDutyType[]>(`${API.admin.department_duty}`, { params });
+            const response = await request.get<DutyType[]>(`${API.admin.duty}`, { params });
 
             setMeta({
                 currentPage: response.data.extra?.currentPage,
@@ -56,9 +55,9 @@ const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
         },
     });
 
-    const departmentDutyMutation = useMutation<any, AxiosError<ResponseType>, DepartmentDutyType>({
+    const departmentDutyMutation = useMutation<any, AxiosError<ResponseType>, DutyType>({
         mutationFn: (data) => {
-            return request.remove(`${API.admin.department_duty}`, { params: { id: data.id } });
+            return request.remove(`${API.admin.duty}`, { params: { id: data.id } });
         },
     });
 
@@ -76,7 +75,7 @@ const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (data: DepartmentDutyType) => {
+    const renderActions = (data: DutyType) => {
         return (
             <div className='flex align-items-center justify-content-center gap-3'>
                 {permission.update && (
@@ -96,7 +95,7 @@ const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
         );
     };
 
-    const onRemove = (data: DepartmentDutyType) => {
+    const onRemove = (data: DutyType) => {
         departmentDutyMutation.mutate(data, {
             onSuccess: () => {
                 departmentDutyQuery.refetch();
@@ -126,114 +125,89 @@ const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='flex align-items-center'>
-                <div className='col-4'>
-                    <InputText id='form_data_keyword' label={`${t('search')}`} placeholder={`${t('search')}`} />
-                </div>
+                <InputText id='form_data_keyword' label={`${t('search')}`} placeholder={`${t('search')}`} />
+            </div>
 
-                <div className='col-4'>
+            <div className='border-round-xl overflow-hidden relative shadow-5'>
+                <Loader show={departmentDutyQuery.isFetching || departmentDutyMutation.isPending} />
+
+                <DataTable
+                    value={departmentDutyQuery.data}
+                    rowHover={true}
+                    stripedRows={true}
+                    showGridlines={true}
+                    emptyMessage={t('list_empty')}
+                >
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header={t('common:action')}
+                        body={renderActions}
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        field='name'
+                        header='Tên nhiệm vụ'
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        field='teacher.name'
+                        header='Giảng viên'
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        field='numberOfThesis'
+                        header='Số lượng đề tài'
+                    />
+                </DataTable>
+
+                <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
                     <Dropdown
-                        id='form_data_department_id'
-                        options={departmentQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
-                        value={params.departmentId}
-                        label='Bộ môn'
-                        placeholder='Bộ môn'
-                        onChange={(e) => setParams((prev) => ({ ...prev, departmentId: parseInt(e) }))}
+                        id='date_created_filter'
+                        value='date_decrease'
+                        optionValue='code'
+                        onChange={(sortCode) => {
+                            const filter = DATE_FILTER(t).find((t) => t.code === sortCode);
+
+                            setParams((prev) => {
+                                return {
+                                    ...prev,
+                                    sorts: request.handleSort(filter, prev),
+                                };
+                            });
+                        }}
+                        options={DATE_FILTER(t)}
+                    />
+
+                    <Paginator
+                        first={request.currentPage(meta.currentPage)}
+                        rows={meta.pageSize}
+                        totalRecords={meta.totalCount}
+                        rowsPerPageOptions={ROWS_PER_PAGE}
+                        onPageChange={onPageChange}
+                        className='border-noround p-0'
                     />
                 </div>
             </div>
-
-            {params.departmentId > 0 && (
-                <div className='border-round-xl overflow-hidden relative shadow-5'>
-                    <Loader show={departmentDutyQuery.isFetching || departmentDutyMutation.isPending} />
-
-                    <DataTable
-                        value={departmentDutyQuery.data}
-                        rowHover={true}
-                        stripedRows={true}
-                        showGridlines={true}
-                        emptyMessage={t('list_empty')}
-                    >
-                        <Column
-                            alignHeader='center'
-                            headerStyle={{
-                                background: 'var(--primary-color)',
-                                color: 'var(--surface-a)',
-                                whiteSpace: 'nowrap',
-                            }}
-                            header={t('common:action')}
-                            body={renderActions}
-                        />
-                        <Column
-                            alignHeader='center'
-                            headerStyle={{
-                                background: 'var(--primary-color)',
-                                color: 'var(--surface-a)',
-                                whiteSpace: 'nowrap',
-                            }}
-                            field='internalCode'
-                            header='Mã nhiệm vụ'
-                        />
-                        <Column
-                            alignHeader='center'
-                            headerStyle={{
-                                background: 'var(--primary-color)',
-                                color: 'var(--surface-a)',
-                                whiteSpace: 'nowrap',
-                            }}
-                            field='name'
-                            header='Tên nhiệm vụ'
-                        />
-                        <Column
-                            alignHeader='center'
-                            headerStyle={{
-                                background: 'var(--primary-color)',
-                                color: 'var(--surface-a)',
-                                whiteSpace: 'nowrap',
-                            }}
-                            field='teacher.name'
-                            header='Giảng viên'
-                        />
-                        <Column
-                            alignHeader='center'
-                            headerStyle={{
-                                background: 'var(--primary-color)',
-                                color: 'var(--surface-a)',
-                                whiteSpace: 'nowrap',
-                            }}
-                            field='numberOfThesis'
-                            header='Số lượng đề tài'
-                        />
-                    </DataTable>
-
-                    <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
-                        <Dropdown
-                            id='date_created_filter'
-                            value='date_decrease'
-                            optionValue='code'
-                            onChange={(sortCode) => {
-                                const filter = DATE_FILTER(t).find((t) => t.code === sortCode);
-
-                                setParams((prev) => {
-                                    return {
-                                        ...prev,
-                                        sorts: request.handleSort(filter, prev),
-                                    };
-                                });
-                            }}
-                            options={DATE_FILTER(t)}
-                        />
-
-                        <Paginator
-                            first={request.currentPage(meta.currentPage)}
-                            rows={meta.pageSize}
-                            totalRecords={meta.totalCount}
-                            rowsPerPageOptions={ROWS_PER_PAGE}
-                            onPageChange={onPageChange}
-                            className='border-noround p-0'
-                        />
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

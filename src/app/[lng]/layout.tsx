@@ -5,11 +5,11 @@ import '../../resources/styles/index.css';
 
 import ReduxProvider from '@assets/providers/ReduxProvider';
 import { PageProps } from '@assets/types/UI';
-import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dir } from 'i18next';
+import moment from 'moment';
 import { APIOptions, PrimeReactProvider, addLocale, locale } from 'primereact/api';
 import { toast } from 'react-toastify';
-import moment from 'moment';
 
 locale('vi');
 

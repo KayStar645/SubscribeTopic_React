@@ -1,7 +1,7 @@
 'use client';
 
 import { API } from '@assets/configs';
-import { IMAGE_MIME_TYPE, MIME_TYPES } from '@assets/configs/mime_type';
+import { IMAGE_MIME_TYPE } from '@assets/configs/mime_type';
 import { request } from '@assets/helpers';
 import { FileType, InputFileProps } from '@assets/types/form';
 import { ResponseType } from '@assets/types/request';
@@ -88,7 +88,7 @@ const InputFile = memo(
                 setFiles(value);
                 setDefaultFile(value[0]);
             }
-        }, [value]);
+        }, [defaultValue, value]);
 
         useEffect(() => {
             if (defaultValue) {

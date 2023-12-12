@@ -1,14 +1,14 @@
 'use client';
 
-import { API, ROUTES } from '@assets/configs';
+import { API, MODULE, ROUTES } from '@assets/configs';
 import { PageProps } from '@assets/types/UI';
 import { language, request } from '@assets/helpers';
-import { DepartmentType } from '@assets/interface';
-import { FacultyDutyType } from '@assets/interface/FacultyDuty';
+import { DepartmentType, RegistrationPeriodType } from '@assets/interface';
+import { DutyType } from '@assets/interface/Duty';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Loader } from '@resources/components/UI';
-import { Dropdown, InputDate, InputFile, InputNumber } from '@resources/components/form';
+import { Dropdown, Editor, InputDate, InputFile, InputNumber } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -22,19 +22,17 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-const defaultValues: FacultyDutyType = {
-    id: '0',
+const defaultValues: DutyType = {
+    id: 0,
     name: '',
     internalCode: '',
-    facultyId: '0',
+    content: '',
     departmentId: 0,
     numberOfThesis: 1,
     timeStart: null,
     timeEnd: null,
-    image: '',
-    file: '',
-    images: [],
-    department: undefined,
+    files: [],
+    type: 'F',
 };
 
 const schema = (_t: TFunction) =>
@@ -43,7 +41,8 @@ const schema = (_t: TFunction) =>
         internalCode: yup.string().required(),
         timeStart: yup.date(),
         timeEnd: yup.date(),
-        images: yup.array().of(yup.string()),
+        files: yup.array().of(yup.string()),
+        type: yup.string(),
     });
 
 const FacultyDutyForm = ({ params }: PageProps) => {
@@ -51,33 +50,33 @@ const FacultyDutyForm = ({ params }: PageProps) => {
     const { t } = useTranslation(lng);
     const router = useRouter();
 
-    const { control, handleSubmit, setValue, reset } = useForm({
-        resolver: yupResolver(schema(t)) as Resolver<FacultyDutyType>,
+    const { control, handleSubmit, setValue, reset, getValues } = useForm({
+        resolver: yupResolver(schema(t)) as Resolver<DutyType>,
         defaultValues,
     });
 
-    const facultyDutyDetailQuery = useQuery<FacultyDutyType | null, AxiosError<ResponseType>>({
+    const facultyDutyDetailQuery = useQuery<DutyType | null, AxiosError<ResponseType>>({
         queryKey: ['faculty_duty'],
         refetchOnWindowFocus: false,
         enabled: id != 0,
         queryFn: async () => {
-            const response = await request.get<FacultyDutyType>(`${API.admin.detail.faculty_duty}?id=${id}`);
+            const response = await request.get<DutyType>(`${API.admin.detail.duty}?id=${id}`);
 
             return response.data.data;
         },
     });
 
-    useEffect(() => {
-        if (facultyDutyDetailQuery.data) {
-            reset(facultyDutyDetailQuery.data);
-        }
-    }, [facultyDutyDetailQuery.data, reset]);
-
-    const facultyDutyMutation = useMutation<any, AxiosError<ResponseType>, FacultyDutyType | null>({
+    const facultyDutyMutation = useMutation<any, AxiosError<ResponseType>, DutyType | null>({
         mutationFn: async (data) => {
             return id == '0'
-                ? request.post<FacultyDutyType>(API.admin.faculty_duty, data)
-                : request.update<FacultyDutyType>(API.admin.faculty_duty, data);
+                ? request.post<DutyType>(API.admin.duty, {
+                      ...data,
+                      files: data?.files?.map((t) => t.path),
+                  })
+                : request.update<DutyType>(API.admin.duty, {
+                      ...data,
+                      files: data?.files?.map((t) => t.path),
+                  });
         },
     });
 
@@ -91,7 +90,7 @@ const FacultyDutyForm = ({ params }: PageProps) => {
         },
     });
 
-    const onSubmit = (data: FacultyDutyType) => {
+    const onSubmit = (data: DutyType) => {
         facultyDutyMutation.mutate(data, {
             onSuccess: () => {
                 toast.success(t('request:update_success'));
@@ -108,28 +107,17 @@ const FacultyDutyForm = ({ params }: PageProps) => {
         });
     };
 
+    useEffect(() => {
+        if (facultyDutyDetailQuery.data) {
+            reset(facultyDutyDetailQuery.data);
+        }
+    }, [facultyDutyDetailQuery.data, reset]);
+
     return (
         <div className='overflow-auto pb-8'>
             <Loader show={facultyDutyMutation.isPending || facultyDutyDetailQuery.isFetching} />
 
             <form className='p-3 flex flex-wrap bg-white border-round-xl ' onSubmit={handleSubmit(onSubmit)}>
-                <div className='col-4'>
-                    <Controller
-                        name='internalCode'
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <InputText
-                                id='form_data_internal_code'
-                                value={field.value}
-                                label={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
-                                placeholder={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                            />
-                        )}
-                    />
-                </div>
-
                 <div className='col-4'>
                     <Controller
                         name='name'
@@ -154,7 +142,6 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                         render={({ field, fieldState }) => (
                             <InputDate
                                 id='form_data_time_start'
-                                time={true}
                                 value={field.value}
                                 label={t('time_start')}
                                 placeholder={t('time_start')}
@@ -172,7 +159,6 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                         render={({ field, fieldState }) => (
                             <InputDate
                                 id='form_data_time_end'
-                                time={true}
                                 value={field.value}
                                 label={t('time_end')}
                                 placeholder={t('time_end')}
@@ -218,31 +204,32 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                     />
                 </div>
 
-                <div className='col-4'>
-                    <Controller
-                        name='image'
-                        control={control}
-                        render={() => (
-                            <InputFile
-                                id='form_image'
-                                multiple={true}
-                                label={t('common:image')}
-                                accept='*'
-                                folder={`test_cua_son_2/`}
-                                onChange={({ file, files }) => {
-                                    if (file) {
-                                        setValue('image', file?.path);
-                                    }
+                <div className='col-12'>
+                    <InputFile
+                        id='form_data_image'
+                        label='File đi kèm'
+                        accept='*'
+                        hasDefault={false}
+                        multiple={true}
+                        value={getValues('files')}
+                        folder={`Faculty_${MODULE.duty}/${id}`}
+                        onChange={({ files }) => {
+                            if (files) {
+                                setValue('files', files);
+                            }
+                        }}
+                    />
+                </div>
 
-                                    if (files) {
-                                        setValue(
-                                            'images',
-                                            files.map((t) => t.path),
-                                        );
-                                    }
-                                }}
-                            />
-                        )}
+                <div className='col-12'>
+                    <Editor
+                        id='form_data_content'
+                        label='Nội dung'
+                        placeholder='Nội dung'
+                        value={getValues('content')}
+                        onChange={(e) => {
+                            setValue('content', e);
+                        }}
                     />
                 </div>
 

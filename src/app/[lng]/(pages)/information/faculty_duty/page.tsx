@@ -1,8 +1,10 @@
 'use client';
 
 import { API, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
+import { DATE_FILTER } from '@assets/configs/general';
 import { language, request } from '@assets/helpers';
 import { RegistrationPeriodType } from '@assets/interface';
+import { DutyParamType, DutyType } from '@assets/interface/Duty';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
@@ -13,6 +15,7 @@ import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import moment from 'moment';
+import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -20,10 +23,6 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import FacultyDutyForm from './form';
-import { DATE_FILTER } from '@assets/configs/general';
-import { FacultyDutyParamType, FacultyDutyType } from '@assets/interface/FacultyDuty';
-import { useRouter } from 'next/navigation';
 
 const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
@@ -31,17 +30,18 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
     const router = useRouter();
 
-    const [params, setParams] = useState<FacultyDutyParamType>({
+    const [params, setParams] = useState<DutyParamType>({
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
+        type: 'F',
     });
 
-    const facultyDutyQuery = useQuery<FacultyDutyType[], AxiosError<ResponseType>>({
+    const facultyDutyQuery = useQuery<DutyType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
         queryKey: ['faculty_duty', 'list', params],
         queryFn: async () => {
-            const response = await request.get<FacultyDutyType[]>(`${API.admin.faculty_duty}`, {
+            const response = await request.get<DutyType[]>(`${API.admin.duty}`, {
                 params,
             });
 
@@ -59,9 +59,9 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
         },
     });
 
-    const facultyDutyMutation = useMutation<any, AxiosError<ResponseType>, FacultyDutyType>({
-        mutationFn: (data: FacultyDutyType) => {
-            return request.remove(`${API.admin.faculty_duty}`, { params: { id: data.id } });
+    const facultyDutyMutation = useMutation<any, AxiosError<ResponseType>, DutyType>({
+        mutationFn: (data: DutyType) => {
+            return request.remove(`${API.admin.duty}`, { params: { id: data.id } });
         },
     });
 
@@ -69,7 +69,7 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
 
-    const renderActions = (data: FacultyDutyType) => {
+    const renderActions = (data: DutyType) => {
         return (
             <div className='flex align-items-center justify-content-center gap-3'>
                 <i
@@ -88,7 +88,7 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
         );
     };
 
-    const onRemove = (data: FacultyDutyType) => {
+    const onRemove = (data: DutyType) => {
         facultyDutyMutation.mutate(data, {
             onSuccess: () => {
                 facultyDutyQuery.refetch();
@@ -153,15 +153,6 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
                             color: 'var(--surface-a)',
                             whiteSpace: 'nowrap',
                         }}
-                        field='internalCode'
-                        header={t('common:code_of', { obj: t('module:faculty_duty').toLowerCase() })}
-                    />
-                    <Column
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
                         field='name'
                         header={t('common:name_of', { obj: t('module:faculty_duty').toLowerCase() })}
                     />
@@ -181,9 +172,7 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
                             whiteSpace: 'nowrap',
                         }}
                         header={t('time_start')}
-                        body={(data: RegistrationPeriodType) => (
-                            <p>{moment(data.timeStart).format('DD-MM-YYYY HH:MM')}</p>
-                        )}
+                        body={(data: RegistrationPeriodType) => <p>{moment(data.timeStart).format('DD/MM/YYYY')}</p>}
                     />
                     <Column
                         headerStyle={{
@@ -192,9 +181,7 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
                             whiteSpace: 'nowrap',
                         }}
                         header={t('time_end')}
-                        body={(data: RegistrationPeriodType) => (
-                            <p>{moment(data.timeEnd).format('DD-MM-YYYY HH:MM')}</p>
-                        )}
+                        body={(data: RegistrationPeriodType) => <p>{moment(data.timeEnd).format('DD/MM/YYYY')}</p>}
                     />
                 </DataTable>
 

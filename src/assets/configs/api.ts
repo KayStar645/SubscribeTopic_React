@@ -18,23 +18,21 @@ const API = {
         topic: '/thesis',
         role: '/role',
         permission: '/permission',
-        faculty_duty: '/facultyDuty',
         account: '/account',
         google_drive: '/googledrive',
         feedback: '/feedback',
         job: '/job',
         exchange: 'exchange',
-        department_duty: '/departmentDuty',
+        duty: '/duty',
 
         detail: {
             notification: '/notification/detail',
-            faculty_duty: '/facultyDuty/detail',
+            duty: '/duty/detail',
             group: '/group/detail',
             topic: '/thesis/detail',
             role: '/role/detail',
             job: '/job/detail',
             exchange: '/exchange/detail',
-            department_duy: '/departmentDuty/detail',
         },
 
         approve: {

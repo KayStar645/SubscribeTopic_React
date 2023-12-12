@@ -16,4 +16,4 @@ export * from './Account';
 export * from './Feedback';
 export * from './Job';
 export * from './Exchange';
-export * from './DepartmentDuty';
+export * from './Duty';

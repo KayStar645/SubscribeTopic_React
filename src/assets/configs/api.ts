@@ -24,6 +24,7 @@ const API = {
         job: '/job',
         exchange: 'exchange',
         duty: '/duty',
+        job_result: '/jobResults',
 
         detail: {
             notification: '/notification/detail',

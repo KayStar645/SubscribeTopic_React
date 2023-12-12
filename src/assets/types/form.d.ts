@@ -101,7 +101,7 @@ interface InputFileProps extends InputProps {
     value?: FileType[];
     defaultValue?: FileType;
     successMessage?: string;
-    folder: string;
+    folder?: string;
     accept?: string;
     defaultFileText?: string;
     hasDefault?: boolean;

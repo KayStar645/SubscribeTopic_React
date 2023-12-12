@@ -46,7 +46,6 @@ const schema = (t: TFunction) =>
 
 const JobInfo = () => {
     const { id, lng, topicId } = useContext(ExercisePageContext);
-
     const { t } = useTranslation(lng);
     const [auth] = useCookies<AuthType>(AUTH_TOKEN);
     const [edit, setEdit] = useState(false);

@@ -21,6 +21,7 @@ import { toast } from 'react-toastify';
 import * as yup from 'yup';
 import useGetGroupPermission from './useGroupPermission';
 import useGetPermissionDetail from './useGetPermissionDetail';
+import { Tag } from 'primereact/tag';
 
 interface RoleFormRefType {
     show?: (_data?: RoleType) => void;
@@ -141,6 +142,32 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
         }
     };
 
+    const ActivePermission = ({ permission }: { permission: PermissionType }) => {
+        const actions = permission.actions.filter((t, index) => index < 4);
+
+        return (
+            <>
+                {actions.map(
+                    (action) =>
+                        _permissions.includes(action) && (
+                            <Tag
+                                key={action}
+                                severity='info'
+                                value={t(`common:${action?.split('.')[1].toLowerCase()}`)}
+                            />
+                        ),
+                )}
+                {permission.actions.length > 4 && (
+                    <Tag severity='info'>
+                        <div className='flex align-items-center justify-content-center'>
+                            <i className='pi pi-ellipsis-h' />
+                        </div>
+                    </Tag>
+                )}
+            </>
+        );
+    };
+
     const Header = ({ options, permission }: { options: PanelHeaderTemplateOptions; permission: PermissionType }) => {
         const toggleIcon = options.collapsed ? 'pi pi-chevron-down' : 'pi pi-chevron-up';
 
@@ -155,12 +182,7 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
                 />
 
                 <div className='flex align-items-center gap-2'>
-                    {permission.actions.map(
-                        (action) =>
-                            _permissions.includes(action) && (
-                                <Chip key={action} label={t(`common:${action?.split('.')[1].toLowerCase()}`)} />
-                            ),
-                    )}
+                    <ActivePermission permission={permission} />
                 </div>
 
                 <Button

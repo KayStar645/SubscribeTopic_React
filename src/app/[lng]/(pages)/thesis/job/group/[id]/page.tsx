@@ -22,6 +22,7 @@ type JobPageContextType = {
     lng: string;
     topic?: TopicType | null;
     jobs?: JobType[];
+    active: string;
 };
 
 const JobPageContext = createContext<JobPageContextType>({
@@ -29,6 +30,7 @@ const JobPageContext = createContext<JobPageContextType>({
     lng: 'vi',
     topic: null,
     jobs: [],
+    active: 'news',
 });
 
 const JobPage = ({ params }: PageProps) => {
@@ -95,6 +97,7 @@ const JobPage = ({ params }: PageProps) => {
         lng,
         topic: topicDetail.data,
         jobs: jobDetail.data,
+        active: activeTab,
     };
 
     return (

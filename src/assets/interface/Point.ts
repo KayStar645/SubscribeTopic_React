@@ -12,6 +12,7 @@ interface PointType extends GeneralType {
     studentJoin?: {
         student: StudentType;
     };
+    studentJoinId?: number;
 }
 
 interface PointParamType extends ParamType {

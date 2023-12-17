@@ -250,7 +250,7 @@ const SchedulePage = () => {
                     />
                 </div>
 
-                <div className='border-round overflow-auto shadow-3'>
+                <div className='overflow-auto border-round' style={{ margin: '0 auto' }}>
                     <div className='flex w-fit align-items-center relative'>
                         <div className='bg-primary text-center border-right-1 border-400 h-3rem w-4rem'></div>
 

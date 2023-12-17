@@ -27,6 +27,7 @@ const API = {
         job_result: '/jobResults',
         schedule: '/reportSchedule',
         department_duty: '/departmentDuty',
+        point: '/point',
 
         detail: {
             notification: '/notification/detail',

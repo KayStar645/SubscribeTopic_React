@@ -112,7 +112,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                             background: 'var(--primary-color)',
                             color: 'var(--surface-a)',
                         }}
-                        field='countMember'
+                        body={(data: GroupType) => <p className='text-center'>{data.countMember}</p>}
                         header={t('module:field.group.count_member')}
                     />
                 </DataTable>

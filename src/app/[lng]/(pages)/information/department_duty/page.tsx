@@ -32,14 +32,14 @@ const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
-        type: 'D',
+        removeFacultyId: true,
     });
 
     const departmentDutyQuery = useQuery<DutyType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
         queryKey: ['faculties', 'list', params],
         queryFn: async () => {
-            const response = await request.get<DutyType[]>(`${API.admin.duty}`, { params });
+            const response = await request.get<DutyType[]>(`${API.admin.department_duty}`, { params });
 
             setMeta({
                 currentPage: response.data.extra?.currentPage,
@@ -57,17 +57,7 @@ const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
 
     const departmentDutyMutation = useMutation<any, AxiosError<ResponseType>, DutyType>({
         mutationFn: (data) => {
-            return request.remove(`${API.admin.duty}`, { params: { id: data.id } });
-        },
-    });
-
-    const departmentQuery = useQuery<DepartmentType[] | [], AxiosError<ResponseType>>({
-        queryKey: ['departments'],
-        refetchOnWindowFocus: false,
-        queryFn: async () => {
-            const response = await request.get<DepartmentType[]>(`${API.admin.department}`);
-
-            return response.data.data || [];
+            return request.remove(`${API.admin.department_duty}`, { params: { id: data.id } });
         },
     });
 
@@ -157,16 +147,6 @@ const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
                         }}
                         field='name'
                         header='Tên nhiệm vụ'
-                    />
-                    <Column
-                        alignHeader='center'
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
-                        field='teacher.name'
-                        header='Giảng viên'
                     />
                     <Column
                         alignHeader='center'

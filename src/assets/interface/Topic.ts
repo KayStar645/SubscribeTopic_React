@@ -15,6 +15,7 @@ interface TopicType extends GeneralType {
     lecturerThesis?: TeacherType;
     status?: 'A' | 'AR' | 'D';
     groupDto?: GroupType;
+    dutyId?: number;
 }
 
 interface TopicParamType extends ParamType {

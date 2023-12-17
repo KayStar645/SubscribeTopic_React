@@ -29,3 +29,7 @@
     border: none !important;
     border-radius: 0 !important;
 }
+
+.p-skeleton-circle {
+    border-radius: 50% !important;
+}

@@ -12,17 +12,13 @@ const InputDate = ({
     format = 'dd/mm/yy',
     row = false,
     time = false,
+    timeOnly = false,
+    showButtonBar = true,
     required = false,
     errorMessage,
     onChange = () => {},
 }: InputDateProps) => {
     const [date, setDate] = useState<Date | undefined | null>(value ? new Date(value) : null);
-
-    useEffect(() => {
-        if (value) {
-            setDate(new Date(value));
-        }
-    }, [value]);
 
     return (
         <div className={classNames(blockClassName)}>
@@ -46,12 +42,17 @@ const InputDate = ({
                     hideOnDateTimeSelect={true}
                     value={date}
                     hourFormat='24'
+                    showButtonBar={showButtonBar}
                     placeholder={placeholder}
-                    onChange={onChange}
+                    onChange={(e) => {
+                        setDate(e.value);
+                        onChange(e);
+                    }}
                     dateFormat={format}
                     className={classNames('w-full flex-1', { 'p-invalid': !!errorMessage })}
                     inputClassName='w-full h-3rem'
                     showTime={time}
+                    timeOnly={timeOnly}
                 />
             </div>
 

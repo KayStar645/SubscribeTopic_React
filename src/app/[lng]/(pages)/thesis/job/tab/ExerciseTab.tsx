@@ -39,7 +39,7 @@ const ExerciseTab = () => {
     };
 
     return (
-        <div className='flex flex-column pt-4 gap-4 my-panel'>
+        <div className='flex flex-column gap-3 my-panel'>
             {jobs &&
                 jobs.length > 0 &&
                 jobs.map((job) => (

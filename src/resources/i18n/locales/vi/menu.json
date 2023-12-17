@@ -23,5 +23,6 @@
     "admin": "Quản trị viên",
     "faculty_duty": "Nhiệm vụ khoa",
     "job": "Công việc",
-    "department_duty": "Nhiệm vụ bộ môn"
+    "department_duty": "Nhiệm vụ bộ môn",
+    "schedule": "Lịch phản biện"
 }

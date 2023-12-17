@@ -34,7 +34,6 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
         page: meta.currentPage,
         pageSize: meta.pageSize,
         sorts: '-DateCreated',
-        type: 'F',
     });
 
     const facultyDutyQuery = useQuery<DutyType[], AxiosError<ResponseType>>({
@@ -164,15 +163,6 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
                         }}
                         field='numberOfThesis'
                         header={t('module:field.faculty_duty.numberOfThesis')}
-                    />
-                    <Column
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
-                        header={t('time_start')}
-                        body={(data: RegistrationPeriodType) => <p>{moment(data.timeStart).format('DD/MM/YYYY')}</p>}
                     />
                     <Column
                         headerStyle={{

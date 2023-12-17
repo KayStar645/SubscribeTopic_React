@@ -2,18 +2,15 @@ import { ParamType } from '@assets/types/request';
 import { GeneralType } from './Default';
 import { FileType } from '@assets/types/form';
 
-interface DutyType extends GeneralType {
+interface DepartmentDutyType extends GeneralType {
     content?: string;
     numberOfThesis?: number;
-    timeStart?: Date | null;
     timeEnd?: Date | null;
-    periodId?: number;
     files?: FileType[];
-    departmentId?: number;
+    teacherId?: number;
+    dutyId?: number;
 }
 
-interface DutyParamType extends ParamType {
-    departmentId?: number;
-}
+interface DepartmentDutyParamType extends ParamType {}
 
-export type { DutyType, DutyParamType };
+export type { DepartmentDutyType, DepartmentDutyParamType };

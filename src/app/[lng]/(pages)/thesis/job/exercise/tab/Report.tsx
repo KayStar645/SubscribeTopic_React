@@ -1,17 +1,16 @@
-import { useContext } from 'react';
-import { ExercisePageContext } from '../[id]/page';
-import { useQuery } from '@tanstack/react-query';
-import { JobResultParamType, JobResultType } from '@assets/interface';
-import { AxiosError } from 'axios';
 import { API } from '@assets/configs';
 import { request } from '@assets/helpers';
-import { Panel, PanelHeaderTemplateOptions } from 'primereact/panel';
-import { InputFile } from '@resources/components/form';
+import { JobResultParamType, JobResultType } from '@assets/interface';
 import { Loader } from '@resources/components/UI';
+import { InputFile } from '@resources/components/form';
+import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import moment from 'moment';
-import { date } from 'yup';
 import { Button } from 'primereact/button';
+import { Panel, PanelHeaderTemplateOptions } from 'primereact/panel';
 import { classNames } from 'primereact/utils';
+import { useContext } from 'react';
+import { ExercisePageContext } from '../[id]/page';
 
 const JobReport = () => {
     const { id, lng, topicId } = useContext(ExercisePageContext);
@@ -51,7 +50,7 @@ const JobReport = () => {
     };
 
     return (
-        <div className='flex flex-column gap-3'>
+        <div className='flex flex-column gap-3 bg-white border-round shadow-1 p-3 relative overflow-hidden'>
             <Loader show={jobQuery.isLoading} />
 
             {jobQuery.data &&

@@ -2,7 +2,7 @@
 
 import { API, MODULE, ROUTES } from '@assets/configs';
 import { language, request } from '@assets/helpers';
-import { DutyType, DepartmentType, TeacherType } from '@assets/interface';
+import { DepartmentDutyType, DutyType, TeacherType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -19,17 +19,15 @@ import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
-const defaultValues: DutyType = {
+const defaultValues: DepartmentDutyType = {
     id: 0,
     name: '',
-    departmentId: 0,
     files: [],
     timeEnd: new Date(),
-    timeStart: new Date(),
     numberOfThesis: 1,
     teacherId: 0,
-    type: 'D',
     content: '',
+    dutyId: 0,
 };
 
 const schema = (t: TFunction) =>
@@ -39,12 +37,10 @@ const schema = (t: TFunction) =>
                 attribute: t('common:name_of', { obj: t('module:department_duty') }).toLowerCase(),
             }),
         ),
-        departmentId: yup.number().required(),
-        timeStart: yup.date(),
         timeEnd: yup.date(),
         numberOfThesis: yup.number().min(1),
         teacherId: yup.number().required(),
-        type: yup.string().oneOf(['F', 'D']),
+        dutyId: yup.number().required(),
     });
 
 const DepartmentDutyForm = ({ params }: PageProps) => {
@@ -53,29 +49,29 @@ const DepartmentDutyForm = ({ params }: PageProps) => {
     const router = useRouter();
 
     const { control, handleSubmit, setValue, reset, getValues } = useForm({
-        resolver: yupResolver(schema(t)) as Resolver<DutyType>,
+        resolver: yupResolver(schema(t)) as Resolver<DepartmentDutyType>,
         defaultValues,
     });
 
-    const departmentDutyDetailQuery = useQuery<DutyType | null, AxiosError<ResponseType>>({
+    const departmentDutyDetailQuery = useQuery<DepartmentDutyType | null, AxiosError<ResponseType>>({
         queryKey: ['departmentDuty_detail'],
         refetchOnWindowFocus: false,
         enabled: id != 0,
         queryFn: async () => {
-            const response = await request.get<DutyType>(`${API.admin.detail.duty}?id=${id}`);
+            const response = await request.get<DepartmentDutyType>(`${API.admin.detail.department_duty}?id=${id}`);
 
             return response.data.data;
         },
     });
 
-    const departmentDutyMutation = useMutation<any, AxiosError<ResponseType>, DutyType | null>({
+    const departmentDutyMutation = useMutation<any, AxiosError<ResponseType>, DepartmentDutyType | null>({
         mutationFn: async (data) => {
             return id == '0'
-                ? request.post<DutyType>(API.admin.duty, {
+                ? request.post<DepartmentDutyType>(API.admin.department_duty, {
                       ...data,
                       files: data?.files?.map((t) => t.path),
                   })
-                : request.update<DutyType>(API.admin.duty, {
+                : request.update<DepartmentDutyType>(API.admin.department_duty, {
                       ...data,
                       files: data?.files?.map((t) => t.path),
                   });
@@ -92,7 +88,19 @@ const DepartmentDutyForm = ({ params }: PageProps) => {
         },
     });
 
-    const onSubmit = (data: DutyType) => {
+    const facultyDutyQuery = useQuery<DutyType[], AxiosError<ResponseType>>({
+        refetchOnWindowFocus: false,
+        queryKey: ['faculty_duty', 'list', params],
+        queryFn: async () => {
+            const response = await request.get<DutyType[]>(`${API.admin.duty}`, {
+                params,
+            });
+
+            return response.data.data || [];
+        },
+    });
+
+    const onSubmit = (data: DepartmentDutyType) => {
         departmentDutyMutation.mutate(data, {
             onSuccess: () => {
                 toast.success(t('request:update_success'));
@@ -138,15 +146,15 @@ const DepartmentDutyForm = ({ params }: PageProps) => {
 
                 <div className='col-4'>
                     <Controller
-                        name='numberOfThesis'
+                        name='dutyId'
                         control={control}
                         render={({ field, fieldState }) => (
-                            <InputNumber
-                                id='form_data_number_of_thesis'
-                                label='Số lượng đề tài'
-                                min={1}
+                            <Dropdown
+                                id='form_data_faculty_duty'
+                                options={facultyDutyQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
                                 value={field.value}
-                                required={true}
+                                label='Nhiệm vụ khoa'
+                                placeholder='Nhiệm vụ khoa'
                                 errorMessage={fieldState.error?.message}
                                 onChange={field.onChange}
                             />
@@ -174,14 +182,15 @@ const DepartmentDutyForm = ({ params }: PageProps) => {
 
                 <div className='col-4'>
                     <Controller
-                        name='timeStart'
+                        name='numberOfThesis'
                         control={control}
                         render={({ field, fieldState }) => (
-                            <InputDate
-                                id='form_data_time_start'
+                            <InputNumber
+                                id='form_data_number_of_thesis'
+                                label='Số lượng đề tài'
+                                min={1}
                                 value={field.value}
-                                label={t('common:time_start')}
-                                placeholder={t('common:time_start')}
+                                required={true}
                                 errorMessage={fieldState.error?.message}
                                 onChange={field.onChange}
                             />

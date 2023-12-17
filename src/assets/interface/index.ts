@@ -18,3 +18,5 @@ export * from './Job';
 export * from './Exchange';
 export * from './Duty';
 export * from './JobResult';
+export * from './Schedule';
+export * from './DepartmentDuty';

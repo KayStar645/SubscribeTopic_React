@@ -30,6 +30,7 @@ const ROUTES = {
         job: '/thesis/job',
         job_detail: '/thesis/job/group',
         job_for_topic: '/thesis/job/exercise',
+        schedule: '/thesis/schedule',
     },
 
     information: {

@@ -29,20 +29,16 @@ const defaultValues: DutyType = {
     content: '',
     departmentId: 0,
     numberOfThesis: 1,
-    timeStart: null,
     timeEnd: null,
     files: [],
-    type: 'F',
 };
 
 const schema = (_t: TFunction) =>
     yup.object({
         name: yup.string().required(),
         internalCode: yup.string().required(),
-        timeStart: yup.date(),
         timeEnd: yup.date(),
         files: yup.array().of(yup.string()),
-        type: yup.string(),
     });
 
 const FacultyDutyForm = ({ params }: PageProps) => {
@@ -137,14 +133,15 @@ const FacultyDutyForm = ({ params }: PageProps) => {
 
                 <div className='col-4'>
                     <Controller
-                        name='timeStart'
                         control={control}
+                        name='departmentId'
                         render={({ field, fieldState }) => (
-                            <InputDate
-                                id='form_data_time_start'
+                            <Dropdown
+                                id='form_data_department_id'
+                                options={departmentQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
                                 value={field.value}
-                                label={t('time_start')}
-                                placeholder={t('time_start')}
+                                label={t('module:field.faculty_duty.department')}
+                                placeholder={t('module:field.faculty_duty.department')}
                                 errorMessage={fieldState.error?.message}
                                 onChange={field.onChange}
                             />
@@ -162,24 +159,6 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                                 value={field.value}
                                 label={t('time_end')}
                                 placeholder={t('time_end')}
-                                errorMessage={fieldState.error?.message}
-                                onChange={field.onChange}
-                            />
-                        )}
-                    />
-                </div>
-
-                <div className='col-4'>
-                    <Controller
-                        control={control}
-                        name='departmentId'
-                        render={({ field, fieldState }) => (
-                            <Dropdown
-                                id='form_data_department_id'
-                                options={departmentQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
-                                value={field.value}
-                                label={t('module:field.faculty_duty.department')}
-                                placeholder={t('module:field.faculty_duty.department')}
                                 errorMessage={fieldState.error?.message}
                                 onChange={field.onChange}
                             />

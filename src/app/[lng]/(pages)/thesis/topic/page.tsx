@@ -1,7 +1,7 @@
 'use client';
 
 import { API, MODULE, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
-import { DATE_FILTER } from '@assets/configs/general';
+import { DATE_FILTER, THESIS_STATUS } from '@assets/configs/general';
 import { language, request } from '@assets/helpers';
 import usePermission from '@assets/hooks/usePermission';
 import { TeacherType, TopicParamType, TopicType } from '@assets/interface';
@@ -227,6 +227,16 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                         }}
                         header={t('module:field.thesis.review')}
                         body={(data: TopicType) => <p>{data.thesisReviews?.map((t) => t.name).join(', ')}</p>}
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header='Trạng thái'
+                        body={(data: TopicType) => <p className='text-center'>{THESIS_STATUS(t)[data.status!]}</p>}
                     />
                 </DataTable>
 

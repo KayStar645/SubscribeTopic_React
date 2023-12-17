@@ -25,6 +25,8 @@ const API = {
         exchange: 'exchange',
         duty: '/duty',
         job_result: '/jobResults',
+        schedule: '/reportSchedule',
+        department_duty: '/departmentDuty',
 
         detail: {
             notification: '/notification/detail',
@@ -34,6 +36,8 @@ const API = {
             role: '/role/detail',
             job: '/job/detail',
             exchange: '/exchange/detail',
+            schedule: '/reportSchedule/detail',
+            department_duty: '/departmentDuty/detail',
         },
 
         approve: {

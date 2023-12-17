@@ -52,21 +52,25 @@ const TopicFeedback = ({ showInput = true }: { showInput?: boolean }) => {
             <div className='flex flex-column gap-6'>
                 <Loader show={isFetching || isPending} />
 
-                <div className='flex flex-column gap-4'>
-                    {feedbacks &&
-                        feedbacks?.length > 0 &&
-                        feedbacks?.map((feedback) => (
-                            <div key={feedback.id} className='flex gap-2 align-items-start'>
-                                <Avatar icon='pi pi-user' className='bg-primary text-white border-circle' />
+                {feedbacks && feedbacks.length > 0 && (
+                    <div className='flex flex-column gap-4'>
+                        {feedbacks &&
+                            feedbacks?.length > 0 &&
+                            feedbacks?.map((feedback) => (
+                                <div key={feedback.id} className='flex gap-2 align-items-start'>
+                                    <Avatar icon='pi pi-user' className='bg-primary text-white border-circle' />
 
-                                <div className='flex flex-column gap-2'>
-                                    {feedback.commenter.name}
-                                    <Chip label={feedback.content} className='bg-gray-200' />
-                                    <p className='text-xs'>{moment(feedback.dateCreated).format('DD/MM/YYYY HH:MM')}</p>
+                                    <div className='flex flex-column gap-2'>
+                                        {feedback.commenter.name}
+                                        <Chip label={feedback.content} className='bg-gray-200' />
+                                        <p className='text-xs'>
+                                            {moment(feedback.dateCreated).format('DD/MM/YYYY HH:MM')}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                </div>
+                            ))}
+                    </div>
+                )}
 
                 {showInput && (
                     <div className='flex flex-column gap-3'>

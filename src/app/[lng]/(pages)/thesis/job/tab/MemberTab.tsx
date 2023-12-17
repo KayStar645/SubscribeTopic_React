@@ -21,7 +21,7 @@ const MemberTab = () => {
 
             <div>
                 <div className='border-bottom-2 border-blue-500 px-3 flex align-items-center justify-content-between'>
-                    <p className='font-semibold text-blue-500 text-2xl py-3'>{t('module:field.job.member')}</p>
+                    <p className='font-semibold text-blue-500 text-2xl py-3'>Thành viên</p>
                     <p className='text-blue-500 font-semibold'>{topic?.groupDto?.countMember} thành viên</p>
                 </div>
 

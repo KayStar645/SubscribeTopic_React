@@ -140,6 +140,14 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
                     permission: PERMISSION.studentJoin.view,
                     checkPermission: true,
                 },
+                {
+                    code: 'schedule',
+                    parent: 'thesis',
+                    label: t('menu:schedule'),
+                    to: `/${lng}/${ROUTES.thesis.schedule}`,
+                    permission: PERMISSION.studentJoin.view,
+                    checkPermission: false,
+                },
             ],
         },
         {

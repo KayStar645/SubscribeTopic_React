@@ -1,10 +1,18 @@
 'use client';
 
-import { API, MODULE } from '@assets/configs';
+import { API, AUTH_TOKEN, MODULE } from '@assets/configs';
 import { THESIS_STATUS } from '@assets/configs/general';
 import { request } from '@assets/helpers';
 import usePermission from '@assets/hooks/usePermission';
-import { MajorType, TeacherType, TopicParamType, TopicType } from '@assets/interface';
+import {
+    AuthType,
+    DepartmentDutyParamType,
+    DepartmentDutyType,
+    MajorType,
+    TeacherType,
+    TopicParamType,
+    TopicType,
+} from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -19,12 +27,17 @@ import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Chip } from 'primereact/chip';
+import { Dialog } from 'primereact/dialog';
 import { classNames } from 'primereact/utils';
-import { createContext, useEffect } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
 import TopicFeedback from './Feedback';
+import useCookies from '@assets/hooks/useCookies';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { RadioButton } from 'primereact/radiobutton';
 
 interface TopicPageContextType {
     t: TFunction;
@@ -63,6 +76,9 @@ const TopicForm = ({ params: _params }: PageProps) => {
     const { t } = useTranslation(lng);
     const router = useRouter();
     const permission = usePermission(MODULE.topic);
+    const [visible, setVisible] = useState(false);
+    const [auth] = useCookies<AuthType>(AUTH_TOKEN);
+    const [dutyId, setDutyId] = useState(0);
 
     const { control, handleSubmit, setValue, reset, getValues } = useForm({
         resolver: yupResolver(schema(t)) as Resolver<TopicType>,
@@ -85,24 +101,6 @@ const TopicForm = ({ params: _params }: PageProps) => {
         },
     });
 
-    useEffect(() => {
-        if (thesisDetailQuery.data) {
-            thesisDetailQuery.data.thesisInstructionsId = (thesisDetailQuery.data.thesisInstructions || [])?.map((t) =>
-                parseInt(t.id?.toString()!),
-            );
-            thesisDetailQuery.data.thesisMajorsId = (thesisDetailQuery.data.thesisMajors || [])?.map((t) =>
-                parseInt(t.id?.toString()!),
-            );
-            thesisDetailQuery.data.thesisReviewsId = (thesisDetailQuery.data.thesisReviews || [])?.map((t) =>
-                parseInt(t.id?.toString()!),
-            );
-
-            reset(thesisDetailQuery.data);
-        } else {
-            reset(defaultValues);
-        }
-    }, [reset, thesisDetailQuery.data]);
-
     const majorQuery = useQuery<MajorType[], AxiosError<ResponseType>>({
         queryKey: ['thesis_majors', 'list'],
         refetchOnWindowFocus: false,
@@ -123,6 +121,21 @@ const TopicForm = ({ params: _params }: PageProps) => {
         },
     });
 
+    const departmentDutyQuery = useQuery<DepartmentDutyType[], AxiosError<ResponseType>>({
+        refetchOnWindowFocus: false,
+        queryKey: ['faculties', 'list'],
+        enabled: !!auth?.customer.Id && visible,
+        queryFn: async () => {
+            const params: DepartmentDutyParamType = {
+                filters: `teacherId==${auth?.customer.Id}`,
+            };
+
+            const response = await request.get<DepartmentDutyType[]>(`${API.admin.department_duty}`, { params });
+
+            return response.data.data || [];
+        },
+    });
+
     const thesisMutation = useMutation<any, AxiosError<ResponseType>, TopicType | null>({
         mutationFn: async (data) => {
             return id == '0'
@@ -133,10 +146,16 @@ const TopicForm = ({ params: _params }: PageProps) => {
 
     const thesisUpdateStatusMutation = useMutation({
         mutationFn: async (status: 'AR' | 'A' | 'D') => {
-            return request.update<TopicType>(API.admin.approve.topic, {
+            const data: TopicType = {
                 id,
                 status,
-            });
+            };
+
+            if (dutyId > 0) {
+                data['dutyId'] = dutyId;
+            }
+
+            return request.update<TopicType>(API.admin.approve.topic, data);
         },
     });
 
@@ -196,12 +215,8 @@ const TopicForm = ({ params: _params }: PageProps) => {
                             severity='secondary'
                             onClick={(e) => {
                                 e.preventDefault();
-                                thesisUpdateStatusMutation.mutate('AR', {
-                                    onSuccess() {
-                                        thesisDetailQuery.refetch();
-                                        toast.success(t('request:update_success'));
-                                    },
-                                });
+
+                                setVisible(true);
                             }}
                         />
                     )}
@@ -225,6 +240,24 @@ const TopicForm = ({ params: _params }: PageProps) => {
             </div>
         );
     };
+
+    useEffect(() => {
+        if (thesisDetailQuery.data) {
+            thesisDetailQuery.data.thesisInstructionsId = (thesisDetailQuery.data.thesisInstructions || [])?.map((t) =>
+                parseInt(t.id?.toString()!),
+            );
+            thesisDetailQuery.data.thesisMajorsId = (thesisDetailQuery.data.thesisMajors || [])?.map((t) =>
+                parseInt(t.id?.toString()!),
+            );
+            thesisDetailQuery.data.thesisReviewsId = (thesisDetailQuery.data.thesisReviews || [])?.map((t) =>
+                parseInt(t.id?.toString()!),
+            );
+
+            reset(thesisDetailQuery.data);
+        } else {
+            reset(defaultValues);
+        }
+    }, [reset, thesisDetailQuery.data]);
 
     const value: TopicPageContextType = {
         t,
@@ -344,7 +377,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
                                         name='thesisMajorsId'
                                         render={({ field }) => (
                                             <MultiSelect
-                                                disabled={getValues('status') != 'D'}
+                                                disabled={getValues('status') == 'AR'}
                                                 id={`thesisMajorsId_${field.value}`}
                                                 label={t('module:field.thesis.major')}
                                                 emptyMessage={t('common:list_empty')}
@@ -359,7 +392,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
                                         name='thesisInstructionsId'
                                         render={({ field }) => (
                                             <MultiSelect
-                                                disabled={getValues('status') != 'D'}
+                                                disabled={getValues('status') == 'AR'}
                                                 id={`thesisInstructionsId_${field.value}`}
                                                 label={t('module:field.thesis.instruction')}
                                                 emptyMessage={t('common:list_empty')}
@@ -379,7 +412,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
                                             name='thesisReviewsId'
                                             render={({ field }) => (
                                                 <MultiSelect
-                                                    disabled={getValues('status') != 'D'}
+                                                    disabled={getValues('status') == 'AR'}
                                                     id={`thesisReviewsId_${field.value}`}
                                                     label={t('module:field.thesis.review')}
                                                     emptyMessage={t('common:list_empty')}
@@ -413,7 +446,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
                                 </div>
                             </div>
 
-                            {getValues('status') == 'D' && (
+                            {getValues('status') != 'AR' && (
                                 <div
                                     className='flex align-items-center justify-content-end gap-2 fixed bottom-0 left-0 right-0 bg-white px-5 h-4rem shadow-8'
                                     style={{ zIndex: 500 }}
@@ -438,6 +471,85 @@ const TopicForm = ({ params: _params }: PageProps) => {
                     )}
                 </div>
             </div>
+
+            <Dialog
+                header='Đề tài thuộc nhiệm vụ'
+                onHide={() => {
+                    setDutyId(0);
+                    setVisible(false);
+                }}
+                visible={visible}
+                style={{ width: '50vw' }}
+                className='relative overflow-hidden'
+            >
+                <Loader show={departmentDutyQuery.isFetching} />
+
+                <DataTable
+                    value={departmentDutyQuery.data}
+                    rowHover={true}
+                    stripedRows={true}
+                    showGridlines={true}
+                    emptyMessage={t('list_empty')}
+                >
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header={t('common:action')}
+                        body={(data: DepartmentDutyType) => (
+                            <div className='flex align-items-center justify-content-center'>
+                                <RadioButton
+                                    checked={data.id === dutyId}
+                                    onChange={() => setDutyId(parseInt(data.id?.toString()!))}
+                                />
+                            </div>
+                        )}
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        field='name'
+                        header='Tên nhiệm vụ'
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        field='numberOfThesis'
+                        header='Số lượng đề tài'
+                    />
+                </DataTable>
+
+                <div className='flex align-items-center justify-content-end mt-3'>
+                    <Button
+                        label={t('common:approve_request')}
+                        size='small'
+                        severity='secondary'
+                        onClick={(e) => {
+                            e.preventDefault();
+
+                            thesisUpdateStatusMutation.mutate('AR', {
+                                onSuccess() {
+                                    setDutyId(0);
+                                    setVisible(false);
+                                    thesisDetailQuery.refetch();
+                                    toast.success(t('request:update_success'));
+                                },
+                            });
+                        }}
+                    />
+                </div>
+            </Dialog>
         </TopicPageContext.Provider>
     );
 };

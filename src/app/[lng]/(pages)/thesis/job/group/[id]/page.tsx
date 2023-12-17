@@ -15,6 +15,7 @@ import { TopicType, TopicParamType, JobType, JobParamType } from '@assets/interf
 import { AxiosError } from 'axios';
 import { request } from '@assets/helpers';
 import { Loader } from '@resources/components/UI';
+import ResultTab from '../../tab/Result';
 
 type JobPageContextType = {
     t: TFunction;
@@ -36,9 +37,9 @@ const JobPage = ({ params }: PageProps) => {
     const [activeTab, setActiveTab] = useState<string>('news');
 
     const topicDetail = useQuery<TopicType | null, AxiosError<ResponseType>>({
-        queryKey: ['thesis_detail', id],
+        queryKey: ['thesis_detail'],
         refetchOnWindowFocus: false,
-        enabled: id !== '0',
+        enabled: id != '0',
         queryFn: async () => {
             const params: TopicParamType = {
                 id,
@@ -52,12 +53,12 @@ const JobPage = ({ params }: PageProps) => {
     });
 
     const jobDetail = useQuery<JobType[], AxiosError<ResponseType>>({
-        queryKey: ['job_detail', id],
+        queryKey: ['job_detail'],
         refetchOnWindowFocus: false,
-        enabled: id !== '0',
+        enabled: topicDetail.isSuccess,
         queryFn: async () => {
             const params: JobParamType = {
-                thesisId: id,
+                thesisId: parseInt(topicDetail.data?.id?.toString()!),
                 isAllDetail: true,
             };
 
@@ -80,6 +81,10 @@ const JobPage = ({ params }: PageProps) => {
             {
                 value: 'member',
                 label: t('module:field.job.member'),
+            },
+            {
+                value: 'point',
+                label: 'Kết quả',
             },
         ],
         [t],
@@ -124,6 +129,7 @@ const JobPage = ({ params }: PageProps) => {
                 {activeTab === 'news' && <NewsTab />}
                 {activeTab === 'exercise' && <ExerciseTab />}
                 {activeTab === 'member' && <MemberTab />}
+                {activeTab === 'point' && <ResultTab />}
             </div>
         </JobPageContext.Provider>
     );

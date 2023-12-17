@@ -2,17 +2,17 @@
 
 import { API } from '@assets/configs';
 import { date, request } from '@assets/helpers';
-import { ScheduleType } from '@assets/interface';
+import { ScheduleParamType, ScheduleType } from '@assets/interface';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import {
     add,
+    compareAsc,
     differenceInHours,
     differenceInMinutes,
     endOfWeek,
     format,
     getDay,
-    isWithinInterval,
     max,
     min,
     set,
@@ -32,18 +32,23 @@ const SchedulePage = () => {
     const dateRefs = useRef<HTMLDivElement[] | null[]>([]);
     const [curr, setCurr] = useState(date.CURR_DATE);
     const [show, setShow] = useState(false);
+    const [tempSchedules, setTempSchedules] = useState<ScheduleType[]>([]);
     const [schedules, setSchedules] = useState<ScheduleType[]>([]);
     const [selected, setSelected] = useState<ScheduleType>();
     const formRef = useRef<ScheduleFormRefType>(null);
 
     const { data, isFetching, refetch } = useQuery<ScheduleType[], AxiosError>({
-        queryKey: ['schedules', 'list'],
+        queryKey: ['schedules', 'list', curr],
         refetchOnWindowFocus: false,
         queryFn: async () => {
             const response = await request.get(API.admin.schedule, {
                 params: {
                     isGetThesis: true,
-                },
+                    filters: `timeStart>=${format(startOfWeek(curr), 'yyyy-MM-dd')},timeStart<=${format(
+                        endOfWeek(curr),
+                        'yyyy-MM-dd',
+                    )}`,
+                } as ScheduleParamType,
             });
 
             return response.data.data || [];
@@ -52,30 +57,53 @@ const SchedulePage = () => {
 
     useEffect(() => {
         if (data) {
-            const validData = data.filter((t) =>
-                isWithinInterval(new Date(t.timeStart!), {
-                    start: startOfWeek(curr),
-                    end: endOfWeek(curr),
-                }),
+            setSchedules(
+                data.map((t) => ({
+                    ...t,
+                    timeEnd: new Date(t.timeEnd!),
+                    timeStart: new Date(t.timeStart!),
+                })),
             );
 
-            setSchedules(
-                validData.map((t) => ({ ...t, timeEnd: new Date(t.timeEnd!), timeStart: new Date(t.timeStart!) })),
+            setTempSchedules(
+                data.map((t) => {
+                    const timeEnd = moment(t.timeEnd!)
+                        .set({
+                            date: curr.getDate(),
+                            month: curr.getMonth(),
+                            year: curr.getFullYear(),
+                        })
+                        .toDate();
+
+                    const timeStart = moment(t.timeStart!)
+                        .set({
+                            date: curr.getDate(),
+                            month: curr.getMonth(),
+                            year: curr.getFullYear(),
+                        })
+                        .toDate();
+
+                    return {
+                        ...t,
+                        timeEnd,
+                        timeStart,
+                    };
+                }),
             );
         }
     }, [curr, data]);
 
     const minStart = useMemo(() => {
-        return moment(min(schedules.map((t) => t.timeStart!)))
+        return moment(min(tempSchedules.map((t) => t.timeStart!)))
             .set({
                 minute: 0,
             })
             .toDate();
-    }, [schedules]);
+    }, [tempSchedules]);
 
     const maxEnd = useMemo(() => {
-        return max(schedules.map((t) => t.timeEnd!));
-    }, [schedules]);
+        return max(tempSchedules.map((t) => t.timeEnd!));
+    }, [tempSchedules]);
 
     const timeLines: (string | undefined)[] = useMemo(() => {
         let result: (string | undefined)[] = [];
@@ -90,7 +118,10 @@ const SchedulePage = () => {
             minutes: minStart.getMinutes(),
         });
 
-        for (let hour = date2.getHours(); hour <= date1.getHours(); hour++) {
+        const hourStart = compareAsc(date1, date2) === 1 ? date2.getHours() : date1.getHours();
+        const hourEnd = compareAsc(date1, date2) === 1 ? date1.getHours() : date2.getHours();
+
+        for (let hour = hourStart; hour <= hourEnd; hour++) {
             const stringHour = hour.toString().padStart(2, '0');
 
             result.push(`${stringHour}:00`);
@@ -111,18 +142,23 @@ const SchedulePage = () => {
             return;
         }
 
-        const diffHoursWithMinStart = differenceInHours(item.timeStart!, minStart);
-        const diffMinutesWithMinStart = differenceInMinutes(item.timeStart!, minStart);
+        const diffHoursWithMinStart = item.timeStart?.getHours()! - minStart.getHours();
+        const diffMinutesWithMinStart = item.timeStart?.getMinutes()! - minStart.getMinutes();
 
         // bonus size
-        const bonusHeight = item.timeStart!.getMinutes();
-        const bonusTop = diffHoursWithMinStart * 45 + diffHoursWithMinStart * 22.4 + diffMinutesWithMinStart + 22.4;
+        const bonusHeight =
+            differenceInHours(item.timeEnd!, item.timeStart!) > 1 ? item.timeStart?.getMinutes()! + 22.4 : 22.4;
+
+        const bonusTop =
+            diffHoursWithMinStart * 60 +
+            diffHoursWithMinStart * 22.4 +
+            (diffMinutesWithMinStart > 1 ? diffMinutesWithMinStart + 22.4 : 4);
 
         // size
-        const height = differenceInMinutes(item.timeEnd!, item.timeStart!) + diffMinutesWithMinStart + bonusHeight;
+        const height = differenceInMinutes(item.timeEnd!, item.timeStart!) + bonusHeight;
         const left = parent?.offsetLeft + 4;
         const top = parent?.offsetHeight + bonusTop;
-        const width = parent?.offsetWidth - 10;
+        const width = parent?.offsetWidth - 8;
 
         //style
         const background = item.type === 'W' ? 'bg-blue-600' : 'bg-green-600';
@@ -132,7 +168,7 @@ const SchedulePage = () => {
                 <div
                     style={{ height, left, top, width }}
                     className={classNames(
-                        'absolute border-round p-1 overflow-auto text-white flex flex-column gap-2',
+                        'absolute border-round p-1 overflow-hidden text-white flex flex-column gap-2',
                         background,
                     )}
                 >
@@ -235,7 +271,9 @@ const SchedulePage = () => {
 
                         {show &&
                             dateRefs.current.length > 0 &&
-                            schedules.map((item) => <CalendarItem item={item} key={item.timeStart!.toString()} />)}
+                            schedules &&
+                            schedules.length > 0 &&
+                            schedules?.map((item) => <CalendarItem item={item} key={item.timeStart!.toString()} />)}
                     </div>
                     <div className='bg-white'>
                         {timeLines.length > 0 ? (

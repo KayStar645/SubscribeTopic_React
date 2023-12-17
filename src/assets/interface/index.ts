@@ -20,3 +20,4 @@ export * from './Duty';
 export * from './JobResult';
 export * from './Schedule';
 export * from './DepartmentDuty';
+export * from './Point';

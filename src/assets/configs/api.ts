@@ -52,6 +52,10 @@ const API = {
             thesis: {
                 topic_by_teacher: '/thesis/listThesisInstructorOfTeacher',
             },
+            point: {
+                by_thesis: '/point/thesis',
+                by_faculty: '/point/faculty',
+            },
         },
     },
 };

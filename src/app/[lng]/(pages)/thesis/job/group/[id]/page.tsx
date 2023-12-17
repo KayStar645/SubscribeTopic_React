@@ -84,7 +84,7 @@ const JobPage = ({ params }: PageProps) => {
             },
             {
                 value: 'point',
-                label: 'Kết quả',
+                label: 'Điểm / Kết quả',
             },
         ],
         [t],
@@ -101,7 +101,7 @@ const JobPage = ({ params }: PageProps) => {
         <JobPageContext.Provider value={value}>
             <Loader show={topicDetail.isFetching || jobDetail.isFetching} />
 
-            <div className='flex align-items-center border-bottom-2 border-200 bg-white border-round overflow-hidden'>
+            <div className='flex align-items-center border-bottom-2 border-200 bg-white border-round overflow-hidden shadow-1'>
                 {TABS.map((tab) => (
                     <div
                         key={tab.value}

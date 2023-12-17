@@ -27,6 +27,7 @@ const Feedback = () => {
                 params: {
                     removeFacultyId: true,
                     jobId: id,
+                    sorts: 'LastModifiedDate',
                 } as ExchangeParamType,
             });
 

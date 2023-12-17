@@ -36,7 +36,6 @@ const defaultValues: DutyType = {
 const schema = (_t: TFunction) =>
     yup.object({
         name: yup.string().required(),
-        internalCode: yup.string().required(),
         timeEnd: yup.date(),
         files: yup.array().of(yup.string()),
     });

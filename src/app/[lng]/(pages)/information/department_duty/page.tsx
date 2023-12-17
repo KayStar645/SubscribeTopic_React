@@ -2,7 +2,7 @@
 
 import { API, MODULE, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
 import { language, request } from '@assets/helpers';
-import { DutyParamType, DutyType, DepartmentType } from '@assets/interface';
+import { DutyParamType, DutyType, DepartmentType, RegistrationPeriodType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
@@ -21,6 +21,7 @@ import { AxiosError } from 'axios';
 import { DATE_FILTER } from '@assets/configs/general';
 import usePermission from '@assets/hooks/usePermission';
 import Link from 'next/link';
+import moment from 'moment';
 
 const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
@@ -157,6 +158,15 @@ const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
                         }}
                         field='numberOfThesis'
                         header='Số lượng đề tài'
+                    />
+                    <Column
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header={t('time_end')}
+                        body={(data: RegistrationPeriodType) => <p>{moment(data.timeEnd).format('DD/MM/YYYY')}</p>}
                     />
                 </DataTable>
 

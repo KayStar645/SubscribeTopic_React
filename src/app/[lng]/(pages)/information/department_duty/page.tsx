@@ -1,27 +1,27 @@
 'use client';
 
 import { API, MODULE, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
+import { DATE_FILTER } from '@assets/configs/general';
 import { language, request } from '@assets/helpers';
-import { DutyParamType, DutyType, DepartmentType, RegistrationPeriodType } from '@assets/interface';
+import usePermission from '@assets/hooks/usePermission';
+import { DepartmentDutyType, DutyParamType, DutyType, RegistrationPeriodType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
+import { Loader } from '@resources/components/UI';
 import { Dropdown, InputText } from '@resources/components/form';
+import { ConfirmModal } from '@resources/components/modal';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import moment from 'moment';
+import Link from 'next/link';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Loader } from '@resources/components/UI';
-import { ConfirmModal } from '@resources/components/modal';
-import { AxiosError } from 'axios';
-import { DATE_FILTER } from '@assets/configs/general';
-import usePermission from '@assets/hooks/usePermission';
-import Link from 'next/link';
-import moment from 'moment';
 
 const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
@@ -156,8 +156,8 @@ const DepartmentDutyPage = ({ params: { lng } }: PageProps) => {
                             color: 'var(--surface-a)',
                             whiteSpace: 'nowrap',
                         }}
-                        field='numberOfThesis'
                         header='Số lượng đề tài'
+                        body={(data: DepartmentDutyType) => <p className='text-center'>{data.numberOfThesis}</p>}
                     />
                     <Column
                         headerStyle={{

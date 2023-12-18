@@ -21,6 +21,7 @@ import { InputText } from '@resources/components/form';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import moment from 'moment';
 
 const defaultValues: DutyType = {
     id: 0,
@@ -36,7 +37,7 @@ const defaultValues: DutyType = {
 const schema = (_t: TFunction) =>
     yup.object({
         name: yup.string().required(),
-        timeEnd: yup.date(),
+        timeEnd: yup.date().required(),
         files: yup.array().of(yup.string()),
     });
 
@@ -53,7 +54,7 @@ const FacultyDutyForm = ({ params }: PageProps) => {
     const facultyDutyDetailQuery = useQuery<DutyType | null, AxiosError<ResponseType>>({
         queryKey: ['faculty_duty'],
         refetchOnWindowFocus: false,
-        enabled: id != 0,
+        enabled: id != '0',
         queryFn: async () => {
             const response = await request.get<DutyType>(`${API.admin.detail.duty}?id=${id}`);
 
@@ -66,10 +67,12 @@ const FacultyDutyForm = ({ params }: PageProps) => {
             return id == '0'
                 ? request.post<DutyType>(API.admin.duty, {
                       ...data,
+                      timeEnd: moment(data?.timeEnd).format('yyyy-MM-DD'),
                       files: data?.files?.map((t) => t.path),
                   })
                 : request.update<DutyType>(API.admin.duty, {
                       ...data,
+                      timeEnd: moment(data?.timeEnd).format('yyyy-MM-DD'),
                       files: data?.files?.map((t) => t.path),
                   });
         },
@@ -103,10 +106,12 @@ const FacultyDutyForm = ({ params }: PageProps) => {
     };
 
     useEffect(() => {
-        if (facultyDutyDetailQuery.data) {
+        if (id == 0) {
+            reset(defaultValues);
+        } else if (facultyDutyDetailQuery.data) {
             reset(facultyDutyDetailQuery.data);
         }
-    }, [facultyDutyDetailQuery.data, reset]);
+    }, [facultyDutyDetailQuery.data, id, reset]);
 
     return (
         <div className='overflow-auto pb-8'>

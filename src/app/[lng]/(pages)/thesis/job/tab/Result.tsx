@@ -122,14 +122,16 @@ const ResultTab = () => {
                         header={field.teacher.name}
                         body={() =>
                             field.teacher.id === auth?.customer.Id ? (
-                                <InputText
-                                    className='text-center w-8rem'
-                                    defaultValue={field.score.toString()}
-                                    keyfilter={'num'}
-                                    min={0}
-                                    max={10}
-                                    onBlur={(e) => onSave(parseFloat(e.currentTarget.value), field.studentId)}
-                                />
+                                <div className='flex justify-content-center'>
+                                    <InputText
+                                        className='text-center w-8rem'
+                                        defaultValue={field.score.toString()}
+                                        keyfilter={'num'}
+                                        min={0}
+                                        max={10}
+                                        onBlur={(e) => onSave(parseFloat(e.currentTarget.value), field.studentId)}
+                                    />
+                                </div>
                             ) : (
                                 <p className='text-center'>{field.score > 0 ? field.score : '-'}</p>
                             )

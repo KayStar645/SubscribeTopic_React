@@ -20,6 +20,12 @@ const InputDate = ({
 }: InputDateProps) => {
     const [date, setDate] = useState<Date | undefined | null>(value ? new Date(value) : null);
 
+    useEffect(() => {
+        if (value) {
+            setDate(new Date(value));
+        }
+    }, [value]);
+
     return (
         <div className={classNames(blockClassName)}>
             <div className={classNames('block', { 'flex align-items-center': row })}>

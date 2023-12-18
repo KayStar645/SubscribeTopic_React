@@ -250,133 +250,135 @@ const SchedulePage = () => {
                     />
                 </div>
 
-                <div className='overflow-auto border-round' style={{ margin: '0 auto' }}>
-                    <div className='flex w-fit align-items-center relative'>
-                        <div className='bg-primary text-center border-right-1 border-400 h-3rem w-4rem'></div>
+                <div className='flex justify-content-center'>
+                    <div className='overflow-auto border-round'>
+                        <div className='flex w-fit align-items-center relative'>
+                            <div className='bg-primary text-center border-right-1 border-400 h-3rem w-4rem'></div>
 
-                        {date.DATES_IN_WEEK(curr).map((_date, index) => (
-                            <div
-                                key={_date.toString()}
-                                ref={(ref) => (dateRefs.current[index] = ref)}
-                                className={classNames(
-                                    'bg-primary text-center border-400 h-3rem w-12rem flex align-items-center justify-content-center',
-                                    {
-                                        'border-right-1': index < 6,
-                                    },
-                                )}
-                            >
-                                {format(_date, 'dd/MM/yyyy')}
-                            </div>
-                        ))}
-
-                        {show &&
-                            dateRefs.current.length > 0 &&
-                            schedules &&
-                            schedules.length > 0 &&
-                            schedules?.map((item) => <CalendarItem item={item} key={item.timeStart!.toString()} />)}
-                    </div>
-                    <div className='bg-white'>
-                        {timeLines.length > 0 ? (
-                            timeLines.map((timeLine, index) => (
+                            {date.DATES_IN_WEEK(curr).map((_date, index) => (
                                 <div
-                                    key={Math.random().toString()}
-                                    className='flex w-fit align-items-center justify-content-between'
-                                >
-                                    <div
-                                        className={classNames('bg-primary w-4rem border-400 text-center', {
-                                            'border-top-1 ': !!timeLine,
+                                    key={_date.toString()}
+                                    ref={(ref) => (dateRefs.current[index] = ref)}
+                                    className={classNames(
+                                        'bg-primary text-center border-400 h-3rem w-12rem flex align-items-center justify-content-center',
+                                        {
                                             'border-right-1': index < 6,
-                                        })}
-                                        style={{
-                                            height: timeLine ? 22.4 : 15,
-                                        }}
-                                    >
-                                        {timeLine}
-                                    </div>
-
-                                    <div
-                                        className={classNames('w-12rem border-right-1 border-400', {
-                                            'text-white': timeLine,
-                                        })}
-                                        style={{
-                                            height: timeLine ? 22.4 : 15,
-                                            userSelect: 'none',
-                                        }}
-                                    >
-                                        {timeLine ? '.' : null}
-                                    </div>
-
-                                    <div
-                                        className={classNames('w-12rem border-right-1 border-400', {
-                                            'text-white': timeLine,
-                                        })}
-                                        style={{
-                                            height: timeLine ? 22.4 : 15,
-                                            userSelect: 'none',
-                                        }}
-                                    >
-                                        {timeLine ? '.' : null}
-                                    </div>
-                                    <div
-                                        className={classNames('w-12rem border-right-1 border-400', {
-                                            'text-white': timeLine,
-                                        })}
-                                        style={{
-                                            height: timeLine ? 22.4 : 15,
-                                            userSelect: 'none',
-                                        }}
-                                    >
-                                        {timeLine ? '.' : null}
-                                    </div>
-                                    <div
-                                        className={classNames('w-12rem border-right-1 border-400', {
-                                            'text-white': timeLine,
-                                        })}
-                                        style={{
-                                            height: timeLine ? 22.4 : 15,
-                                            userSelect: 'none',
-                                        }}
-                                    >
-                                        {timeLine ? '.' : null}
-                                    </div>
-                                    <div
-                                        className={classNames('w-12rem border-right-1 border-400', {
-                                            'text-white': timeLine,
-                                        })}
-                                        style={{
-                                            height: timeLine ? 22.4 : 15,
-                                            userSelect: 'none',
-                                        }}
-                                    >
-                                        {timeLine ? '.' : null}
-                                    </div>
-                                    <div
-                                        className={classNames('w-12rem border-right-1 border-400', {
-                                            'text-white': timeLine,
-                                        })}
-                                        style={{
-                                            height: timeLine ? 22.4 : 15,
-                                            userSelect: 'none',
-                                        }}
-                                    >
-                                        {timeLine ? '.' : null}
-                                    </div>
-                                    <div
-                                        className={classNames('w-12rem border-400', {
-                                            'text-white': timeLine,
-                                        })}
-                                        style={{
-                                            height: timeLine ? 22.4 : 15,
-                                            userSelect: 'none',
-                                        }}
-                                    >
-                                        {timeLine ? '.' : null}
-                                    </div>
+                                        },
+                                    )}
+                                >
+                                    {format(_date, 'dd/MM/yyyy')}
                                 </div>
-                            ))
-                        ) : (
-                            <p className='py-5 font-semibold text-center'>Không có lịch nào diễn ra trong tuần</p>
-                        )}
+                            ))}
+
+                            {show &&
+                                dateRefs.current.length > 0 &&
+                                schedules &&
+                                schedules.length > 0 &&
+                                schedules?.map((item) => <CalendarItem item={item} key={item.timeStart!.toString()} />)}
+                        </div>
+                        <div className='bg-white'>
+                            {timeLines.length > 0 ? (
+                                timeLines.map((timeLine, index) => (
+                                    <div
+                                        key={Math.random().toString()}
+                                        className='flex w-fit align-items-center justify-content-between'
+                                    >
+                                        <div
+                                            className={classNames('bg-primary w-4rem border-400 text-center', {
+                                                'border-top-1 ': !!timeLine,
+                                                'border-right-1': index < 6,
+                                            })}
+                                            style={{
+                                                height: timeLine ? 22.4 : 15,
+                                            }}
+                                        >
+                                            {timeLine}
+                                        </div>
+
+                                        <div
+                                            className={classNames('w-12rem border-right-1 border-400', {
+                                                'text-white': timeLine,
+                                            })}
+                                            style={{
+                                                height: timeLine ? 22.4 : 15,
+                                                userSelect: 'none',
+                                            }}
+                                        >
+                                            {timeLine ? '.' : null}
+                                        </div>
+
+                                        <div
+                                            className={classNames('w-12rem border-right-1 border-400', {
+                                                'text-white': timeLine,
+                                            })}
+                                            style={{
+                                                height: timeLine ? 22.4 : 15,
+                                                userSelect: 'none',
+                                            }}
+                                        >
+                                            {timeLine ? '.' : null}
+                                        </div>
+                                        <div
+                                            className={classNames('w-12rem border-right-1 border-400', {
+                                                'text-white': timeLine,
+                                            })}
+                                            style={{
+                                                height: timeLine ? 22.4 : 15,
+                                                userSelect: 'none',
+                                            }}
+                                        >
+                                            {timeLine ? '.' : null}
+                                        </div>
+                                        <div
+                                            className={classNames('w-12rem border-right-1 border-400', {
+                                                'text-white': timeLine,
+                                            })}
+                                            style={{
+                                                height: timeLine ? 22.4 : 15,
+                                                userSelect: 'none',
+                                            }}
+                                        >
+                                            {timeLine ? '.' : null}
+                                        </div>
+                                        <div
+                                            className={classNames('w-12rem border-right-1 border-400', {
+                                                'text-white': timeLine,
+                                            })}
+                                            style={{
+                                                height: timeLine ? 22.4 : 15,
+                                                userSelect: 'none',
+                                            }}
+                                        >
+                                            {timeLine ? '.' : null}
+                                        </div>
+                                        <div
+                                            className={classNames('w-12rem border-right-1 border-400', {
+                                                'text-white': timeLine,
+                                            })}
+                                            style={{
+                                                height: timeLine ? 22.4 : 15,
+                                                userSelect: 'none',
+                                            }}
+                                        >
+                                            {timeLine ? '.' : null}
+                                        </div>
+                                        <div
+                                            className={classNames('w-12rem border-400', {
+                                                'text-white': timeLine,
+                                            })}
+                                            style={{
+                                                height: timeLine ? 22.4 : 15,
+                                                userSelect: 'none',
+                                            }}
+                                        >
+                                            {timeLine ? '.' : null}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className='py-5 font-semibold text-center'>Không có lịch nào diễn ra trong tuần</p>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

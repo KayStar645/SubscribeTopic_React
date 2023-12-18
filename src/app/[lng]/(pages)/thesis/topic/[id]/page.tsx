@@ -377,7 +377,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
                                         name='thesisMajorsId'
                                         render={({ field }) => (
                                             <MultiSelect
-                                                disabled={getValues('status') == 'AR'}
+                                                disabled={getValues('status') != 'D'}
                                                 id={`thesisMajorsId_${field.value}`}
                                                 label={t('module:field.thesis.major')}
                                                 emptyMessage={t('common:list_empty')}

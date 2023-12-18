@@ -116,14 +116,23 @@ const DepartmentDutyForm = ({ params }: PageProps) => {
     };
 
     useEffect(() => {
-        if (departmentDutyDetailQuery.data) {
+        if (id == 0) {
+            reset(defaultValues);
+        } else if (departmentDutyDetailQuery.data) {
             reset(departmentDutyDetailQuery.data);
         }
-    }, [departmentDutyDetailQuery.data, reset]);
+    }, [departmentDutyDetailQuery.data, id, reset]);
 
     return (
         <div className='overflow-auto pb-8'>
-            <Loader show={departmentDutyMutation.isPending || departmentDutyDetailQuery.isFetching} />
+            <Loader
+                show={
+                    departmentDutyMutation.isPending ||
+                    departmentDutyDetailQuery.isFetching ||
+                    facultyDutyQuery.isFetching ||
+                    teacherQuery.isFetching
+                }
+            />
 
             <form className='p-3 flex flex-wrap bg-white border-round-xl ' onSubmit={handleSubmit(onSubmit)}>
                 <div className='col-4'>

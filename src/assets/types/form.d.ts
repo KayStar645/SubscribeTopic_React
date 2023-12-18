@@ -64,7 +64,7 @@ interface RadioListProps extends InputProps {
 }
 
 interface InputDateProps extends InputProps {
-    value?: Date | null | string;
+    value?: Date | null;
     format?: string;
     time?: boolean;
     timeOnly?: boolean;

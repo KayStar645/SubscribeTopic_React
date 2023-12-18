@@ -1,6 +1,7 @@
 import { MultiSelectProps } from '@assets/types/form';
 import { MultiSelect as PrimeMultiSelect } from 'primereact/multiselect';
 import { classNames } from 'primereact/utils';
+import { useEffect, useState } from 'react';
 
 const MultiSelect = ({
     id,
@@ -16,6 +17,14 @@ const MultiSelect = ({
     errorMessage,
     onChange = () => {},
 }: MultiSelectProps) => {
+    const [inputValue, setInputValue] = useState(value);
+
+    useEffect(() => {
+        if (value && value.length > 0) {
+            setInputValue(value);
+        }
+    }, [value]);
+
     return (
         <div className={classNames(blockClassName)}>
             <div className={classNames({ 'flex align-items-center': row })}>
@@ -37,7 +46,7 @@ const MultiSelect = ({
                     emptyMessage={emptyMessage}
                     inputId={id}
                     options={options}
-                    value={value}
+                    value={inputValue}
                     optionValue={optionValue}
                     placeholder={placeholder}
                     display='chip'

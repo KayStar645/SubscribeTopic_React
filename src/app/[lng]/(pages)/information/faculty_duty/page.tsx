@@ -128,7 +128,7 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
             </div>
 
             <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={facultyDutyQuery.isLoading || facultyDutyMutation.isPending} />
+                <Loader show={facultyDutyQuery.isFetching || facultyDutyMutation.isPending} />
 
                 <DataTable
                     value={facultyDutyQuery.data || []}
@@ -161,8 +161,8 @@ const FacultyDutyPage = ({ params: { lng } }: PageProps) => {
                             color: 'var(--surface-a)',
                             whiteSpace: 'nowrap',
                         }}
-                        field='numberOfThesis'
-                        header={t('module:field.faculty_duty.numberOfThesis')}
+                        header='Số lượng đề tài'
+                        body={(data: DutyType) => <p className='text-center'>{data.numberOfThesis}</p>}
                     />
                     <Column
                         headerStyle={{

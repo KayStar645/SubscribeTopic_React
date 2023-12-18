@@ -39,7 +39,7 @@ const ResultTab = () => {
 
     const pointMutate = useMutation({
         mutationFn: (data: { scores: number; studentJoinId: number }) => {
-            return request.post(API.admin.point, data);
+            return request.update(API.admin.point, data);
         },
     });
 

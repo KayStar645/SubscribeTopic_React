@@ -165,9 +165,6 @@ const TopicForm = ({ params: _params }: PageProps) => {
                 toast.success(t('request:update_success'));
                 router.back();
             },
-            onError: (err) => {
-                toast.error(err.response?.data.messages?.[0] || err.message);
-            },
         });
     };
 

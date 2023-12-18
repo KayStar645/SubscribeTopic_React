@@ -1,14 +1,16 @@
+'use client';
+
 import { API, AUTH_TOKEN } from '@assets/configs';
 import { request } from '@assets/helpers';
 import useCookies from '@assets/hooks/useCookies';
 import { AuthType, PointParamType, PointType, TeacherType } from '@assets/interface';
+import { PageProps } from '@assets/types/UI';
 import { Loader } from '@resources/components/UI';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { InputText } from 'primereact/inputtext';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { JobPageContext } from '../group/[id]/page';
 
 interface TeacherResult {
     teacher: TeacherType;
@@ -16,20 +18,19 @@ interface TeacherResult {
     studentId: number;
 }
 
-const ResultTab = () => {
+const ResultPage = ({ params }: PageProps) => {
+    const { id } = params;
     const [teacherResult, setTeacherResult] = useState<any[]>([]);
-    const [auth] = useCookies<AuthType>(AUTH_TOKEN);
     const [teacher, setTeacher] = useState<string[]>([]);
-    const { topic, active } = useContext(JobPageContext);
+    const [auth] = useCookies<AuthType>(AUTH_TOKEN);
 
     const pointQuery = useQuery<PointType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
         queryKey: ['points', 'list'],
-        enabled: active === 'point',
         queryFn: async () => {
             const response = await request.get<PointType[]>(API.admin.custom.point.by_thesis, {
                 params: {
-                    thesisId: topic?.id,
+                    thesisId: id,
                 } as PointParamType,
             });
 
@@ -112,7 +113,7 @@ const ResultTab = () => {
                                 <td className='border-1 border-300 py-2 px-3'>{result.internalCode}</td>
                                 <td className='border-1 border-300 py-2 px-3'>{result.name}</td>
                                 {result.scores.map((field: any) => (
-                                    <td className='border-1 border-300 py-2 px-3' key={Math.random().toString()}>
+                                    <td className='border-1 border-300 py-2 px-3' key={field?.teacherId}>
                                         {field?.teacherId === auth?.customer.Id ? (
                                             <div className='flex justify-content-center'>
                                                 <InputText
@@ -143,4 +144,4 @@ const ResultTab = () => {
     );
 };
 
-export default ResultTab;
+export default ResultPage;

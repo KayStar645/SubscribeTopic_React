@@ -25,7 +25,7 @@ import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useDebouncedCallback } from 'use-debounce';
 
-const GroupPage = ({ params: { lng } }: PageProps) => {
+const CounterPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
     const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
@@ -53,7 +53,9 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
         refetchOnWindowFocus: false,
         queryKey: ['thesis', 'list', params],
         queryFn: async () => {
-            const response = await request.get<TopicType[]>(`${API.admin.custom.thesis.topic_by_teacher}`, { params });
+            const response = await request.get<TopicType[]>(`${API.admin.custom.thesis.topic_counter_by_teacher}`, {
+                params,
+            });
 
             setMeta({
                 currentPage: response.data.extra?.currentPage,
@@ -86,7 +88,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                     <i
                         className='pi pi-book hover:text-primary cursor-pointer'
                         onClick={() =>
-                            router.push(language.addPrefixLanguage(lng, `${ROUTES.thesis.job_detail}/${data.id}`))
+                            router.push(language.addPrefixLanguage(lng, `${ROUTES.thesis.counter}/${data.id}`))
                         }
                     />
                 )}
@@ -116,9 +118,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
             />
 
             <div className='flex align-items-center justify-content-between bg-white h-4rem px-3 border-round-lg shadow-3'>
-                <p className='text-xl font-semibold'>
-                    {t('list_of', { module: t('module:field.job.instruction_topic').toLowerCase() })}
-                </p>
+                <p className='text-xl font-semibold'>Danh sách đề tài phản biện</p>
             </div>
 
             <div className='flex align-items-center gap-3'>
@@ -223,4 +223,4 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
     );
 };
 
-export default GroupPage;
+export default CounterPage;

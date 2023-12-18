@@ -32,6 +32,7 @@ const ROUTES = {
         job_for_topic: '/thesis/job/exercise',
         schedule: '/thesis/schedule',
         point: '/thesis/point',
+        counter: '/thesis/counter',
     },
 
     information: {

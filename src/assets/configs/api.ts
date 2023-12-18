@@ -52,6 +52,7 @@ const API = {
         custom: {
             thesis: {
                 topic_by_teacher: '/thesis/listThesisInstructorOfTeacher',
+                topic_counter_by_teacher: '/thesis/listThesisReviewOfTeacher',
             },
             point: {
                 by_thesis: '/point/thesis',

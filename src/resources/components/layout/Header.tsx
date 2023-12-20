@@ -14,11 +14,12 @@ import { usePathname } from 'next/navigation';
 import { Avatar } from 'primereact/avatar';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useRef } from 'react';
-import { Breadcrumb, MenuItem } from '../UI';
+import { MenuItem } from '../UI';
+import { SelectFacultyModal } from '../modal';
 
 const Header = ({ lng }: LanguageType) => {
     const { t } = useTranslation(lng);
-    const [auth] = useCookies<AuthType>(AUTH_TOKEN);
+    const [auth, setAuth] = useCookies<AuthType>(AUTH_TOKEN);
     const userModalRef = useRef<OverlayPanel>(null);
     const pathName = usePathname();
     const menu = USER_MENU(t, lng, language.getRealPathName(pathName));
@@ -33,8 +34,14 @@ const Header = ({ lng }: LanguageType) => {
         };
 
         const onChangeFacultyClick = () => {
-            selectFacultyRef.current?.show();
+            selectFacultyRef.current?.show(auth?.facultyId);
         };
+
+        if (item.code === 'change_faculty') {
+            if (auth?.type !== 'admin') {
+                return null;
+            }
+        }
 
         return (
             <MenuItem
@@ -77,7 +84,7 @@ const Header = ({ lng }: LanguageType) => {
                     onClick={(e) => userModalRef?.current?.toggle(e)}
                 >
                     <Avatar icon='pi pi-user' className='bg-primary text-white border-circle' />
-                    <p>{auth?.customer.Name}</p>
+                    <p>{auth?.customer.Name || auth?.userName}</p>
 
                     <i className='pi pi-angle-down ml-2' />
                 </div>
@@ -87,13 +94,18 @@ const Header = ({ lng }: LanguageType) => {
                 </OverlayPanel>
             </div>
 
-            {/* <SelectFacultyModal
+            <SelectFacultyModal
                 ref={selectFacultyRef}
                 lng={lng}
                 onConfirm={(item) => {
-                    setCookie(FACULTY_TOKEN, item);
+                    if (auth) {
+                        setAuth({
+                            ...auth,
+                            facultyId: parseInt(item?.id?.toString()!),
+                        });
+                    }
                 }}
-            /> */}
+            />
         </div>
     );
 };

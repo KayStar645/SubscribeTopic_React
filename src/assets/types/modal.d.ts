@@ -26,7 +26,7 @@ interface SelectObjectModalType extends LanguageType {
 }
 
 interface SelectFacultyModalRefType {
-    show: (selected?: FacultyType) => void;
+    show: (selected?: number) => void;
 }
 
 interface SelectFacultyModalType extends LanguageType {

@@ -44,18 +44,28 @@ const Page = ({ params: { lng } }: PageProps) => {
             onSuccess(response) {
                 try {
                     const tokenData: any = jwtDecode(response.data.data.token);
-                    const faculty = JSON.parse(tokenData.faculty);
-                    const customer = JSON.parse(tokenData.customer);
+
+                    if (tokenData.faculty) {
+                    }
 
                     if (!tokenData) {
                         return;
                     }
 
-                    if (faculty) {
-                        tokenData.faculty = faculty;
+                    if (tokenData.faculty) {
+                        const faculty = JSON.parse(tokenData.faculty);
+
+                        if (faculty) {
+                            tokenData.faculty = faculty;
+                        }
                     }
-                    if (customer) {
-                        tokenData.customer = customer;
+
+                    if (tokenData.custom) {
+                        const customer = JSON.parse(tokenData.customer);
+
+                        if (customer) {
+                            tokenData.customer = customer;
+                        }
                     }
 
                     cookies.set(AUTH_TOKEN, tokenData, { expires: new Date(tokenData.exp * 1000) });
@@ -64,7 +74,9 @@ const Page = ({ params: { lng } }: PageProps) => {
                     });
 
                     router.push(language.addPrefixLanguage(lng, ROUTES.home.index));
-                } catch (error) {}
+                } catch (error) {
+                    console.log('🚀 ~ file: page.tsx:70 ~ onSuccess ~ error:', error);
+                }
             },
         });
     };

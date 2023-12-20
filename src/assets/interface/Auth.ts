@@ -5,6 +5,7 @@ interface AuthType {
         Name: string;
     };
     exp: number;
+    facultyId: number;
     faculty: {
         Id: number;
     };

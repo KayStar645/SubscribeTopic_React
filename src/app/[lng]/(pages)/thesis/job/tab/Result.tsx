@@ -111,8 +111,8 @@ const ResultTab = () => {
                             <tr key={result.internalCode}>
                                 <td className='border-1 border-300 py-2 px-3'>{result.internalCode}</td>
                                 <td className='border-1 border-300 py-2 px-3'>{result.name}</td>
-                                {result.scores.map((field: any) => (
-                                    <td className='border-1 border-300 py-2 px-3' key={Math.random().toString()}>
+                                {result?.scores?.map((field: any) => (
+                                    <td className='border-1 border-300 py-2 px-3' key={field.teacherId}>
                                         {field?.teacherId === auth?.customer.Id ? (
                                             <div className='flex justify-content-center'>
                                                 <InputText

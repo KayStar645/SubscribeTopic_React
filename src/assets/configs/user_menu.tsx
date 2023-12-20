@@ -1,6 +1,6 @@
 import { MenuItemType } from '@assets/types/menu';
 import { TFunction } from 'i18next';
-import { FaArrowRightFromBracket, FaUser } from 'react-icons/fa6';
+import { FaArrowRightArrowLeft, FaArrowRightFromBracket, FaUser } from 'react-icons/fa6';
 import { LuLanguages } from 'react-icons/lu';
 import { LANGUAGE, LANGUAGES, ROUTES } from '.';
 
@@ -32,6 +32,13 @@ const USER_MENU = (t: TFunction, lng: string, pathName: string): MenuItemType[] 
             label: t('menu:logout'),
             icon: <FaArrowRightFromBracket />,
             to: `/${lng}${ROUTES.auth.sign_in}`,
+        },
+        {
+            code: 'change_faculty',
+            parent: 'change_faculty',
+            label: t('menu:change_faculty'),
+            icon: <FaArrowRightArrowLeft />,
+            checkPermission: false,
         },
     ];
 };

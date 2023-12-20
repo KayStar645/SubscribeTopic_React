@@ -97,6 +97,14 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
                     permission: PERMISSION.registrationPeriod.view,
                     checkPermission: true,
                 },
+                {
+                    code: 'student_join',
+                    parent: 'master_data',
+                    label: t('menu:student_join'),
+                    to: `/${lng}/${ROUTES.master_data.student_join}`,
+                    permission: PERMISSION.studentJoin.view,
+                    checkPermission: true,
+                },
             ],
         },
         {
@@ -122,14 +130,6 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
                     label: t('menu:group'),
                     to: `/${lng}/${ROUTES.thesis.group}`,
                     permission: PERMISSION.group.view,
-                    checkPermission: true,
-                },
-                {
-                    code: 'student_join',
-                    parent: 'thesis',
-                    label: t('menu:student_join'),
-                    to: `/${lng}/${ROUTES.thesis.student_join}`,
-                    permission: PERMISSION.studentJoin.view,
                     checkPermission: true,
                 },
                 {

@@ -124,9 +124,6 @@ const RoleForm = forwardRef<RoleFormRefType, RoleFormType>(({ title, lng, onSucc
                 onSuccess?.(response.data);
                 toast.success(t('request:update_success'));
             },
-            onError: (err) => {
-                toast.error(err.response?.data.messages?.[0] || err.message);
-            },
         });
     };
 

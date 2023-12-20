@@ -6,7 +6,7 @@ import { LanguageType } from '@assets/types/lang';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Loader } from '@resources/components/UI';
-import { InputDate, RadioList } from '@resources/components/form';
+import { Checkbox, InputDate, RadioList } from '@resources/components/form';
 import { useTranslation } from '@resources/i18n';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 import * as yup from 'yup';
 
 interface RegistrationPeriodFormRefType {
-    show?: (data?: RegistrationPeriodType) => void;
+    show?: (_data?: RegistrationPeriodType) => void;
     close?: () => void;
 }
 
@@ -33,6 +33,7 @@ const defaultValues: RegistrationPeriodType = {
     semester: undefined,
     timeStart: null,
     timeEnd: null,
+    isActive: true,
 };
 
 const schema = (t: TFunction) =>
@@ -40,6 +41,7 @@ const schema = (t: TFunction) =>
         semester: yup.string(),
         timeStart: yup.date(),
         timeEnd: yup.date(),
+        isActive: yup.bool(),
     });
 
 const RegistrationPeriodForm = forwardRef<RegistrationPeriodFormRefType, RegistrationPeriodFormType>(
@@ -148,6 +150,20 @@ const RegistrationPeriodForm = forwardRef<RegistrationPeriodFormRefType, Registr
                                 label={t('time_end')}
                                 placeholder={t('time_end')}
                                 errorMessage={fieldState.error?.message}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
+
+                    <Controller
+                        name='isActive'
+                        control={control}
+                        render={({ field }) => (
+                            <Checkbox
+                                id='form_data_is_active'
+                                value={field.value}
+                                label='Trạng thái'
+                                placeholder='Trạng thái'
                                 onChange={field.onChange}
                             />
                         )}

@@ -99,9 +99,6 @@ const FacultyDutyForm = ({ params }: PageProps) => {
                     ),
                 );
             },
-            onError: (err) => {
-                toast.error(err.response?.data.messages?.[0] || err.message);
-            },
         });
     };
 

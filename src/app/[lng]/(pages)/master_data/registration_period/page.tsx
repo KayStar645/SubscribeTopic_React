@@ -23,6 +23,7 @@ import { toast } from 'react-toastify';
 import RegistrationForm, { RegistrationPeriodFormRefType } from './form';
 import { DATE_FILTER } from '@assets/configs/general';
 import { Checkbox } from 'primereact/checkbox';
+import { RadioButton } from 'primereact/radiobutton';
 
 const MajorPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
@@ -95,9 +96,6 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                 registrationPeriodQuery.refetch();
 
                 toast.success(t('request:update_success'));
-            },
-            onError: (err) => {
-                toast.error(err.response?.data.messages?.[0] || err.message);
             },
         });
     };
@@ -214,7 +212,7 @@ const MajorPage = ({ params: { lng } }: PageProps) => {
                         header={t('common:status')}
                         body={(data: RegistrationPeriodType) => (
                             <div className='text-center'>
-                                <Checkbox checked={!!data.isActive} />
+                                <RadioButton checked={!!data.isActive} />
                             </div>
                         )}
                     />

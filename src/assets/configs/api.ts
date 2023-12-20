@@ -39,10 +39,15 @@ const API = {
             exchange: '/exchange/detail',
             schedule: '/reportSchedule/detail',
             department_duty: '/departmentDuty/detail',
+            teacher: '/teacher/detail',
+        },
+
+        change_status: {
+            topic: '/thesis/changeStatus',
         },
 
         approve: {
-            topic: 'thesis/changeStatus',
+            topic: '/thesis/approve',
         },
 
         assign: {

@@ -1,5 +1,6 @@
 import { ParamType } from '@assets/types/request';
 import { GeneralType } from './Default';
+import { DepartmentType } from '.';
 
 interface TeacherType extends GeneralType {
     departmentId?: number | string;
@@ -8,6 +9,7 @@ interface TeacherType extends GeneralType {
     academicTitle?: string;
     degree?: string;
     type?: string;
+    department?: DepartmentType;
 }
 
 interface TeacherParamType extends ParamType {

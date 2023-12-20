@@ -109,9 +109,6 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
                 close();
                 onSuccess?.(response.data);
             },
-            onError: (err) => {
-                toast.error(err.response?.data.messages?.[0] || err.message);
-            },
         });
     };
 

@@ -60,7 +60,7 @@ const Page = ({ params: { lng } }: PageProps) => {
                         }
                     }
 
-                    if (tokenData.custom) {
+                    if (tokenData.customer) {
                         const customer = JSON.parse(tokenData.customer);
 
                         if (customer) {

@@ -1,25 +1,22 @@
 'use client';
 
-import { API, AUTH_TOKEN, MODULE, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
+import { API, MODULE, ROUTES, ROWS_PER_PAGE } from '@assets/configs';
 import { DATE_FILTER } from '@assets/configs/general';
 import { language, request } from '@assets/helpers';
-import useCookies from '@assets/hooks/useCookies';
 import usePermission from '@assets/hooks/usePermission';
-import { AuthType, TopicParamType, TopicType } from '@assets/interface';
+import { RegistrationPeriodType, TopicParamType, TopicType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
 import { Loader } from '@resources/components/UI';
-import { Dropdown } from '@resources/components/form';
+import { Dropdown, InputText } from '@resources/components/form';
 import { ConfirmModal } from '@resources/components/modal';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { InputText } from 'primereact/inputtext';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -31,7 +28,6 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
     const router = useRouter();
     const permission = usePermission(MODULE.job);
-    const [auth] = useCookies<AuthType>(AUTH_TOKEN);
 
     const debounceKeyword = useDebouncedCallback((keyword) => {
         setParams((prev) => ({
@@ -49,7 +45,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
     });
 
     const thesisQuery = useQuery<TopicType[], AxiosError<ResponseType>>({
-        enabled: !!auth?.customer.Id,
+        enabled: !!params.periodId,
         refetchOnWindowFocus: false,
         queryKey: ['thesis', 'list', params],
         queryFn: async () => {
@@ -64,6 +60,16 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                 totalPages: response.data.extra?.totalPages,
                 messages: response.data.extra?.messages,
             });
+
+            return response.data.data || [];
+        },
+    });
+
+    const registrationPeriodQuery = useQuery<RegistrationPeriodType[], AxiosError<ResponseType>>({
+        refetchOnWindowFocus: false,
+        queryKey: ['registration_periods', 'list'],
+        queryFn: async () => {
+            const response = await request.get<RegistrationPeriodType[]>(`${API.admin.registration_period}`);
 
             return response.data.data || [];
         },
@@ -100,9 +106,6 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                 thesisQuery.refetch();
                 toast.success(t('request:update_success'));
             },
-            onError: (err) => {
-                toast.error(err.response?.data.messages?.[0] || err.message);
-            },
         });
     };
 
@@ -121,104 +124,125 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
                 </p>
             </div>
 
-            <div className='flex align-items-center gap-3'>
+            <div className='flex align-items-center'>
                 <InputText
+                    id='search'
+                    label='Tìm kiếm'
+                    blockClassName='col-3'
                     placeholder={`${t('search')}...`}
-                    className='w-20rem'
                     onChange={(e) => debounceKeyword(e.target.value)}
+                />
+
+                <Dropdown
+                    id='form_data_teacher_id'
+                    options={registrationPeriodQuery.data?.map((t) => ({
+                        label: `Năm học ${t.schoolYear} _ ${t.semester} _ Đợt ${t.phase}`,
+                        value: t.id,
+                    }))}
+                    value={params.periodId}
+                    label='Đợt đăng ký'
+                    placeholder='Đợt đăng ký'
+                    onChange={(e) =>
+                        setParams((prev) => ({
+                            ...prev,
+                            periodId: parseInt(e),
+                        }))
+                    }
                 />
             </div>
 
-            <div className='border-round-xl overflow-hidden relative shadow-5'>
-                <Loader show={thesisQuery.isFetching || thesisMutation.isPending} />
+            {params.periodId && (
+                <div className='border-round-xl overflow-hidden relative shadow-5'>
+                    <Loader show={thesisQuery.isFetching || thesisMutation.isPending} />
 
-                <DataTable
-                    value={thesisQuery.data}
-                    rowHover={true}
-                    stripedRows={true}
-                    showGridlines={true}
-                    emptyMessage={t('list_empty')}
-                >
-                    <Column
-                        alignHeader='center'
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
-                        header={t('common:action')}
-                        body={renderActions}
-                    />
-                    <Column
-                        alignHeader='center'
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
-                        field='internalCode'
-                        header={t('common:code_of', { obj: t('module:thesis').toLowerCase() })}
-                    />
-                    <Column
-                        alignHeader='center'
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
-                        field='name'
-                        header={t('common:name_of', { obj: t('module:thesis').toLowerCase() })}
-                    />
-                    <Column
-                        alignHeader='center'
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
-                        header={t('module:field.thesis.instruction')}
-                        body={(data: TopicType) => <p>{data.thesisInstructions?.map((t) => t.name).join(', ')}</p>}
-                    />
-                    <Column
-                        alignHeader='center'
-                        headerStyle={{
-                            background: 'var(--primary-color)',
-                            color: 'var(--surface-a)',
-                            whiteSpace: 'nowrap',
-                        }}
-                        header={t('module:field.thesis.review')}
-                        body={(data: TopicType) => <p>{data.thesisReviews?.map((t) => t.name).join(', ')}</p>}
-                    />
-                </DataTable>
+                    <DataTable
+                        value={thesisQuery.data}
+                        rowHover={true}
+                        stripedRows={true}
+                        showGridlines={true}
+                        emptyMessage={t('list_empty')}
+                    >
+                        <Column
+                            alignHeader='center'
+                            headerStyle={{
+                                background: 'var(--primary-color)',
+                                color: 'var(--surface-a)',
+                                whiteSpace: 'nowrap',
+                            }}
+                            header={t('common:action')}
+                            body={renderActions}
+                        />
+                        <Column
+                            alignHeader='center'
+                            headerStyle={{
+                                background: 'var(--primary-color)',
+                                color: 'var(--surface-a)',
+                                whiteSpace: 'nowrap',
+                            }}
+                            field='internalCode'
+                            header={t('common:code_of', { obj: t('module:thesis').toLowerCase() })}
+                        />
+                        <Column
+                            alignHeader='center'
+                            headerStyle={{
+                                background: 'var(--primary-color)',
+                                color: 'var(--surface-a)',
+                                whiteSpace: 'nowrap',
+                            }}
+                            field='name'
+                            header={t('common:name_of', { obj: t('module:thesis').toLowerCase() })}
+                        />
+                        <Column
+                            alignHeader='center'
+                            headerStyle={{
+                                background: 'var(--primary-color)',
+                                color: 'var(--surface-a)',
+                                whiteSpace: 'nowrap',
+                            }}
+                            header={t('module:field.thesis.instruction')}
+                            body={(data: TopicType) => <p>{data.thesisInstructions?.map((t) => t.name).join(', ')}</p>}
+                        />
+                        <Column
+                            alignHeader='center'
+                            headerStyle={{
+                                background: 'var(--primary-color)',
+                                color: 'var(--surface-a)',
+                                whiteSpace: 'nowrap',
+                            }}
+                            header={t('module:field.thesis.review')}
+                            body={(data: TopicType) => <p>{data.thesisReviews?.map((t) => t.name).join(', ')}</p>}
+                        />
+                    </DataTable>
 
-                <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
-                    <Dropdown
-                        id='date_created_filter'
-                        value='date_decrease'
-                        optionValue='code'
-                        onChange={(sortCode) => {
-                            const filter = DATE_FILTER(t).find((t) => t.code === sortCode);
+                    <div className='flex align-items-center justify-content-between bg-white px-3 py-2'>
+                        <Dropdown
+                            id='date_created_filter'
+                            value='date_decrease'
+                            optionValue='code'
+                            onChange={(sortCode) => {
+                                const filter = DATE_FILTER(t).find((t) => t.code === sortCode);
 
-                            setParams((prev) => {
-                                return {
-                                    ...prev,
-                                    sorts: request.handleSort(filter, prev),
-                                };
-                            });
-                        }}
-                        options={DATE_FILTER(t)}
-                    />
+                                setParams((prev) => {
+                                    return {
+                                        ...prev,
+                                        sorts: request.handleSort(filter, prev),
+                                    };
+                                });
+                            }}
+                            options={DATE_FILTER(t)}
+                        />
 
-                    <Paginator
-                        first={request.currentPage(meta.currentPage)}
-                        rows={meta.pageSize}
-                        totalRecords={meta.totalCount}
-                        rowsPerPageOptions={ROWS_PER_PAGE}
-                        onPageChange={onPageChange}
-                        className='border-noround p-0'
-                    />
+                        <Paginator
+                            first={request.currentPage(meta.currentPage)}
+                            rows={meta.pageSize}
+                            totalRecords={meta.totalCount}
+                            rowsPerPageOptions={ROWS_PER_PAGE}
+                            onPageChange={onPageChange}
+                            className='border-noround p-0'
+                        />
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

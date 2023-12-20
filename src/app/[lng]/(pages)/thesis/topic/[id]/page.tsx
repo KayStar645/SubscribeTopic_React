@@ -121,6 +121,22 @@ const TopicForm = ({ params: _params }: PageProps) => {
         },
     });
 
+    const teacherDetailQuery = useQuery<TeacherType | null, AxiosError<ResponseType>>({
+        enabled: !!auth?.customer.Id,
+        queryKey: ['thesis_detail'],
+        refetchOnWindowFocus: false,
+        queryFn: async () => {
+            const response = await request.get<TeacherType>(`${API.admin.detail.teacher}?id=${auth?.customer.Id}`, {
+                params: {
+                    id: auth?.customer.Id,
+                    isAllDetail: true,
+                },
+            });
+
+            return response.data.data;
+        },
+    });
+
     const departmentDutyQuery = useQuery<DepartmentDutyType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
         queryKey: ['faculties', 'list'],
@@ -145,7 +161,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
     });
 
     const thesisUpdateStatusMutation = useMutation({
-        mutationFn: async (status: 'AR' | 'A' | 'D') => {
+        mutationFn: async (status: 'AR' | 'D') => {
             const data: TopicType = {
                 id,
                 status,
@@ -154,6 +170,16 @@ const TopicForm = ({ params: _params }: PageProps) => {
             if (dutyId > 0) {
                 data['dutyId'] = dutyId;
             }
+
+            return request.update<TopicType>(API.admin.change_status.topic, data);
+        },
+    });
+
+    const thesisApproveMutation = useMutation({
+        mutationFn: async (_id: number) => {
+            const data: TopicType = {
+                id,
+            };
 
             return request.update<TopicType>(API.admin.approve.topic, data);
         },
@@ -224,7 +250,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
                             size='small'
                             onClick={(e) => {
                                 e.preventDefault();
-                                thesisUpdateStatusMutation.mutate('A', {
+                                thesisApproveMutation.mutate(1, {
                                     onSuccess() {
                                         thesisDetailQuery.refetch();
                                         toast.success(t('request:update_success'));
@@ -278,7 +304,8 @@ const TopicForm = ({ params: _params }: PageProps) => {
                         thesisDetailQuery.isFetching ||
                         majorQuery.isFetching ||
                         teacherQuery.isFetching ||
-                        thesisUpdateStatusMutation.isPending
+                        thesisUpdateStatusMutation.isPending ||
+                        teacherDetailQuery.isFetching
                     }
                 />
 
@@ -384,24 +411,32 @@ const TopicForm = ({ params: _params }: PageProps) => {
                                             />
                                         )}
                                     />
-                                    <Controller
-                                        control={control}
-                                        name='thesisInstructionsId'
-                                        render={({ field }) => (
-                                            <MultiSelect
-                                                disabled={getValues('status') == 'AR'}
-                                                id={`thesisInstructionsId_${field.value}`}
-                                                label={t('module:field.thesis.instruction')}
-                                                emptyMessage={t('common:list_empty')}
-                                                value={field.value}
-                                                options={teacherQuery.data?.map((t) => ({
-                                                    label: t.name,
-                                                    value: t.id,
-                                                }))}
-                                                onChange={(e) => field.onChange(e.value)}
-                                            />
-                                        )}
-                                    />
+
+                                    {id != '0' && (
+                                        <Controller
+                                            control={control}
+                                            name='thesisInstructionsId'
+                                            render={({ field }) => (
+                                                <MultiSelect
+                                                    disabled={
+                                                        getValues('status') == 'AR' ||
+                                                        teacherDetailQuery?.data?.id !==
+                                                            teacherDetailQuery.data?.department
+                                                                ?.headDepartment_TeacherId
+                                                    }
+                                                    id={`thesisInstructionsId_${field.value}`}
+                                                    label={t('module:field.thesis.instruction')}
+                                                    emptyMessage={t('common:list_empty')}
+                                                    value={field.value}
+                                                    options={teacherQuery.data?.map((t) => ({
+                                                        label: t.name,
+                                                        value: t.id,
+                                                    }))}
+                                                    onChange={(e) => field.onChange(e.value)}
+                                                />
+                                            )}
+                                        />
+                                    )}
 
                                     {id != '0' && (
                                         <Controller
@@ -409,7 +444,12 @@ const TopicForm = ({ params: _params }: PageProps) => {
                                             name='thesisReviewsId'
                                             render={({ field }) => (
                                                 <MultiSelect
-                                                    disabled={getValues('status') == 'AR'}
+                                                    disabled={
+                                                        getValues('status') == 'AR' ||
+                                                        teacherDetailQuery?.data?.id !==
+                                                            teacherDetailQuery.data?.department
+                                                                ?.headDepartment_TeacherId
+                                                    }
                                                     id={`thesisReviewsId_${field.value}`}
                                                     label={t('module:field.thesis.review')}
                                                     emptyMessage={t('common:list_empty')}
@@ -443,7 +483,10 @@ const TopicForm = ({ params: _params }: PageProps) => {
                                 </div>
                             </div>
 
-                            {getValues('status') != 'AR' && (
+                            {(getValues('status') === 'D' ||
+                                (getValues('status') !== 'A' &&
+                                    teacherDetailQuery?.data?.id ===
+                                        teacherDetailQuery.data?.department?.headDepartment_TeacherId)) && (
                                 <div
                                     className='flex align-items-center justify-content-end gap-2 fixed bottom-0 left-0 right-0 bg-white px-5 h-4rem shadow-8'
                                     style={{ zIndex: 500 }}

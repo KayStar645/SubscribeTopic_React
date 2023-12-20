@@ -25,6 +25,7 @@ interface TopicParamType extends ParamType {
     isGetThesisReviews?: boolean;
     isGetThesisMajors?: boolean;
     departmentId?: boolean;
+    periodId?: number;
 }
 
 export type { TopicType, TopicParamType };

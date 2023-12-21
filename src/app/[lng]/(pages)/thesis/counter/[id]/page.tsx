@@ -3,26 +3,24 @@
 import { API, AUTH_TOKEN } from '@assets/configs';
 import { request } from '@assets/helpers';
 import useCookies from '@assets/hooks/useCookies';
-import { AuthType, PointParamType, PointType, TeacherType } from '@assets/interface';
+import { AuthType, PointParamType, PointType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
 import { Loader } from '@resources/components/UI';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { Button } from 'primereact/button';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { InputText } from 'primereact/inputtext';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-interface TeacherResult {
-    teacher: TeacherType;
-    score: number;
-    studentId: number;
-}
-
 const ResultPage = ({ params }: PageProps) => {
     const { id } = params;
     const [teacherResult, setTeacherResult] = useState<any[]>([]);
-    const [teacher, setTeacher] = useState<string[]>([]);
     const [auth] = useCookies<AuthType>(AUTH_TOKEN);
+    const [teacherI, setTeacherI] = useState<string[]>([]);
+    const [teacherR, setTeacherR] = useState<string[]>([]);
+    const [teacherC, setTeacherC] = useState<string[]>([]);
 
     const pointQuery = useQuery<PointType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
@@ -44,6 +42,14 @@ const ResultPage = ({ params }: PageProps) => {
         },
     });
 
+    const councilMutate = useMutation({
+        mutationFn: (_thesisId: null) => {
+            return request.update(API.admin.custom.thesis.send_to_council, {
+                thesisId: id,
+            });
+        },
+    });
+
     const onSave = (scores: number, studentJoinId: number) => {
         pointMutate.mutate(
             {
@@ -62,10 +68,14 @@ const ResultPage = ({ params }: PageProps) => {
     useEffect(() => {
         if (pointQuery.data) {
             let result: any[] = [];
-            let _teacher: string[] = [];
+            let _teacherI: string[] = [];
+            let _teacherR: string[] = [];
+            let _teacherC: string[] = [];
 
             pointQuery.data.forEach((t) => {
-                _teacher = [];
+                _teacherI = [];
+                _teacherR = [];
+                _teacherC = [];
 
                 result.push({
                     internalCode: t.studentJoin?.student.internalCode,
@@ -79,31 +89,98 @@ const ResultPage = ({ params }: PageProps) => {
                 });
 
                 t.scores?.forEach((score) => {
-                    _teacher.push(score.teacher.name!);
+                    if (score.type === 'I') {
+                        _teacherI.push(score.teacher.name!);
+                    }
+                    if (score.type === 'R') {
+                        _teacherR.push(score.teacher.name!);
+                    }
+                    if (score.type === 'C') {
+                        _teacherC.push(score.teacher.name!);
+                    }
                 });
             });
 
             setTeacherResult(result);
-            setTeacher(_teacher);
+
+            setTeacherI(_teacherI);
+            setTeacherR(_teacherR);
+            setTeacherC(_teacherC);
         }
     }, [pointQuery.data]);
 
     return (
         <div className='flex flex-column gap-3 bg-white border-round shadow-1 p-3'>
-            <Loader show={pointQuery.isFetching || pointMutate.isPending} />
+            <Loader show={pointQuery.isFetching || pointMutate.isPending || councilMutate.isPending} />
 
+            <ConfirmDialog />
+
+            <div className='flex justify-content-end'>
+                <Button
+                    label='Đưa ra hội đồng'
+                    size='small'
+                    onClick={() => {
+                        confirmDialog({
+                            message: 'Bạn có chắc muốn đưa đề tài ra hội đồng',
+                            header: 'Xác nhận',
+                            icon: 'pi pi-exclamation-triangle',
+                            acceptLabel: 'Đồng ý',
+                            rejectLabel: 'Hủy',
+                            accept: () => {
+                                councilMutate.mutate(null, {
+                                    onSuccess() {
+                                        toast.success('Đưa đề tài ra hội đồng thành công');
+                                    },
+                                });
+                            },
+                        });
+                    }}
+                />
+            </div>
             <div className='border-round overflow-hidden shadow-3'>
                 <table className='w-full' style={{ borderCollapse: 'collapse' }}>
                     <thead>
                         <tr>
+                            <th className='border-1 border-300 p-3 bg-primary' colSpan={2}>
+                                Thông tin sinh viên
+                            </th>
+                            {teacherI.length > 0 && (
+                                <th className='border-1 border-300 p-3 bg-primary' colSpan={teacherI.length}>
+                                    Điểm GVHD
+                                </th>
+                            )}
+                            {teacherR.length > 0 && (
+                                <th className='border-1 border-300 p-3 bg-primary' colSpan={teacherR.length}>
+                                    Điểm GVPB
+                                </th>
+                            )}
+                            {teacherC.length > 0 && (
+                                <th className='border-1 border-300 p-3 bg-primary' colSpan={teacherC.length}>
+                                    Điểm GV
+                                </th>
+                            )}
+                            <th className='border-1 border-300 p-3 bg-primary' rowSpan={2}>
+                                Điểm trung bình
+                            </th>
+                        </tr>
+                        <tr>
                             <th className='border-1 border-300 p-3 bg-primary'>Mã sinh viên</th>
                             <th className='border-1 border-300 p-3 bg-primary'>Tên sinh viên</th>
-                            {teacher.map((name) => (
+                            {teacherI.map((name) => (
                                 <th className='border-1 border-300 p-3 bg-primary' key={name}>
                                     {name}
                                 </th>
                             ))}
-                            <th className='border-1 border-300 p-3 bg-primary'>Điểm trung bình</th>
+                            {teacherR.map((name) => (
+                                <th className='border-1 border-300 p-3 bg-primary' key={name}>
+                                    {name}
+                                </th>
+                            ))}
+                            {teacherC.map((name) => (
+                                <th className='border-1 border-300 p-3 bg-primary' key={name}>
+                                    {name}
+                                </th>
+                            ))}
                         </tr>
                     </thead>
 
@@ -112,8 +189,8 @@ const ResultPage = ({ params }: PageProps) => {
                             <tr key={result.internalCode}>
                                 <td className='border-1 border-300 py-2 px-3'>{result.internalCode}</td>
                                 <td className='border-1 border-300 py-2 px-3'>{result.name}</td>
-                                {result.scores.map((field: any) => (
-                                    <td className='border-1 border-300 py-2 px-3' key={field?.teacherId}>
+                                {result?.scores?.map((field: any) => (
+                                    <td className='border-1 border-300 py-2 px-3' key={field.teacherId}>
                                         {field?.teacherId === auth?.customer.Id ? (
                                             <div className='flex justify-content-center'>
                                                 <InputText

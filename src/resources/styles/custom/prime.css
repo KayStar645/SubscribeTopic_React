@@ -35,7 +35,5 @@
 }
 
 .p-dialog-footer {
-    padding-top: 8px !important;
-    z-index: 10;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    padding-top: 12px !important;
 }

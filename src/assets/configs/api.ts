@@ -61,6 +61,7 @@ const API = {
             thesis: {
                 topic_by_teacher: '/thesis/listThesisInstructorOfTeacher',
                 topic_counter_by_teacher: '/thesis/listThesisReviewOfTeacher',
+                send_to_council: '/thesis/approveToCouncil',
             },
             point: {
                 by_thesis: '/point/thesis',

@@ -70,7 +70,7 @@ const CouncilPage = ({ params: { lng } }: PageProps) => {
         return (
             <div className='flex align-items-center justify-content-center gap-3'>
                 {permission.update && (
-                    <Link href={language.addPrefixLanguage(lng, `${ROUTES.thesis.council}/${data.id}`)}>
+                    <Link href={language.addPrefixLanguage(lng, `${ROUTES.master_data.council}/${data.id}`)}>
                         <i className='pi pi-pencil hover:text-primary cursor-pointer' />
                     </Link>
                 )}
@@ -98,7 +98,7 @@ const CouncilPage = ({ params: { lng } }: PageProps) => {
 
             <div className='flex align-items-center justify-content-between bg-white h-4rem px-3 border-round-lg shadow-3'>
                 <p className='text-xl font-semibold'>{t('list_of', { module: 'hội đồng' })}</p>
-                <Link href={language.addPrefixLanguage(lng, `${ROUTES.thesis.council}/0`)}>
+                <Link href={language.addPrefixLanguage(lng, `${ROUTES.master_data.council}/0`)}>
                     <Button
                         label={t('create_new')}
                         icon='pi pi-plus'

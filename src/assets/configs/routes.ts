@@ -21,6 +21,7 @@ const ROUTES = {
         student: '/master_data/student',
         registration_period: '/master_data/registration_period',
         student_join: '/master_data/student_join',
+        council: '/master_data/council',
     },
 
     thesis: {
@@ -32,7 +33,6 @@ const ROUTES = {
         schedule: '/thesis/schedule',
         point: '/thesis/point',
         counter: '/thesis/counter',
-        council: '/thesis/council',
     },
 
     information: {

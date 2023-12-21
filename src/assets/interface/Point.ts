@@ -7,6 +7,7 @@ interface PointType extends GeneralType {
         pointId: number;
         score: number;
         teacher: TeacherType;
+        type: string;
     }[];
     averageScore?: number;
     studentJoin?: {

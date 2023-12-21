@@ -8,12 +8,13 @@ import { PageProps } from '@assets/types/UI';
 import { ResponseType } from '@assets/types/request';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Loader } from '@resources/components/UI';
-import { Dropdown, InputText } from '@resources/components/form';
+import { Dropdown, InputDate, InputText } from '@resources/components/form';
 import { MultiSelect } from '@resources/components/form/MultiSelect';
 import { useTranslation } from '@resources/i18n';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { TFunction } from 'i18next';
+import moment from 'moment';
 import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
@@ -135,6 +136,23 @@ const CouncilForm = ({ params: _params }: PageProps) => {
             return id == '0'
                 ? request.post<CouncilType>(API.admin.council, data)
                 : request.update<CouncilType>(API.admin.council, data);
+        },
+    });
+
+    const councilThesisMutation = useMutation<any, AxiosError<ResponseType>, CouncilType | undefined>({
+        mutationFn: async (_data) => {
+            return request.update<CouncilType>(
+                API.admin.custom.council.select_thesis,
+                {
+                    councilId: id,
+                    listThesis: thesis,
+                },
+                {
+                    params: {
+                        removeFacultyId: true,
+                    },
+                },
+            );
         },
     });
 
@@ -308,43 +326,51 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                         }}
                     />
 
-                    <Button
-                        size='small'
-                        label='Chọn đề tài'
-                        icon='pi pi-book'
-                        severity='help'
-                        onClick={(e) => {
-                            e.preventDefault();
+                    {id > 0 && (
+                        <Button
+                            size='small'
+                            label='Chọn đề tài'
+                            icon='pi pi-book'
+                            severity='help'
+                            onClick={(e) => {
+                                e.preventDefault();
 
-                            setVisible(true);
-                        }}
-                    />
+                                setVisible(true);
+                            }}
+                        />
+                    )}
 
                     {permission.update && <Button size='small' label={t('save')} icon='pi pi-save' />}
                 </div>
             </form>
 
             <Dialog
-                header='Đề tài thuộc nhiệm vụ'
+                header='Chọn đề tài cho hội đồng'
                 onHide={() => {
                     setVisible(false);
                 }}
                 visible={visible}
                 draggable={true}
-                style={{ width: '80vw' }}
+                style={{ width: '85vw' }}
                 className='relative overflow-hidden'
                 footer={
                     <Button
-                        label={t('common:approve_request')}
+                        label='Xác nhận'
                         size='small'
                         severity='secondary'
                         onClick={(e) => {
                             e.preventDefault();
+
+                            councilThesisMutation.mutate(undefined, {
+                                onSuccess() {
+                                    setVisible(false);
+                                },
+                            });
                         }}
                     />
                 }
             >
-                <Loader show={thesisQuery.isFetching} />
+                <Loader show={thesisQuery.isFetching || councilThesisMutation.isPending} />
 
                 <DataTable
                     value={thesisQuery.data}
@@ -352,6 +378,7 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                     stripedRows={true}
                     showGridlines={true}
                     emptyMessage={t('list_empty')}
+                    draggable={false}
                 >
                     <Column
                         alignHeader='center'
@@ -395,6 +422,16 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                             color: 'var(--surface-a)',
                             whiteSpace: 'nowrap',
                         }}
+                        field='internalCode'
+                        header='Mã đề tài'
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
                         field='name'
                         header='Tên đề tài'
                     />
@@ -406,6 +443,24 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                             whiteSpace: 'nowrap',
                         }}
                         header='Ngày bắt đầu'
+                        body={(data: TopicType) => {
+                            return (
+                                <InputDate
+                                    id={`date_start${data.id}`}
+                                    time={true}
+                                    onChange={(e) => {
+                                        setThesis((prev) => {
+                                            const index = prev.findIndex((t) => t.thesisId == data.id);
+
+                                            if (index > -1) {
+                                                prev[index].timeStart = moment(e.value).format('yyyy-MM-DDTHH:mm');
+                                            }
+                                            return prev;
+                                        });
+                                    }}
+                                />
+                            );
+                        }}
                     />
                     <Column
                         alignHeader='center'
@@ -415,6 +470,24 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                             whiteSpace: 'nowrap',
                         }}
                         header='Ngày kết thúc'
+                        body={(data: TopicType) => {
+                            return (
+                                <InputDate
+                                    id={`date_end${data.id}`}
+                                    time={true}
+                                    onChange={(e) => {
+                                        setThesis((prev) => {
+                                            const index = prev.findIndex((t) => t.thesisId == data.id);
+
+                                            if (index > -1) {
+                                                prev[index].timeEnd = moment(e.value).format('yyyy-MM-DDTHH:mm');
+                                            }
+                                            return prev;
+                                        });
+                                    }}
+                                />
+                            );
+                        }}
                     />
                 </DataTable>
             </Dialog>

@@ -95,6 +95,17 @@ const ResultTab = () => {
                 <table className='w-full' style={{ borderCollapse: 'collapse' }}>
                     <thead>
                         <tr>
+                            <th className='border-1 border-300 p-3 bg-primary' colSpan={2}>
+                                Thông tin sinh viên
+                            </th>
+                            {teacher.map((name) => (
+                                <th className='border-1 border-300 p-3 bg-primary' key={name}>
+                                    {name}
+                                </th>
+                            ))}
+                            <th className='border-1 border-300 p-3 bg-primary'>Điểm trung bình</th>
+                        </tr>
+                        <tr>
                             <th className='border-1 border-300 p-3 bg-primary'>Mã sinh viên</th>
                             <th className='border-1 border-300 p-3 bg-primary'>Tên sinh viên</th>
                             {teacher.map((name) => (

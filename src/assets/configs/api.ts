@@ -42,6 +42,7 @@ const API = {
             department_duty: '/departmentDuty/detail',
             point: '/point',
             council: '/council/detail',
+            teacher: '/teacher/detail',
         },
 
         change_status: {

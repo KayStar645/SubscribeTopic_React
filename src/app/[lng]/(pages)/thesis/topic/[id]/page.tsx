@@ -126,10 +126,11 @@ const TopicForm = ({ params: _params }: PageProps) => {
         queryKey: ['thesis_detail'],
         refetchOnWindowFocus: false,
         queryFn: async () => {
-            const response = await request.get<TeacherType>(`${API.admin.detail.teacher}?id=${auth?.customer.Id}`, {
+            const response = await request.get<TeacherType>(`${API.admin.detail.teacher}`, {
                 params: {
                     id: auth?.customer.Id,
                     isAllDetail: true,
+                    removeFacultyId: true,
                 },
             });
 
@@ -484,7 +485,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
                             </div>
 
                             {(getValues('status') === 'D' ||
-                                (getValues('status') !== 'A' &&
+                                (getValues('status') === 'A' &&
                                     teacherDetailQuery?.data?.id ===
                                         teacherDetailQuery.data?.department?.headDepartment_TeacherId)) && (
                                 <div

@@ -76,6 +76,21 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
         },
     });
 
+    const statusThesis = [
+        {
+            key: "D",
+            value: "Nháp"
+        },
+        {
+            key: "AR",
+            value: "Yêu cầu duyệt"
+        },
+        {
+            key: "A",
+            value: "Duyệt"
+        },
+    ];
+
     const thesisMutation = useMutation<any, AxiosError<ResponseType>, TopicType>({
         mutationFn: (data) => {
             return request.remove(`${API.admin.topic}`, { params: { id: data.id } });
@@ -149,6 +164,21 @@ const ThesisPage = ({ params: { lng } }: PageProps) => {
                             return {
                                 ...prev,
                                 filters: request.handleFilter(prev.filters || '', 'lecturerThesisId', '==', teacherId),
+                            };
+                        });
+                    }}
+                />
+
+                <Dropdown
+                    id='thesis_lecturer'
+                    showClear={true}
+                    placeholder='Trạng thái'
+                    options={statusThesis.map((t) => ({ label: t.value, value: t.key }))}
+                    onChange={(status) => {
+                        setParams((prev) => {
+                            return {
+                                ...prev,
+                                filters: request.handleFilter(prev.filters || '', 'status', '==', status),
                             };
                         });
                     }}

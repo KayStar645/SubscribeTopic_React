@@ -172,6 +172,14 @@ const ADMIN_MENU = (t: TFunction, lng: string): MenuItemType[] => {
                     permission: PERMISSION.job.view,
                     checkPermission: true,
                 },
+                {
+                    code: 'council_topic',
+                    parent: 'thesis',
+                    label: t('menu:council_topic'),
+                    to: `/${lng}/${ROUTES.thesis.council_topic}`,
+                    permission: PERMISSION.job.view,
+                    checkPermission: true,
+                },
             ],
         },
         {

@@ -29,7 +29,6 @@ const ResultPage = ({ params }: PageProps) => {
             const response = await request.get<PointType[]>(API.admin.custom.point.by_thesis, {
                 params: {
                     thesisId: id,
-                    removeFacultyId: true,
                 } as PointParamType,
             });
 

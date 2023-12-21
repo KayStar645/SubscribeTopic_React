@@ -13,6 +13,7 @@ const MODULE = {
     account: 'Account',
     notification: 'Notification',
     job: 'Job',
+    council: 'Council',
 };
 
 export { MODULE };

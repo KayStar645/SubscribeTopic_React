@@ -48,6 +48,7 @@ const MultiSelect = ({
                     options={options}
                     value={inputValue}
                     optionValue={optionValue}
+                    filter={true}
                     placeholder={placeholder}
                     display='chip'
                     className={classNames('w-full', { 'p-invalid': !!errorMessage })}

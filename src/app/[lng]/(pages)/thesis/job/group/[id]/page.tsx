@@ -60,7 +60,7 @@ const JobPage = ({ params }: PageProps) => {
         enabled: topicDetail.isSuccess,
         queryFn: async () => {
             const params: JobParamType = {
-                thesisId: parseInt(topicDetail.data?.id?.toString()!),
+                thesisId: id,
                 isAllDetail: true,
             };
 

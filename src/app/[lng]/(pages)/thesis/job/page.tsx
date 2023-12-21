@@ -6,25 +6,21 @@ import { language, request } from '@assets/helpers';
 import usePermission from '@assets/hooks/usePermission';
 import { RegistrationPeriodType, TopicParamType, TopicType } from '@assets/interface';
 import { PageProps } from '@assets/types/UI';
-import { ConfirmModalRefType } from '@assets/types/modal';
 import { MetaType, ResponseType } from '@assets/types/request';
 import { Loader } from '@resources/components/UI';
 import { Dropdown, InputText } from '@resources/components/form';
-import { ConfirmModal } from '@resources/components/modal';
 import { useTranslation } from '@resources/i18n';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Paginator, PaginatorPageChangeEvent } from 'primereact/paginator';
-import { useRef, useState } from 'react';
-import { toast } from 'react-toastify';
+import { useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 const GroupPage = ({ params: { lng } }: PageProps) => {
     const { t } = useTranslation(lng);
-    const confirmModalRef = useRef<ConfirmModalRefType>(null);
     const [meta, setMeta] = useState<MetaType>(request.defaultMeta);
     const router = useRouter();
     const permission = usePermission(MODULE.job);
@@ -75,12 +71,6 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
         },
     });
 
-    const thesisMutation = useMutation<any, AxiosError<ResponseType>, TopicType>({
-        mutationFn: (data) => {
-            return request.remove(`${API.admin.topic}`, { params: { id: data.id } });
-        },
-    });
-
     const onPageChange = (e: PaginatorPageChangeEvent) => {
         setParams((prev) => ({ ...prev, pageSize: e.rows, currentPage: e.first + 1 }));
     };
@@ -100,23 +90,9 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
         );
     };
 
-    const onRemove = (data: TopicType) => {
-        thesisMutation.mutate(data, {
-            onSuccess: () => {
-                thesisQuery.refetch();
-                toast.success(t('request:update_success'));
-            },
-        });
-    };
-
     return (
         <div className='flex flex-column gap-4'>
-            <ConfirmModal
-                ref={confirmModalRef}
-                onAccept={onRemove}
-                acceptLabel={t('confirm')}
-                rejectLabel={t('cancel')}
-            />
+            <Loader show={registrationPeriodQuery.isFetching} />
 
             <div className='flex align-items-center justify-content-between bg-white h-4rem px-3 border-round-lg shadow-3'>
                 <p className='text-xl font-semibold'>
@@ -153,7 +129,7 @@ const GroupPage = ({ params: { lng } }: PageProps) => {
 
             {params.periodId && (
                 <div className='border-round-xl overflow-hidden relative shadow-5'>
-                    <Loader show={thesisQuery.isFetching || thesisMutation.isPending} />
+                    <Loader show={thesisQuery.isFetching} />
 
                     <DataTable
                         value={thesisQuery.data}

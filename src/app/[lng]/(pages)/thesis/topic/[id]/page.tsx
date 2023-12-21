@@ -519,6 +519,7 @@ const TopicForm = ({ params: _params }: PageProps) => {
                     setVisible(false);
                 }}
                 visible={visible}
+                draggable={true}
                 style={{ width: '50vw' }}
                 className='relative overflow-hidden'
             >

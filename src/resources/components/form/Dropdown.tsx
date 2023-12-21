@@ -18,6 +18,7 @@ const Dropdown = ({
     errorMessage,
     showClear = false,
     onChange = () => {},
+    onSelect = () => {},
 }: DropdownProps) => {
     const [selected, setSelected] = useState(value);
 
@@ -52,6 +53,7 @@ const Dropdown = ({
                     onChange={(e) => {
                         onChange(e.value);
                         setSelected(e.value);
+                        onSelect(options?.find((t) => t.value == e.value)!);
                     }}
                 />
             </div>

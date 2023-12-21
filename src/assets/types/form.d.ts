@@ -43,6 +43,7 @@ interface DropdownProps extends InputProps {
     emptyMessage?: string;
     showClear?: boolean;
     onChange?: (_e: string) => void;
+    onSelect?: (option: OptionType) => void;
 }
 
 interface MultiSelectProps extends InputProps {

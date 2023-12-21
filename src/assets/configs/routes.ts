@@ -32,6 +32,7 @@ const ROUTES = {
         schedule: '/thesis/schedule',
         point: '/thesis/point',
         counter: '/thesis/counter',
+        council: '/thesis/council',
     },
 
     information: {

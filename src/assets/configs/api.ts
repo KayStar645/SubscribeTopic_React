@@ -28,6 +28,7 @@ const API = {
         schedule: '/reportSchedule',
         department_duty: '/departmentDuty',
         point: '/point',
+        council: '/council',
 
         detail: {
             notification: '/notification/detail',
@@ -39,7 +40,8 @@ const API = {
             exchange: '/exchange/detail',
             schedule: '/reportSchedule/detail',
             department_duty: '/departmentDuty/detail',
-            teacher: '/teacher/detail',
+            point: '/point',
+            council: '/council/detail',
         },
 
         change_status: {
@@ -62,6 +64,9 @@ const API = {
             point: {
                 by_thesis: '/point/thesis',
                 by_faculty: '/point/faculty',
+            },
+            council: {
+                select_thesis: '/council/selectThesis',
             },
         },
     },

@@ -2,7 +2,7 @@ import { ParamType } from '@assets/types/request';
 import { GeneralType } from './Default';
 
 interface StudentJoinType extends GeneralType {
-    studentId?: string | number;
+    studentIds?: number[];
     registrationPeriodId?: string | number;
     score?: number;
 }

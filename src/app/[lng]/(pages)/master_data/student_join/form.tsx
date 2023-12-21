@@ -11,6 +11,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { TFunction } from 'i18next';
 import { Button } from 'primereact/button';
+import { Checkbox } from 'primereact/checkbox';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
@@ -29,17 +32,11 @@ interface StudentJoinFormType extends LanguageType {
 
 const defaultValues: StudentJoinType = {
     id: '0',
-    studentId: '',
     registrationPeriodId: '',
 };
 
 const schema = (t: TFunction) =>
     yup.object({
-        studentId: yup.string().required(
-            t('validation:required', {
-                attribute: t('module:field.student_join.student').toLowerCase(),
-            }),
-        ),
         registrationPeriodId: yup.string().required(
             t('validation:required', {
                 attribute: t('module:field.student_join.registration_period').toLowerCase(),
@@ -50,6 +47,7 @@ const schema = (t: TFunction) =>
 const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(({ title, lng, onSuccess }, ref) => {
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation(lng);
+    const [students, setStudents] = useState<number[]>([]);
 
     const { control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema(t)) as Resolver<StudentJoinType>,
@@ -103,6 +101,8 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
     };
 
     const onSubmit = (data: StudentJoinType) => {
+        data.studentIds = students;
+
         studentJoinMutation.mutate(data, {
             onSuccess: (response) => {
                 toast.success(t('request:update_success'));
@@ -132,22 +132,6 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
 
             <form className='mt-2 flex flex-column gap-3' onSubmit={handleSubmit(onSubmit)}>
                 <Controller
-                    name='studentId'
-                    control={control}
-                    render={({ field, fieldState }) => (
-                        <Dropdown
-                            id='form_data_student_id'
-                            options={studentQuery.data?.map((t) => ({ label: t.name, value: t.id }))}
-                            value={field.value}
-                            label={t('module:field.student_join.student')}
-                            placeholder={t('module:field.student_join.student')}
-                            errorMessage={fieldState.error?.message}
-                            onChange={field.onChange}
-                        />
-                    )}
-                />
-
-                <Controller
                     name='registrationPeriodId'
                     control={control}
                     render={({ field, fieldState }) => (
@@ -165,6 +149,67 @@ const StudentJoinForm = forwardRef<StudentJoinFormRefType, StudentJoinFormType>(
                         />
                     )}
                 />
+                <DataTable
+                    value={studentQuery.data}
+                    rowHover={true}
+                    stripedRows={true}
+                    showGridlines={true}
+                    emptyMessage={t('list_empty')}
+                >
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header={t('common:action')}
+                        body={(data: StudentType) => (
+                            <div className='flex align-items-center justify-content-center'>
+                                <Checkbox
+                                    checked={!!students?.includes(data.id)}
+                                    onChange={(e) => {
+                                        if (e.checked) {
+                                            setStudents((prev) => {
+                                                let result = prev.filter((t) => t != data.id);
+
+                                                result.push(data.id);
+
+                                                return result;
+                                            });
+                                        } else {
+                                            setStudents((prev) => {
+                                                let result = prev.filter((t) => t != data.id);
+
+                                                return result;
+                                            });
+                                        }
+                                    }}
+                                />
+                            </div>
+                        )}
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        field='internalCode'
+                        header='Mã sinh viên'
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        field='name'
+                        header='Tên sinh viên'
+                    />
+                </DataTable>
 
                 <div className='flex align-items-center justify-content-end gap-2 absolute bottom-0 left-0 right-0 bg-white p-4'>
                     <Button

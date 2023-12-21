@@ -16,6 +16,7 @@ import { AxiosError } from 'axios';
 import { TFunction } from 'i18next';
 import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
+import { Checkbox } from 'primereact/checkbox';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
@@ -52,6 +53,12 @@ const defaultMemberValues: MemberType = {
     secretary: undefined,
 };
 
+interface CouncilThesisType {
+    thesisId: number;
+    timeStart?: string;
+    timeEnd?: string;
+}
+
 const schema = (t: TFunction) =>
     yup.object({
         internalCode: yup.string().required(),
@@ -68,17 +75,18 @@ const CouncilForm = ({ params: _params }: PageProps) => {
     const router = useRouter();
     const permission = usePermission(MODULE.council);
     const [visible, setVisible] = useState(false);
-    const [dutyId, setDutyId] = useState(0);
+    const [thesis, setThesis] = useState<CouncilThesisType[]>([]);
     const [members, setMembers] = useState<MemberType>(defaultMemberValues);
 
-    const { control, handleSubmit, setValue, reset, getValues } = useForm({
+    const { control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema(t)) as Resolver<CouncilType>,
         defaultValues,
     });
 
-    const councilQuery = useQuery<TopicType[], AxiosError<ResponseType>>({
+    const thesisQuery = useQuery<TopicType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
-        queryKey: ['council', 'list'],
+        enabled: visible,
+        queryKey: ['thesis', 'list'],
         queryFn: async () => {
             const response = await request.get<TopicType[]>(`${API.admin.topic}`);
 
@@ -141,6 +149,7 @@ const CouncilForm = ({ params: _params }: PageProps) => {
 
     useEffect(() => {
         if (id == 0) reset(defaultValues);
+
         if (councilDetailQuery.data) {
             let nData = councilDetailQuery.data;
             let memberData: MemberType = defaultMemberValues;
@@ -272,7 +281,7 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                         <Controller
                             name='location'
                             control={control}
-                            render={({ field, fieldState }) => (
+                            render={({ field }) => (
                                 <InputText
                                     id='form_data_internal_code'
                                     value={field.value}
@@ -286,7 +295,7 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                 </div>
 
                 <div
-                    className='flex align-items-center justify-content-end gap-2 fixed bottom-0 left-0 right-0 bg-white px-5 h-4rem shadow-8'
+                    className='flex align-items-center justify-content-end gap-3 fixed bottom-0 left-0 right-0 bg-white px-5 h-4rem shadow-8'
                     style={{ zIndex: 500 }}
                 >
                     <Button
@@ -298,6 +307,19 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                             router.back();
                         }}
                     />
+
+                    <Button
+                        size='small'
+                        label='Chọn đề tài'
+                        icon='pi pi-book'
+                        severity='help'
+                        onClick={(e) => {
+                            e.preventDefault();
+
+                            setVisible(true);
+                        }}
+                    />
+
                     {permission.update && <Button size='small' label={t('save')} icon='pi pi-save' />}
                 </div>
             </form>
@@ -305,18 +327,27 @@ const CouncilForm = ({ params: _params }: PageProps) => {
             <Dialog
                 header='Đề tài thuộc nhiệm vụ'
                 onHide={() => {
-                    setDutyId(0);
                     setVisible(false);
                 }}
                 visible={visible}
                 draggable={true}
-                style={{ width: '50vw' }}
+                style={{ width: '80vw' }}
                 className='relative overflow-hidden'
+                footer={
+                    <Button
+                        label={t('common:approve_request')}
+                        size='small'
+                        severity='secondary'
+                        onClick={(e) => {
+                            e.preventDefault();
+                        }}
+                    />
+                }
             >
-                <Loader show={councilQuery.isFetching} />
+                <Loader show={thesisQuery.isFetching} />
 
                 <DataTable
-                    value={councilQuery.data}
+                    value={thesisQuery.data}
                     rowHover={true}
                     stripedRows={true}
                     showGridlines={true}
@@ -332,9 +363,27 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                         header={t('common:action')}
                         body={(data: DepartmentDutyType) => (
                             <div className='flex align-items-center justify-content-center'>
-                                <RadioButton
-                                    checked={data.id === dutyId}
-                                    onChange={() => setDutyId(parseInt(data.id?.toString()!))}
+                                <Checkbox
+                                    checked={thesis.findIndex((t) => t.thesisId == data.id) > -1}
+                                    onChange={(e) => {
+                                        if (e.checked) {
+                                            setThesis((prev) => {
+                                                let result = prev.filter((t) => t.thesisId != data.id);
+
+                                                result.push({
+                                                    thesisId: data.id,
+                                                });
+
+                                                return result;
+                                            });
+                                        } else {
+                                            setThesis((prev) => {
+                                                let result = prev.filter((t) => t.thesisId != data.id);
+
+                                                return result;
+                                            });
+                                        }
+                                    }}
                                 />
                             </div>
                         )}
@@ -347,7 +396,7 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                             whiteSpace: 'nowrap',
                         }}
                         field='name'
-                        header='Tên nhiệm vụ'
+                        header='Tên đề tài'
                     />
                     <Column
                         alignHeader='center'
@@ -356,21 +405,18 @@ const CouncilForm = ({ params: _params }: PageProps) => {
                             color: 'var(--surface-a)',
                             whiteSpace: 'nowrap',
                         }}
-                        field='numberOfThesis'
-                        header='Số lượng đề tài'
+                        header='Ngày bắt đầu'
+                    />
+                    <Column
+                        alignHeader='center'
+                        headerStyle={{
+                            background: 'var(--primary-color)',
+                            color: 'var(--surface-a)',
+                            whiteSpace: 'nowrap',
+                        }}
+                        header='Ngày kết thúc'
                     />
                 </DataTable>
-
-                <div className='flex align-items-center justify-content-end mt-3'>
-                    <Button
-                        label={t('common:approve_request')}
-                        size='small'
-                        severity='secondary'
-                        onClick={(e) => {
-                            e.preventDefault();
-                        }}
-                    />
-                </div>
             </Dialog>
         </div>
     );

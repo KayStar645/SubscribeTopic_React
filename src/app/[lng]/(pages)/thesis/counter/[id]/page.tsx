@@ -157,7 +157,7 @@ const ResultPage = ({ params }: PageProps) => {
                             )}
                             {teacherC.length > 0 && (
                                 <th className='border-1 border-300 p-3 bg-primary' colSpan={teacherC.length}>
-                                    Điểm GV
+                                    Điểm HĐ
                                 </th>
                             )}
                             <th className='border-1 border-300 p-3 bg-primary' rowSpan={2}>

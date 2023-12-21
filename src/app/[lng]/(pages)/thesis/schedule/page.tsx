@@ -161,7 +161,7 @@ const SchedulePage = () => {
         const width = parent?.offsetWidth - 8;
 
         //style
-        const background = item.type === 'W' ? 'bg-blue-600' : 'bg-green-600';
+        const background = item.type === 'W' ? 'bg-blue-600' : item.type === 'R' ? 'bg-green-600' : 'bg-bluegray-800';
 
         return (
             <>

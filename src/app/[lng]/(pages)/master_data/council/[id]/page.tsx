@@ -125,11 +125,11 @@ const CouncilForm = ({ params: _params }: PageProps) => {
         mutationFn: async (data) => {
             data.commissioners = [...(members.commissioners || [])];
 
-            if (members?.secretary?.teacherId == 0) {
+            if (members?.secretary?.teacherId != 0) {
                 data.commissioners.push(members.secretary);
             }
 
-            if (members?.president?.teacherId == 0) {
+            if (members?.president?.teacherId != 0) {
                 data.commissioners.push(members.president);
             }
 

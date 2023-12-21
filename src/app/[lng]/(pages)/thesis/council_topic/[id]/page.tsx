@@ -8,8 +8,6 @@ import { PageProps } from '@assets/types/UI';
 import { Loader } from '@resources/components/UI';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { Button } from 'primereact/button';
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { InputText } from 'primereact/inputtext';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -39,14 +37,6 @@ const ResultPage = ({ params }: PageProps) => {
     const pointMutate = useMutation({
         mutationFn: (data: { scores: number; studentJoinId: number }) => {
             return request.update(API.admin.point, data);
-        },
-    });
-
-    const councilMutate = useMutation({
-        mutationFn: (_thesisId: null) => {
-            return request.update(API.admin.custom.thesis.send_to_council, {
-                thesisId: id,
-            });
         },
     });
 
@@ -111,32 +101,8 @@ const ResultPage = ({ params }: PageProps) => {
 
     return (
         <div className='flex flex-column gap-3 bg-white border-round shadow-1 p-3'>
-            <Loader show={pointQuery.isFetching || pointMutate.isPending || councilMutate.isPending} />
+            <Loader show={pointQuery.isFetching || pointMutate.isPending} />
 
-            <ConfirmDialog />
-
-            <div className='flex justify-content-end'>
-                <Button
-                    label='Đưa ra hội đồng'
-                    size='small'
-                    onClick={() => {
-                        confirmDialog({
-                            message: 'Bạn có chắc muốn đưa đề tài ra hội đồng',
-                            header: 'Xác nhận',
-                            icon: 'pi pi-exclamation-triangle',
-                            acceptLabel: 'Đồng ý',
-                            rejectLabel: 'Hủy',
-                            accept: () => {
-                                councilMutate.mutate(null, {
-                                    onSuccess() {
-                                        toast.success('Đưa đề tài ra hội đồng thành công');
-                                    },
-                                });
-                            },
-                        });
-                    }}
-                />
-            </div>
             <div className='border-round overflow-hidden shadow-3'>
                 <table className='w-full' style={{ borderCollapse: 'collapse' }}>
                     <thead>
@@ -156,7 +122,7 @@ const ResultPage = ({ params }: PageProps) => {
                             )}
                             {teacherC.length > 0 && (
                                 <th className='border-1 border-300 p-3 bg-primary' colSpan={teacherC.length}>
-                                    Điểm GV
+                                    Điểm HĐ
                                 </th>
                             )}
                             <th className='border-1 border-300 p-3 bg-primary' rowSpan={2}>

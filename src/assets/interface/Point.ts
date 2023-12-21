@@ -10,6 +10,9 @@ interface PointType extends GeneralType {
         type: string;
     }[];
     averageScore?: number;
+    instructionScore?: number;
+    viewScore?: number;
+    councilScore?: number;
     studentJoin?: {
         student: StudentType;
     };

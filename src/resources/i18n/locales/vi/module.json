@@ -19,7 +19,13 @@
     "google_drive": "Google Drive",
     "thesis_registration": "Đăng ký đề tài",
     "job": "Công việc",
-
+    "point": "Điểm",
+    "invitation": "Lời mời",
+    "job_results": "Kết quả báo cáo",
+    "council": "Hội đồng",
+    "duty": "Nhiệm vụ",
+    "exchange": "Trao đổi trong bài tập",
+    "report_schedule": "Lịch báo cáo",
     "field": {
         "faculty": {
             "dean": "Trưởng khoa"

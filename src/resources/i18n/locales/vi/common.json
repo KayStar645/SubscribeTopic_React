@@ -62,5 +62,10 @@
     "change_to_draft": "Chuyển về nháp",
     "see_all": "Xem tất cả",
     "post": "Đăng",
-    "number_of": "Số lượng {{ obj }}"
+    "number_of": "Số lượng {{ obj }}",
+    "studentofperiodcurrent": "Sinh viên của đợt hiện tại",
+    "student": "Danh sách đề tài sinh viên",
+    "instructorofteacher": "Danh sách đề tài GVHD",
+    "approvetocouncil": "Đưa đề tài vô hội đồng",
+    "mecurrent": "Đề tài hiện tại của sinh viên"
 }

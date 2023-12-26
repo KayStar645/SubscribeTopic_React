@@ -6,10 +6,15 @@ import { PointType } from '@assets/interface';
 import { Loader } from '@resources/components/UI';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import { useRef } from 'react';
+import { utils, writeFileXLSX } from 'xlsx';
 
 const PointPage = () => {
+    const ref = useRef<DataTable<PointType[]>>(null);
+
     const pointQuery = useQuery<PointType[], AxiosError<ResponseType>>({
         refetchOnWindowFocus: false,
         queryKey: ['points', 'list'],
@@ -20,11 +25,22 @@ const PointPage = () => {
         },
     });
 
+    const exportExcel = () => {
+        const wb = utils.table_to_book(ref.current?.getElement());
+
+        writeFileXLSX(wb, 'test.xlsx');
+    };
+
     return (
         <div className='flex flex-column gap-3 bg-white border-round shadow-1 p-3'>
             <Loader show={pointQuery.isFetching} />
 
+            <div className='flex align-items-center justify-content-end'>
+                <Button label='Xuất file excel' size='small' onClick={exportExcel} />
+            </div>
+
             <DataTable
+                ref={ref}
                 value={pointQuery.data}
                 tableStyle={{ minWidth: '50rem' }}
                 className='border-round overflow-hidden'

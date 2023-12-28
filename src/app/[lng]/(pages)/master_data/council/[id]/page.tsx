@@ -89,7 +89,7 @@ const CouncilForm = ({ params: _params }: PageProps) => {
         enabled: visible,
         queryKey: ['thesis', 'list'],
         queryFn: async () => {
-            const response = await request.get<TopicType[]>(`${API.admin.topic}`);
+            const response = await request.get<TopicType[]>(`${API.admin.custom.thesis.topic_by_council}`);
 
             return response.data.data || [];
         },
